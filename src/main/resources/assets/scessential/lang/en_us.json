@@ -1,0 +1,8 @@
+{
+  "message.scessential.incooldown": "Cooldown: %f seconds.",
+  "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
+  "message.scessential.homenotfound": "Home: %s not found!",
+  "message.scessential.sethomesuccess": "Successfully sat home: %s!",
+  "message.scessential.homesuccess": "Successfully teleported to home: %s!",
+  "message.scessential.delhomesuccess": "Successfully deleted home: %s!"
+}
