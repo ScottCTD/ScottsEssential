@@ -1,8 +1,18 @@
 {
-  "message.scessential.incooldown": "Cooldown: %f seconds.",
+  "message.scessential.incooldown": "Teleport Cooldown: %f seconds.",
+
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
+
   "message.scessential.homenotfound": "Home: %s not found!",
   "message.scessential.sethomesuccess": "Successfully sat home: %s!",
   "message.scessential.homesuccess": "Successfully teleported to home: %s!",
-  "message.scessential.delhomesuccess": "Successfully deleted home: %s!"
+  "message.scessential.delhomesuccess": "Successfully deleted home: %s!",
+  "message.scessential.withdraw": "  Withdraw",
+  "message.scessential.nohome": "You are Homeless...",
+  "message.scessential.setnewhome": "Do you want to set a new home here?",
+  "message.scessential.clicktoteleport": "Click to teleport to this home!",
+  "message.scessential.options": "Please choose: ",
+
+  "message.scessential.accept": "Accept",
+  "message.scessential.deny": "Deny"
 }

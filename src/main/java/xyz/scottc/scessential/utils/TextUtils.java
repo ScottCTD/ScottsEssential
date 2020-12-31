@@ -11,7 +11,7 @@ public class TextUtils {
         return beforeModid + Main.MODID + afterModid;
     }
 
-    public static ITextComponent getColoredTextFromI18n(Color color, boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+    public static IFormattableTextComponent getColoredTextFromI18n(Color color, boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return new TranslationTextComponent(translationKey, parameters)
                 .setStyle(Style.EMPTY
                         .setColor(color)
@@ -20,19 +20,19 @@ public class TextUtils {
                         .setItalic(italic));
     }
 
-    public static ITextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+    public static IFormattableTextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.GREEN), bold, underline, italic, translationKey, parameters);
     }
 
-    public static ITextComponent getRedTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+    public static IFormattableTextComponent getRedTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.RED), bold, underline, italic, translationKey, parameters);
     }
 
-    public static ITextComponent getYellowTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+    public static IFormattableTextComponent getYellowTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.YELLOW), bold, underline, italic, translationKey, parameters);
     }
 
-    public static ITextComponent getColoredTextFromString(Color color, boolean bold, boolean underline, boolean italic, String text) {
+    public static IFormattableTextComponent getColoredTextFromString(Color color, boolean bold, boolean underline, boolean italic, String text) {
         return new StringTextComponent(text)
                 .setStyle(Style.EMPTY
                         .setColor(color)
@@ -41,11 +41,11 @@ public class TextUtils {
                         .setItalic(italic));
     }
 
-    public static ITextComponent getGreenTextFromString(boolean bold, boolean underline, boolean italic, String text) {
+    public static IFormattableTextComponent getGreenTextFromString(boolean bold, boolean underline, boolean italic, String text) {
         return getColoredTextFromString(Color.fromTextFormatting(TextFormatting.GREEN), bold, underline, italic, text);
     }
 
-    public static ITextComponent getYellowTextFromString(boolean bold, boolean underline, boolean italic, String text) {
+    public static IFormattableTextComponent getYellowTextFromString(boolean bold, boolean underline, boolean italic, String text) {
         return getColoredTextFromString(Color.fromTextFormatting(TextFormatting.YELLOW), bold, underline, italic, text);
     }
 

@@ -1,7 +1,5 @@
 package xyz.scottc.scessential;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.FolderName;
@@ -23,7 +21,7 @@ public class EventHandler {
 
     private static final FolderName SE_FOLDER = new FolderName(Main.MODID);
     private static MinecraftServer server;
-    private static final Gson GSON = new GsonBuilder().create();
+
 
     private static Path main;
     private static Path worldData;
@@ -46,7 +44,7 @@ public class EventHandler {
         Path playerData = playersData.resolve(event.getPlayerUUID() + ".json");
         if (Files.exists(playerData)) {
             try (BufferedReader reader = Files.newBufferedReader(playerData)) {
-                JsonObject jsonObject = GSON.fromJson(reader, JsonObject.class);
+                JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
                 SEPlayerData data = SEPlayerData.getInstance(event.getPlayerUUID());
                 data.fromJson(jsonObject);
                 SEPlayerData.PLAYER_DATA_LIST.add(data);
@@ -63,7 +61,7 @@ public class EventHandler {
         SEPlayerData data = SEPlayerData.getInstance(event.getPlayerUUID());
         JsonObject jsonObject = data.toJson();
         try (BufferedWriter writer = Files.newBufferedWriter(playerData)) {
-            GSON.toJson(jsonObject, writer);
+            Main.GSON.toJson(jsonObject, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }

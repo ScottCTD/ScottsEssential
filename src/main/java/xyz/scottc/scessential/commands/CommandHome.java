@@ -6,8 +6,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import xyz.scottc.scessential.Config;
@@ -71,6 +70,15 @@ public class CommandHome {
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
+            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "setnewhome"), name), false);
+            IFormattableTextComponent accept = TextUtils.getGreenTextFromI18n(true, true, false,
+                    TextUtils.getTranslationKey("message", "accept"));
+            TranslationTextComponent setNewText = new TranslationTextComponent(TextUtils.getTranslationKey("message", "options"));
+            accept.setStyle(accept.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sethome " + name)));
+            IFormattableTextComponent deny = TextUtils.getRedTextFromI18n(true, true, false,
+                    TextUtils.getTranslationKey("message", "deny"));
+            player.sendStatusMessage(setNewText.appendString("\n").append(accept).append(new StringTextComponent(" | ").setStyle(Style.EMPTY)).append(deny), false);
             return 0;
         }
         MinecraftServer server = player.getServer();
@@ -85,7 +93,8 @@ public class CommandHome {
 
     private static int delHome(ServerPlayerEntity player, String name) {
         SEPlayerData data = SEPlayerData.getInstance(player.getUniqueID());
-        if (data.getHomePos(name) == null) {
+        TeleportPos homePos = data.getHomePos(name);
+        if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
             return 0;
@@ -99,15 +108,23 @@ public class CommandHome {
     private static int listHome(ServerPlayerEntity player) {
         SEPlayerData data = SEPlayerData.getInstance(player.getUniqueID());
         Map<String, TeleportPos> homes = data.getHomes();
+        if (homes.isEmpty()) {
+            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "nohome")), false);
+            return 0;
+        }
         player.sendStatusMessage(TextUtils.getYellowTextFromString(false, false, false,
                 TextUtils.getSeparator("=", 20)), false);
         Set<String> names = homes.keySet();
         int index = 0;
         for (String name : names) {
             TeleportPos teleportPos = homes.get(name);
-            IFormattableTextComponent text = (IFormattableTextComponent) TextUtils.getGreenTextFromString(false, false, false, (index + 1) + ": " + name);
+            IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + name);
             text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()))));
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).append(
+                            TextUtils.getGreenTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "clicktoteleport")).appendString("\n")
+                    ))));
             player.sendStatusMessage(text, false);
             index++;
         }

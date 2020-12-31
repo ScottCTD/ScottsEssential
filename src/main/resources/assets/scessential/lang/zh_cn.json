@@ -1,0 +1,9 @@
+{
+  "message.scessential.incooldown": "传送冷却: %f 秒。",
+  "message.scessential.spawnsuccess": "成功传送到主世界的出生点！",
+  "message.scessential.homenotfound": "家: %s 不存在！",
+  "message.scessential.sethomesuccess": "成功设置家: %s!",
+  "message.scessential.homesuccess": "成功传送到家: %s!",
+  "message.scessential.delhomesuccess": "成功删除家: %s!",
+  "message.scessential.nohome": "无家可归呢，真可怜..."
+}
