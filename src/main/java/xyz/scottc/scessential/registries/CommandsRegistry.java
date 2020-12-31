@@ -6,6 +6,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.scottc.scessential.Main;
+import xyz.scottc.scessential.commands.CommandBack;
 import xyz.scottc.scessential.commands.CommandHome;
 import xyz.scottc.scessential.commands.CommandSpawn;
 
@@ -18,6 +19,7 @@ public class CommandsRegistry {
 
         CommandSpawn.register(dispatcher);
         CommandHome.register(dispatcher);
+        CommandBack.register(dispatcher);
 
         Main.LOGGER.info("All commands registered!");
     }

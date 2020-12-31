@@ -13,18 +13,17 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import xyz.scottc.scessential.Config;
 import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
 public class CommandSpawn implements Command<CommandSource> {
 
     private static final CommandSpawn INSTANCE = new CommandSpawn();
-    public static final String SPAWN = "spawn";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(
-                Commands.literal(SPAWN)
-                        .executes(INSTANCE)
+        dispatcher.register(Commands.literal("spawn")
+                .executes(INSTANCE)
         );
     }
 
@@ -41,6 +40,7 @@ public class CommandSpawn implements Command<CommandSource> {
             ServerWorld world = server.getWorld(World.OVERWORLD);
             if (world != null) {
                 BlockPos spawnPoint = world.getSpawnPoint();
+                data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
                 TeleportUtils.teleport(player, world, spawnPoint);
                 data.setLastSpawnTime(System.currentTimeMillis());
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false ,false, false,

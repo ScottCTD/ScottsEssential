@@ -20,6 +20,10 @@ public class TextUtils {
                         .setItalic(italic));
     }
 
+    public static IFormattableTextComponent getWhiteTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.WHITE), bold, underline, italic, translationKey, parameters);
+    }
+
     public static IFormattableTextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.GREEN), bold, underline, italic, translationKey, parameters);
     }

@@ -2,6 +2,7 @@ package xyz.scottc.scessential.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -20,37 +21,35 @@ import java.util.Set;
 
 public class CommandHome {
 
-    private static final String SET_HOME = "sethome";
-    private static final String HOME = "home";
-    private static final String DEL_HOME = "delhome";
-    private static final String LIST_HOMES = "listhome";
-
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(
-                Commands.literal(SET_HOME)
-                .then(Commands.argument("name", StringArgumentType.string())
+        LiteralCommandNode<CommandSource> setHome = dispatcher.register(
+                Commands.literal("sethome")
+                        .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(context -> setHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "name"))))
-                .executes(context -> setHome(context.getSource().asPlayer(), "home"))
+                        .executes(context -> setHome(context.getSource().asPlayer(), "home"))
         );
+        dispatcher.register(Commands.literal("homeset").redirect(setHome));
 
         dispatcher.register(
-                Commands.literal(HOME)
+                Commands.literal("home")
                 .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(context -> home(context.getSource().asPlayer(), StringArgumentType.getString(context, "name"))))
                 .executes(context -> home(context.getSource().asPlayer(), "home"))
         );
 
-        dispatcher.register(
-                Commands.literal(DEL_HOME)
-                .then(Commands.argument("name", StringArgumentType.string())
+        LiteralCommandNode<CommandSource> delHome = dispatcher.register(
+                Commands.literal("delhome")
+                        .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(context -> delHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "name"))))
-                .executes(context -> delHome(context.getSource().asPlayer(), "home"))
+                        .executes(context -> delHome(context.getSource().asPlayer(), "home"))
         );
+        dispatcher.register(Commands.literal("removehome").redirect(delHome));
 
-        dispatcher.register(
-                Commands.literal(LIST_HOMES)
-                .executes(context -> listHome(context.getSource().asPlayer()))
+        LiteralCommandNode<CommandSource> listhome = dispatcher.register(
+                Commands.literal("listhome")
+                        .executes(context -> listHome(context.getSource().asPlayer()))
         );
+        dispatcher.register(Commands.literal("listhomes").redirect(listhome));
     }
 
     private static int setHome(ServerPlayerEntity player, String name) {
@@ -70,11 +69,13 @@ public class CommandHome {
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+            player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "setnewhome"), name), false);
+
+            IFormattableTextComponent setNewText = TextUtils.getGreenTextFromI18n(false, false, false,
+                    TextUtils.getTranslationKey("message", "options"));
             IFormattableTextComponent accept = TextUtils.getGreenTextFromI18n(true, true, false,
                     TextUtils.getTranslationKey("message", "accept"));
-            TranslationTextComponent setNewText = new TranslationTextComponent(TextUtils.getTranslationKey("message", "options"));
             accept.setStyle(accept.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sethome " + name)));
             IFormattableTextComponent deny = TextUtils.getRedTextFromI18n(true, true, false,
                     TextUtils.getTranslationKey("message", "deny"));
@@ -83,6 +84,7 @@ public class CommandHome {
         }
         MinecraftServer server = player.getServer();
         if (server != null) {
+            data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
             TeleportUtils.teleport(player, server.getWorld(homePos.getDimension()), homePos.getPos());
             data.setLastHomeTime(System.currentTimeMillis());
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -121,9 +123,9 @@ public class CommandHome {
             TeleportPos teleportPos = homes.get(name);
             IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + name);
             text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).append(
-                            TextUtils.getGreenTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "clicktoteleport")).appendString("\n")
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
+                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "clicktoteleport"))
                     ))));
             player.sendStatusMessage(text, false);
             index++;

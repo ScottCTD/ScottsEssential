@@ -3,6 +3,7 @@ package xyz.scottc.scessential.core;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import xyz.scottc.scessential.Config;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -15,8 +16,13 @@ public class SEPlayerData {
 
     private final Map<String, TeleportPos> homes = new HashMap<>();
 
+    private final TeleportPos[] teleportHistory = new TeleportPos[Config.maxBacks];
+    // 0 -> The most recent teleport
+    public int currentBackIndex = 0;
+
     private long lastSpawnTime = 0;
     private long lastHomeTime = 0;
+    private long lastBackTime = 0;
 
     private SEPlayerData(UUID uuid) {
         this.uuid = uuid;
@@ -35,6 +41,20 @@ public class SEPlayerData {
 
     public static SEPlayerData getInstance(String uuid) {
         return getInstance(UUID.fromString(uuid));
+    }
+
+    public void addTeleportHistory(TeleportPos teleportPos) {
+        System.arraycopy(this.teleportHistory, 0, this.teleportHistory, 1, Config.maxBacks - 1);
+        this.teleportHistory[0] = teleportPos;
+        this.currentBackIndex = 0;
+    }
+
+    public TeleportPos getTeleportHistory() {
+        if (this.currentBackIndex < Config.maxBacks) {
+            return this.teleportHistory[this.currentBackIndex];
+        } else {
+            return null;
+        }
     }
 
     public @Nullable TeleportPos getHomePos(String homeName) {
@@ -73,6 +93,14 @@ public class SEPlayerData {
         this.lastHomeTime = lastHomeTime;
     }
 
+    public long getLastBackTime() {
+        return lastBackTime;
+    }
+
+    public void setLastBackTime(long lastBackTime) {
+        this.lastBackTime = lastBackTime;
+    }
+
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("uuid", this.uuid.toString());
@@ -85,6 +113,13 @@ public class SEPlayerData {
             jsonHomes.add(jsonHome);
         }
         jsonObject.add("homes", jsonHomes);
+
+        jsonObject.addProperty("currentBackIndex", this.currentBackIndex);
+        JsonArray jsonBacks = new JsonArray();
+        for (TeleportPos backPos : this.teleportHistory) {
+            jsonBacks.add(backPos.toJSON());
+        }
+        jsonObject.add("backHistory", jsonBacks);
 
         return jsonObject;
     }
@@ -100,6 +135,17 @@ public class SEPlayerData {
             TeleportPos pos = new TeleportPos();
             pos.fromJSON(temp.get("pos").getAsJsonObject());
             this.homes.put(temp.get("name").getAsString(), pos);
+        }
+
+        this.currentBackIndex = jsonObject.get("currentBackIndex").getAsInt();
+        JsonArray backs = jsonObject.get("backHistory").getAsJsonArray();
+        int i = 0;
+        for (JsonElement back : backs) {
+            JsonObject temp = back.getAsJsonObject();
+            TeleportPos pos = new TeleportPos();
+            pos.fromJSON(temp);
+            this.teleportHistory[i] = pos;
+            i++;
         }
     }
 
