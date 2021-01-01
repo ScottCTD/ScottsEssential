@@ -11,6 +11,10 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
+/**
+ * 01/01/2021 18:38
+ * /back
+ */
 public class CommandBack {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -22,7 +26,7 @@ public class CommandBack {
     private static int back(ServerPlayerEntity player) {
         MinecraftServer server = player.getServer();
         if (server != null) {
-            SEPlayerData data = SEPlayerData.getInstance(player.getUniqueID());
+            SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
             if (TeleportUtils.isInCooldown(player, data.getLastBackTime(), Config.backCooldownSeconds)) {
                 return 0;
             }

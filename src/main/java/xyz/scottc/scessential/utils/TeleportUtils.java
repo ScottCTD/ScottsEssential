@@ -1,13 +1,22 @@
 package xyz.scottc.scessential.utils;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
+import xyz.scottc.scessential.core.TeleportPos;
 
 public class TeleportUtils {
 
     public static void teleport(ServerPlayerEntity player, ServerWorld world, BlockPos targetPos) {
         player.teleport(world, targetPos.getX(), targetPos.getY(), targetPos.getZ(), player.rotationYaw, player.rotationPitch);
+    }
+
+    public static void teleport(ServerPlayerEntity player, TeleportPos pos) {
+        MinecraftServer server = player.getServer();
+        if (server != null) {
+            teleport(player, server.getWorld(pos.getDimension()), pos.getPos());
+        }
     }
 
     /**

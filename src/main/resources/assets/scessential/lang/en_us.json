@@ -4,6 +4,8 @@
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
 
   "message.scessential.homenotfound": "Home \"%s\" not found!",
+  "message.scessential.homeothernotfound": "Player \"%s\"'s home \"%s\" not found!",
+  "message.scessential.otherhomesuccess": "Successfully teleported to \"%s\"'s home \"%s\"",
   "message.scessential.sethomesuccess": "Successfully sat home \"%s\"!",
   "message.scessential.homesuccess": "Successfully teleported to home \"%s\"!",
   "message.scessential.delhomesuccess": "Successfully deleted home \"%s\"!",
@@ -11,8 +13,14 @@
   "message.scessential.nohome": "You are Homeless...",
   "message.scessential.setnewhome": "Do you want to set a new home here?",
   "message.scessential.clicktoteleport": "Click to teleport to this home!",
+  "message.scessential.othernohome": "Player \"%s\" is homeless.",
   "message.scessential.options": "Please choose: ",
 
   "message.scessential.accept": "Accept",
-  "message.scessential.deny": "Deny"
+  "message.scessential.deny": "Deny",
+
+  "message.scessential.startrtp": "Start finding good landing site!",
+  "message.scessential.rtpattempts": "Found good landing site after %d attempts and let's start teleporting!",
+  "message.scessential.rtpsuccess": "Successfully and randomly teleported to x: %d y: %d z: %d",
+  "message.scessential.rtpfail": "Failed to find a good location. Please retry later!"
 }

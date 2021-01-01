@@ -29,7 +29,7 @@ public class EventHandler {
     public static void onPlayerDied(LivingDeathEvent event) {
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof ServerPlayerEntity) {
-            SEPlayerData.getInstance(entity.getUniqueID()).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
+            SEPlayerData.getInstance(((ServerPlayerEntity) entity).getGameProfile()).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
         }
     }
 
@@ -56,7 +56,7 @@ public class EventHandler {
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
                 JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
-                SEPlayerData data = SEPlayerData.getInstance(uuid);
+                SEPlayerData data = SEPlayerData.getInstance(event.getPlayer().getGameProfile());
                 data.fromJson(jsonObject);
                 SEPlayerData.PLAYER_DATA_LIST.add(data);
             } catch (IOException e) {
@@ -70,7 +70,7 @@ public class EventHandler {
         init();
         String uuid = event.getPlayerUUID();
         File file = new File(playersDataFolder + "/" + uuid + ".json");
-        SEPlayerData data = SEPlayerData.getInstance(uuid);
+        SEPlayerData data = SEPlayerData.getInstance(event.getPlayer().getGameProfile());
         JsonObject jsonObject = data.toJson();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
             Main.GSON.toJson(jsonObject, writer);

@@ -12,7 +12,7 @@ public class Main {
 
     public static final String MODID = "scessential";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public Main() {
         MinecraftForge.EVENT_BUS.register(this);

@@ -17,6 +17,10 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
+/**
+ * 01/01/2021 18:39
+ * /spawn
+ */
 public class CommandSpawn implements Command<CommandSource> {
 
     private static final CommandSpawn INSTANCE = new CommandSpawn();
@@ -30,7 +34,7 @@ public class CommandSpawn implements Command<CommandSource> {
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
-        SEPlayerData data = SEPlayerData.getInstance(player.getUniqueID());
+        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
 
         if (TeleportUtils.isInCooldown(player, data.getLastSpawnTime(), Config.spawnCooldownSeconds)) {
             return 0;

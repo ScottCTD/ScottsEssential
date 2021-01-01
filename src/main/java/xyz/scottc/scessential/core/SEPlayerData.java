@@ -3,6 +3,7 @@ package xyz.scottc.scessential.core;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.authlib.GameProfile;
 import xyz.scottc.scessential.Config;
 
 import javax.annotation.Nullable;
@@ -13,6 +14,7 @@ public class SEPlayerData {
     public static final List<SEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
     private UUID uuid;
+    private String playerName;
 
     private final Map<String, TeleportPos> homes = new HashMap<>();
 
@@ -22,14 +24,25 @@ public class SEPlayerData {
 
     private long lastSpawnTime = 0;
     private long lastHomeTime = 0;
+    private long lastHomeOtherTime = 0;
     private long lastBackTime = 0;
+    private long lastRTPTime = 0;
 
-    private SEPlayerData(UUID uuid) {
+    private SEPlayerData(UUID uuid, String playerName) {
         this.uuid = uuid;
+        this.playerName = playerName;
     }
 
-    public static SEPlayerData getInstance(UUID uuid) {
-        SEPlayerData data = new SEPlayerData(uuid);
+    public static SEPlayerData getInstance(GameProfile gameProfile) {
+        return getInstance(gameProfile.getId(), gameProfile.getName());
+    }
+
+    public static SEPlayerData getInstance(String uuid, String playerName) {
+        return getInstance(UUID.fromString(uuid), playerName);
+    }
+
+    public static SEPlayerData getInstance(UUID uuid, String playerName) {
+        SEPlayerData data = new SEPlayerData(uuid, playerName);
         int i = PLAYER_DATA_LIST.indexOf(data);
         if (i != -1) {
             data = PLAYER_DATA_LIST.get(i);
@@ -37,10 +50,6 @@ public class SEPlayerData {
             PLAYER_DATA_LIST.add(data);
         }
         return data;
-    }
-
-    public static SEPlayerData getInstance(String uuid) {
-        return getInstance(UUID.fromString(uuid));
     }
 
     public void addTeleportHistory(TeleportPos teleportPos) {
@@ -77,6 +86,10 @@ public class SEPlayerData {
         return this.uuid;
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
     public long getLastSpawnTime() {
         return this.lastSpawnTime;
     }
@@ -93,6 +106,14 @@ public class SEPlayerData {
         this.lastHomeTime = lastHomeTime;
     }
 
+    public long getLastHomeOtherTime() {
+        return lastHomeOtherTime;
+    }
+
+    public void setLastHomeOtherTime(long lastHomeOtherTime) {
+        this.lastHomeOtherTime = lastHomeOtherTime;
+    }
+
     public long getLastBackTime() {
         return lastBackTime;
     }
@@ -101,9 +122,18 @@ public class SEPlayerData {
         this.lastBackTime = lastBackTime;
     }
 
+    public long getLastRTPTime() {
+        return lastRTPTime;
+    }
+
+    public void setLastRTPTime(long lastRTPTime) {
+        this.lastRTPTime = lastRTPTime;
+    }
+
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("uuid", this.uuid.toString());
+        jsonObject.addProperty("name", this.playerName);
 
         JsonArray jsonHomes = new JsonArray();
         for (Map.Entry<String, TeleportPos> home : this.homes.entrySet()) {
@@ -117,6 +147,7 @@ public class SEPlayerData {
         jsonObject.addProperty("currentBackIndex", this.currentBackIndex);
         JsonArray jsonBacks = new JsonArray();
         for (TeleportPos backPos : this.teleportHistory) {
+            if (backPos == null) break;
             jsonBacks.add(backPos.toJSON());
         }
         jsonObject.add("backHistory", jsonBacks);
@@ -125,8 +156,9 @@ public class SEPlayerData {
     }
 
     public void fromJson(JsonObject jsonObject) {
-        if (this.uuid == null) {
+        if (this.uuid == null || this.playerName == null) {
             this.uuid = UUID.fromString(jsonObject.get("uuid").getAsString());
+            this.playerName = jsonObject.get("name").getAsString();
         }
 
         JsonArray jsonHomes = jsonObject.get("homes").getAsJsonArray();
