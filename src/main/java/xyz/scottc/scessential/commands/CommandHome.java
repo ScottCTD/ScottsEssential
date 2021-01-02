@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -32,6 +33,7 @@ import java.util.Set;
  */
 public class CommandHome {
 
+
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralCommandNode<CommandSource> setHome = dispatcher.register(
                 Commands.literal("sethome")
@@ -44,13 +46,16 @@ public class CommandHome {
         dispatcher.register(
                 Commands.literal("home")
                         .then(Commands.argument("Name", StringArgumentType.string())
-                                .executes(context -> home(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer().getGameProfile()).getHomes().keySet(), builder))
+                                .executes(context -> home(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name")))
+                        )
                         .executes(context -> home(context.getSource().asPlayer(), "home"))
         );
         dispatcher.register(Commands.literal("homeother")
                 .then(Commands.argument("Other", EntityArgument.player())
                         .then(Commands.argument("HomeName", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(EntityArgument.getPlayer(context, "Other").getGameProfile()).getHomes().keySet(), builder))
                                 .executes(context -> homeOther(context.getSource().asPlayer(),
                                         EntityArgument.getPlayer(context, "Other"),
                                         StringArgumentType.getString(context, "HomeName"))
@@ -62,6 +67,7 @@ public class CommandHome {
         LiteralCommandNode<CommandSource> delHome = dispatcher.register(
                 Commands.literal("delhome")
                         .then(Commands.argument("Name", StringArgumentType.string())
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer().getGameProfile()).getHomes().keySet(), builder))
                                 .executes(context -> delHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
                         .executes(context -> delHome(context.getSource().asPlayer(), "home"))
         );

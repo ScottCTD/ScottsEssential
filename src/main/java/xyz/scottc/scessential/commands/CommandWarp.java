@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -32,6 +33,7 @@ public class CommandWarp {
         dispatcher.register(
                 Commands.literal("warp")
                         .then(Commands.argument("name", StringArgumentType.string())
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(TeleportPos.WARPS.keySet(), builder))
                                 .executes(context -> warp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
                         )
         );
@@ -45,6 +47,7 @@ public class CommandWarp {
                 Commands.literal("delwarp")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(TeleportPos.WARPS.keySet(), builder))
                                 .executes(context -> delWarp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
                         )
         );
