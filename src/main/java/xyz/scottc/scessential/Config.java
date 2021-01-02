@@ -8,6 +8,10 @@ public class Config {
     public static int homeOtherCooldownSeconds = 3;
     public static int backCooldownSeconds = 3;
     public static int rtpCooldownSeconds = 3;
+    public static int warpCooldownSeconds = 3;
+
+    // home
+    public static int maxHomes = 5;
 
     // Back
     public static int maxBacks = 10;

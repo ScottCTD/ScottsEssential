@@ -16,7 +16,7 @@ public class SEPlayerData {
     private UUID uuid;
     private String playerName;
 
-    private final Map<String, TeleportPos> homes = new HashMap<>();
+    private final Map<String, TeleportPos> homes = new HashMap<>(Config.maxHomes);
 
     private final TeleportPos[] teleportHistory = new TeleportPos[Config.maxBacks];
     // 0 -> The most recent teleport
@@ -27,6 +27,7 @@ public class SEPlayerData {
     private long lastHomeOtherTime = 0;
     private long lastBackTime = 0;
     private long lastRTPTime = 0;
+    private long lastWarpTime = 0;
 
     private SEPlayerData(UUID uuid, String playerName) {
         this.uuid = uuid;
@@ -128,6 +129,14 @@ public class SEPlayerData {
 
     public void setLastRTPTime(long lastRTPTime) {
         this.lastRTPTime = lastRTPTime;
+    }
+
+    public long getLastWarpTime() {
+        return lastWarpTime;
+    }
+
+    public void setLastWarpTime(long lastWarpTime) {
+        this.lastWarpTime = lastWarpTime;
     }
 
     public JsonObject toJson() {

@@ -50,6 +50,7 @@ public class CommandHome {
         dispatcher.register(Commands.literal("homeother")
                 .then(Commands.argument("Other", EntityArgument.player())
                         .then(Commands.argument("HomeName", StringArgumentType.string())
+                                .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> homeOther(context.getSource().asPlayer(),
                                         EntityArgument.getPlayer(context, "Other"),
                                         StringArgumentType.getString(context, "HomeName"))
@@ -73,12 +74,18 @@ public class CommandHome {
         dispatcher.register(
                 Commands.literal("listotherhomes")
                         .then(Commands.argument("other", EntityArgument.player())
+                                .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> listOthersHome(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "other"))))
         );
     }
 
     private static int setHome(ServerPlayerEntity player, String name) {
         SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        if (data.getHomes().size() >= Config.maxHomes) {
+            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "reachmaxhome"), Config.maxHomes), false);
+            return 0;
+        }
         data.setHome(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "sethomesuccess"), name), false);
@@ -150,57 +157,59 @@ public class CommandHome {
     }
 
     private static int listHome(ServerPlayerEntity player) {
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
-        Map<String, TeleportPos> homes = data.getHomes();
-        if (homes.isEmpty()) {
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "nohome")), false);
-            return 0;
-        }
-        player.sendStatusMessage(TextUtils.getYellowTextFromString(false, false, false,
-                TextUtils.getSeparator("=", 20)), false);
-        Set<String> names = homes.keySet();
-        int index = 0;
-        for (String name : names) {
-            TeleportPos teleportPos = homes.get(name);
-            IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + name);
-            text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "clicktoteleport"))
-                            ))));
-            player.sendStatusMessage(text, false);
-            index++;
-        }
-        player.sendStatusMessage(TextUtils.getYellowTextFromString(false, false, false,
-                TextUtils.getSeparator("=", 20)), false);
+        Thread thread = new Thread(() -> {
+            SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+            Map<String, TeleportPos> homes = data.getHomes();
+            if (homes.isEmpty()) {
+                player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                        TextUtils.getTranslationKey("message", "nohome")), false);
+                return;
+            }
+            player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+            Set<String> names = homes.keySet();
+            int index = 1;
+            for (String name : names) {
+                TeleportPos teleportPos = homes.get(name);
+                IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + name);
+                text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
+                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
+                                .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                                        TextUtils.getTranslationKey("message", "clicktoteleport"))
+                                ))));
+                player.sendStatusMessage(text, false);
+                index++;
+            }
+            player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+        });
+        thread.start();
         return 0;
     }
 
     private static int listOthersHome(ServerPlayerEntity source, ServerPlayerEntity other) {
-        SEPlayerData otherData = SEPlayerData.getInstance(other.getGameProfile());
-        Map<String, TeleportPos> otherHomes = otherData.getHomes();
-        if (otherHomes.isEmpty()) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "othernohome"), otherData.getPlayerName()), false);
-            return 0;
-        }
-        source.sendStatusMessage(TextUtils.getYellowTextFromString(false, false, false,
-                TextUtils.getSeparator("=", 20)), false);
-        int index = 0;
-        for (Map.Entry<String, TeleportPos> e : otherHomes.entrySet()) {
-            TeleportPos teleportPos = e.getValue();
-            IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + e.getKey());
-            text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
-                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "clicktoteleport"))
-                            ))));
-            source.sendStatusMessage(text, false);
-            index++;
-        }
-        source.sendStatusMessage(TextUtils.getYellowTextFromString(false, false, false,
-                TextUtils.getSeparator("=", 20)), false);
+        Thread thread = new Thread(() -> {
+            SEPlayerData otherData = SEPlayerData.getInstance(other.getGameProfile());
+            Map<String, TeleportPos> otherHomes = otherData.getHomes();
+            if (otherHomes.isEmpty()) {
+                source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                        TextUtils.getTranslationKey("message", "othernohome"), otherData.getPlayerName()), false);
+                return;
+            }
+            source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+            int index = 0;
+            for (Map.Entry<String, TeleportPos> e : otherHomes.entrySet()) {
+                TeleportPos teleportPos = e.getValue();
+                IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + e.getKey());
+                text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
+                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
+                                .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                                        TextUtils.getTranslationKey("message", "clicktoteleport"))
+                                ))));
+                source.sendStatusMessage(text, false);
+                index++;
+            }
+            source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+        });
+        thread.start();
         return 0;
     }
 

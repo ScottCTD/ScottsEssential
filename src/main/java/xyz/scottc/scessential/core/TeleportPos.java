@@ -1,16 +1,27 @@
 package xyz.scottc.scessential.core;
 
 import com.google.gson.JsonObject;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TeleportPos {
+
+    public static final Map<String, TeleportPos> WARPS = new HashMap<>();
 
     private RegistryKey<World> dimension;
     private BlockPos pos;
+
+    public TeleportPos(ServerPlayerEntity player) {
+        this.dimension = player.getServerWorld().getDimensionKey();
+        this.pos = player.getPosition();
+    }
 
     public TeleportPos(RegistryKey<World> dimension, BlockPos pos) {
         this.dimension = dimension;
@@ -22,8 +33,7 @@ public class TeleportPos {
         this.pos = pos;
     }
 
-    public TeleportPos() {
-    }
+    public TeleportPos() {}
 
     public RegistryKey<World> getDimension() {
         return dimension;
