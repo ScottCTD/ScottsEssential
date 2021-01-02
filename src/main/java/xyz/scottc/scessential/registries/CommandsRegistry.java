@@ -20,6 +20,7 @@ public class CommandsRegistry {
         CommandBack.register(dispatcher);
         CommandRTP.register(dispatcher);
         CommandWarp.register(dispatcher);
+        CommandTPA.register(dispatcher);
 
         Main.LOGGER.info("All commands registered!");
     }

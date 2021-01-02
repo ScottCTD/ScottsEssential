@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.FolderName;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -14,9 +15,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
+import xyz.scottc.scessential.utils.TextUtils;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -27,6 +31,31 @@ public class EventHandler {
     private static File mainFolder;
     private static File worldDataFolder;
     private static File playersDataFolder;
+
+    private static int counter = 0;
+
+    /**
+     * Determine if an tpa request was expired.
+     * @param event ServerTickEvent
+     */
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            if (counter >= 20) {
+                long now = System.currentTimeMillis();
+                Collection<TPARequest> requests = TPARequest.getTpaRequest().values();
+                for (TPARequest request : requests) {
+                    if ((request.getCreateTime() + Config.maxTPARequestTimeoutSeconds * 1000L) <= now) {
+                        TPARequest.getTpaRequest().remove(request.getId());
+                        request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
+                        );
+                    }
+                }
+            }
+            counter++;
+        }
+    }
 
     /**
      * Listen this event for adding a new back history for a player when that player died, allowing player use /back

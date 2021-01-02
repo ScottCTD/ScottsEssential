@@ -9,6 +9,7 @@ public class Config {
     public static int backCooldownSeconds = 3;
     public static int rtpCooldownSeconds = 3;
     public static int warpCooldownSeconds = 3;
+    public static int tpaCooldownSeconds = 3;
 
     // home
     public static int maxHomes = 5;
@@ -39,4 +40,6 @@ public class Config {
     public static int minRTPRadiusEnd = 1000;
     public static int maxRTPRadiusEnd = 10000;
 
+    // TPA
+    public static int maxTPARequestTimeoutSeconds = 10;
 }

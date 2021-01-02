@@ -28,6 +28,7 @@ public class SEPlayerData {
     private long lastBackTime = 0;
     private long lastRTPTime = 0;
     private long lastWarpTime = 0;
+    private long lastTPATime = 0;
 
     private SEPlayerData(UUID uuid, String playerName) {
         this.uuid = uuid;
@@ -137,6 +138,14 @@ public class SEPlayerData {
 
     public void setLastWarpTime(long lastWarpTime) {
         this.lastWarpTime = lastWarpTime;
+    }
+
+    public long getLastTPATime() {
+        return lastTPATime;
+    }
+
+    public void setLastTPATime(long lastTPATime) {
+        this.lastTPATime = lastTPATime;
     }
 
     public JsonObject toJson() {

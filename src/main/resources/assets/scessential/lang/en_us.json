@@ -1,6 +1,8 @@
 {
   "message.scessential.incooldown": "Teleport Cooldown: %f seconds.",
 
+  "message.scessential.ok": "Okay.",
+
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
 
   "message.scessential.homenotfound": "Home \"%s\" not found!",
@@ -9,7 +11,6 @@
   "message.scessential.sethomesuccess": "Successfully sat home \"%s\"!",
   "message.scessential.homesuccess": "Successfully teleported to home \"%s\"!",
   "message.scessential.delhomesuccess": "Successfully deleted home \"%s\"!",
-  "message.scessential.withdraw": "  Withdraw",
   "message.scessential.nohome": "You are Homeless...",
   "message.scessential.setnewhome": "Do you want to set a new home here?",
   "message.scessential.reachmaxhome": "You cannot set more home than %d homes!",
@@ -19,15 +20,26 @@
 
   "message.scessential.accept": "Accept",
   "message.scessential.deny": "Deny",
+  "message.scessential.acceptHover": "Click to accept this request!",
+  "message.scessential.denyHover": "Click to deny this request!",
 
   "message.scessential.startrtp": "Start finding good landing site!",
   "message.scessential.rtpattempts": "Found good landing site after %d attempts and let's start teleporting!",
-  "message.scessential.rtpsuccess": "Successfully and randomly teleported to x: %d y: %d z: %d",
+  "message.scessential.rtpsuccess": "Successfully and randomly teleported to x: %d y: %d z: %d!",
   "message.scessential.rtpfail": "Failed to find a good location. Please retry later!",
 
   "message.scessential.setwarpsuccess": "Successfully sat warp \"%s\"!",
   "message.scessential.warpnotfound": "Warp \"%s\" not found!",
   "message.scessential.warpsuccess": "Successfully teleported to warp \"%s\"!",
   "message.scessential.delwarpsuccess": "Successfully delete the warp \"%s\"!",
-  "message.scessential.nowarp": "There isn't any warp available."
+  "message.scessential.nowarp": "There isn't any warp available!",
+
+  "message.scessential.requestsent": "Request successfully sent to player \"%s\"!",
+  "message.scessential.tpaline01": "Player \"%s\" want to teleport to your position.",
+  "message.scessential.tpanotfound": "Request expired or not found!",
+  "message.scessential.tpasuccessSource": "Successfully teleported to %s!",
+  "message.scessential.tpasuccessTarget": "Successfully teleported %s to you!",
+  "message.scessential.requesttimeout": "Request related to \"%s\" expired!",
+  "message.scessential.tpadenySource": "Player %s denied your request.",
+  "message.scessential.tpahereline01": "Player \"%s\" want you to teleport to his/her position."
 }
