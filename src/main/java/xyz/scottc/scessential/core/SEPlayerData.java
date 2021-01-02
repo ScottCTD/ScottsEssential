@@ -9,8 +9,15 @@ import xyz.scottc.scessential.Config;
 import javax.annotation.Nullable;
 import java.util.*;
 
+/**
+ * 01/02/2021 22:34
+ * Every player should have an instance of this class.
+ * It contains all the data that a player need like the last teleport time, uuid, name, homes, teleport history, and etc.
+ */
 public class SEPlayerData {
 
+    // All the player data are stored in it.
+    // It will be refilled everytime the server restart.
     public static final List<SEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
     private UUID uuid;
@@ -199,6 +206,11 @@ public class SEPlayerData {
         }
     }
 
+    /**
+     * Compare two player data based on uuid.
+     * @param o Object being compared.
+     * @return true if equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -207,6 +219,10 @@ public class SEPlayerData {
         return this.uuid.equals(that.uuid);
     }
 
+    /**
+     * To UUID
+     * @return The uuid string of this player
+     */
     @Override
     public String toString() {
         return this.uuid.toString();

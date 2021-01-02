@@ -1,9 +1,46 @@
 {
   "message.scessential.incooldown": "传送冷却: %f 秒。",
+
+  "message.scessential.ok": "好的。",
+  "message.scessential.you": "你",
+
   "message.scessential.spawnsuccess": "成功传送到主世界的出生点！",
+
   "message.scessential.homenotfound": "家: %s 不存在！",
-  "message.scessential.sethomesuccess": "成功设置家: %s!",
-  "message.scessential.homesuccess": "成功传送到家: %s!",
-  "message.scessential.delhomesuccess": "成功删除家: %s!",
-  "message.scessential.nohome": "无家可归呢，真可怜..."
+  "message.scessential.homeothernotfound": "未找到玩家 \"%s\" 的家 \"%s\"！",
+  "message.scessential.otherhomesuccess": "成功传送至玩家 \"%s\" 的家 \"%s\"",
+  "message.scessential.sethomesuccess": "成功设置家: %s！",
+  "message.scessential.homesuccess": "成功传送到家: %s！",
+  "message.scessential.delhomesuccess": "成功删除家: %s！",
+  "message.scessential.nohome": "无家可归呢，真可怜...",
+  "message.scessential.setnewhome": "你想在这里设置家吗？",
+  "message.scessential.reachmaxhome": "你不能设置超过 %d 个家！",
+  "message.scessential.clicktoteleport": "点击传送！",
+  "message.scessential.othernohome": "玩家 \"%s\" 无家可归...",
+  "message.scessential.options": "请选择：",
+
+  "message.scessential.accept": "同意",
+  "message.scessential.deny": "拒绝",
+  "message.scessential.acceptHover": "单击以同意该请求！",
+  "message.scessential.denyHover": "单击以拒绝该请求！",
+
+  "message.scessential.startrtp": "开始寻找安全的着陆点！",
+  "message.scessential.rtpattempts": "在尝试 %d 次成功找到了着陆点，开始传送！",
+  "message.scessential.rtpsuccess": "成功随机传送到 x: %d y: %d z: %d！",
+  "message.scessential.rtpfail": "无法找到安全着陆点，请重试！",
+
+  "message.scessential.setwarpsuccess": "成功设置世界传送点： \"%s\"！",
+  "message.scessential.warpnotfound": "世界传送点 \"%s\" 未找到！",
+  "message.scessential.warpsuccess": "成功传送到世界传送点： \"%s\"！",
+  "message.scessential.delwarpsuccess": "成功删除世界传送点： \"%s\"！",
+  "message.scessential.nowarp": "未找到任何世界传送点！",
+
+  "message.scessential.requestsent": "成功发送传送请求至玩家 \"%s\"！",
+  "message.scessential.tpaline01": "玩家 \"%s\" 想传送到你的位置。",
+  "message.scessential.tpanotfound": "传送请求已失效或错误！",
+  "message.scessential.tpasuccessSource": "成功传送至 %s 的位置！",
+  "message.scessential.tpasuccessTarget": "成功将 %s 传送到你身边！",
+  "message.scessential.requesttimeout": "与玩家 \"%s\" 相关的传送请求已失效！",
+  "message.scessential.tpadenySource": "玩家 %s 无情的拒绝了你的传送请求。",
+  "message.scessential.tpahereline01": "玩家 \"%s\" 想让你传送ta的位置。"
 }

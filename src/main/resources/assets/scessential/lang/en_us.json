@@ -2,12 +2,13 @@
   "message.scessential.incooldown": "Teleport Cooldown: %f seconds.",
 
   "message.scessential.ok": "Okay.",
+  "message.scessential.you": "You",
 
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
 
   "message.scessential.homenotfound": "Home \"%s\" not found!",
   "message.scessential.homeothernotfound": "Player \"%s\"'s home \"%s\" not found!",
-  "message.scessential.otherhomesuccess": "Successfully teleported to \"%s\"'s home \"%s\"",
+  "message.scessential.otherhomesuccess": "Successfully teleported to player \"%s\"'s home \"%s\"",
   "message.scessential.sethomesuccess": "Successfully sat home \"%s\"!",
   "message.scessential.homesuccess": "Successfully teleported to home \"%s\"!",
   "message.scessential.delhomesuccess": "Successfully deleted home \"%s\"!",
@@ -23,10 +24,10 @@
   "message.scessential.acceptHover": "Click to accept this request!",
   "message.scessential.denyHover": "Click to deny this request!",
 
-  "message.scessential.startrtp": "Start finding good landing site!",
-  "message.scessential.rtpattempts": "Found good landing site after %d attempts and let's start teleporting!",
+  "message.scessential.startrtp": "Start finding safe landing site!",
+  "message.scessential.rtpattempts": "Found safe landing site after %d attempts and let's start teleporting!",
   "message.scessential.rtpsuccess": "Successfully and randomly teleported to x: %d y: %d z: %d!",
-  "message.scessential.rtpfail": "Failed to find a good location. Please retry later!",
+  "message.scessential.rtpfail": "Failed to find a safe location. Please retry later!",
 
   "message.scessential.setwarpsuccess": "Successfully sat warp \"%s\"!",
   "message.scessential.warpnotfound": "Warp \"%s\" not found!",

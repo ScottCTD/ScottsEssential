@@ -161,6 +161,12 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Init mod directory
+     * /world/scessential
+     * /world/scessential/playersdata
+     * /world/scessential/worlddata
+     */
     public static void init() {
         if (mainFolder == null || worldDataFolder == null || playersDataFolder == null) return;
         if (!mainFolder.exists()) {

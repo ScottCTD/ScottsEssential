@@ -41,5 +41,5 @@ public class Config {
     public static int maxRTPRadiusEnd = 10000;
 
     // TPA
-    public static int maxTPARequestTimeoutSeconds = 10;
+    public static int maxTPARequestTimeoutSeconds = 30;
 }

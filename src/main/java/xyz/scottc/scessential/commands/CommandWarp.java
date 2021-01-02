@@ -19,6 +19,13 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 import java.util.Map;
 
+/**
+ * 01/02/2021 22:25
+ * /setwarp
+ * /warp
+ * /listwarps
+ * /delwarp
+ */
 public class CommandWarp {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {

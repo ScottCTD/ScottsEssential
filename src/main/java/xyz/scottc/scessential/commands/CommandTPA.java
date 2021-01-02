@@ -75,6 +75,7 @@ public class CommandTPA {
 
     }
 
+    // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
 
@@ -89,7 +90,8 @@ public class CommandTPA {
 
         IFormattableTextComponent line0201 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
         IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
-        IFormattableTextComponent line0203 = TextUtils.getGreenTextFromString(false, false, false, "You");
+        IFormattableTextComponent line0203 = TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "you"));
         IFormattableTextComponent line02 = line0201.append(line0202).append(line0203);
 
         IFormattableTextComponent line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
