@@ -93,8 +93,9 @@ public class CommandRTP {
                 if (fluid instanceof LavaFluid) {
                     continue;
                 }
-                world.destroyBlock(targetPos.up(), true);
-                world.destroyBlock(targetPos.up().up(), true);
+                // Destroy player nearby block
+                BlockPos.getAllInBox(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
+                        .forEach(blockpos -> world.destroyBlock(blockpos, true));
                 data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "rtpattempts"), i + 1), false);

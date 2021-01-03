@@ -14,6 +14,9 @@ import java.util.Date;
 
 public class CommandFly {
 
+    // Read from Config
+    public static String datePattern = "hh:mm:ss MM/dd/yyyy";
+
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
                 Commands.literal("fly")
@@ -61,8 +64,7 @@ public class CommandFly {
                 long canFlyUntil = System.currentTimeMillis() + minutes[0] * 60 * 1000L;
                 data.setCanFlyUntil(canFlyUntil);
                 Date date = new Date(canFlyUntil);
-                // TODO Configurable format
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss MM/dd/yyyy");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
                 String formattedDate = simpleDateFormat.format(date);
                 target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "flytempTarget"), formattedDate), false);

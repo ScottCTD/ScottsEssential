@@ -4,6 +4,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import xyz.scottc.scessential.commands.CommandFly;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
@@ -89,6 +90,8 @@ public class Config {
             maxRTPRadiusEndConfig,
 
             maxTPARequestTimeoutSecondsConfig;
+
+    private static ForgeConfigSpec.ConfigValue<? extends String> datePattern;
 
     static {
         initCommandsConfig();
@@ -224,6 +227,15 @@ public class Config {
         SERVER_BUILDER.pop();
         SERVER_BUILDER.pop();
 
+        SERVER_BUILDER.push("Fly");
+        datePattern = SERVER_BUILDER
+                .comment("The date format used to display the deadline of flying.",
+                        "A valid date format should follow the pattern described in JavaDoc: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html",
+                        "If you don't know what it is, please do not modify it.",
+                        "Default value: \"hh:mm:ss MM/dd/yyyy\"")
+                .define("DatePattern", "hh:mm:ss MM/dd/yyyy");
+        SERVER_BUILDER.pop();
+
         SERVER_BUILDER.pop();
     }
 
@@ -273,6 +285,8 @@ public class Config {
         // tpa
         maxTPARequestTimeoutSeconds = maxTPARequestTimeoutSecondsConfig.get();
 
+        // fly
+        CommandFly.datePattern = datePattern.get();
     }
 
     @SubscribeEvent

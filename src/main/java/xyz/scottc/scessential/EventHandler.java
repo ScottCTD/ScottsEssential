@@ -35,6 +35,18 @@ public class EventHandler {
     private static int counter = 0;
 
     /**
+     * Make flyable player flyable again after respawn.
+     * @param e PlayerEvent.PlayerRespawnEvent
+     */
+    @SubscribeEvent
+    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
+        SCEPlayerData data = SCEPlayerData.getInstance(e.getPlayer().getGameProfile());
+        if (data.getPlayer() != null && data.isFlyable()) {
+            data.setFlyable(true);
+        }
+    }
+
+    /**
      * Determine if an tpa request was expired and if a player fly time expired.
      * @param event ServerTickEvent
      */
@@ -151,7 +163,7 @@ public class EventHandler {
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
                 JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
-                SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer().getGameProfile());
+                SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
                 data.fromJson(jsonObject);
                 SCEPlayerData.PLAYER_DATA_LIST.add(data);
             } catch (IOException e) {
@@ -165,7 +177,7 @@ public class EventHandler {
         init();
         String uuid = event.getPlayerUUID();
         File file = new File(playersDataFolder + "/" + uuid + ".json");
-        SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer().getGameProfile());
+        SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
         JsonObject jsonObject = data.toJson();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
             Main.GSON.toJson(jsonObject, writer);

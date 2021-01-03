@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import xyz.scottc.scessential.Config;
 
 import javax.annotation.Nullable;
@@ -21,7 +21,7 @@ public class SCEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
-    private ServerPlayerEntity player;
+    private PlayerEntity player;
     private UUID uuid;
     private String playerName;
 
@@ -47,10 +47,11 @@ public class SCEPlayerData {
         this.playerName = playerName;
     }
 
-    public static SCEPlayerData getInstance(ServerPlayerEntity player) {
+    public static SCEPlayerData getInstance(PlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
         SCEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
         instance.player = player;
+        instance.setFlyable(instance.isFlyable);
         return instance;
     }
 
@@ -129,7 +130,7 @@ public class SCEPlayerData {
         return this.homes;
     }
 
-    public ServerPlayerEntity getPlayer() {
+    public PlayerEntity getPlayer() {
         return player;
     }
 
@@ -202,6 +203,9 @@ public class SCEPlayerData {
         jsonObject.addProperty("uuid", this.uuid.toString());
         jsonObject.addProperty("name", this.playerName);
 
+        jsonObject.addProperty("flyable", this.isFlyable);
+        jsonObject.addProperty("canFlyUntil", this.canFlyUntil);
+
         JsonArray jsonHomes = new JsonArray();
         for (Map.Entry<String, TeleportPos> home : this.homes.entrySet()) {
             JsonObject jsonHome = new JsonObject();
@@ -227,6 +231,9 @@ public class SCEPlayerData {
             this.uuid = UUID.fromString(jsonObject.get("uuid").getAsString());
             this.playerName = jsonObject.get("name").getAsString();
         }
+
+        this.isFlyable = jsonObject.get("flyable").getAsBoolean();
+        this.canFlyUntil = jsonObject.get("canFlyUntil").getAsLong();
 
         JsonArray jsonHomes = jsonObject.get("homes").getAsJsonArray();
         for (JsonElement home : jsonHomes) {
