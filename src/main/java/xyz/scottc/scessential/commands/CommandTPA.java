@@ -11,7 +11,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import xyz.scottc.scessential.Config;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -77,7 +77,7 @@ public class CommandTPA {
 
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
-        SEPlayerData sourceData = SEPlayerData.getInstance(source);
+        SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
             return 0;
         }
@@ -127,7 +127,7 @@ public class CommandTPA {
     }
 
     private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
-        SEPlayerData sourceData = SEPlayerData.getInstance(source);
+        SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
             return 0;
         }
@@ -183,7 +183,7 @@ public class CommandTPA {
             return 0;
         }
         ServerPlayerEntity source = request.getSource();
-        SEPlayerData sourceData = SEPlayerData.getInstance(source);
+        SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         sourceData.addTeleportHistory(new TeleportPos(source));
         TeleportUtils.teleport(source, new TeleportPos(request.getTarget()));
         sourceData.setLastTPATime(System.currentTimeMillis());

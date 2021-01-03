@@ -6,7 +6,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import xyz.scottc.scessential.Config;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -26,7 +26,7 @@ public class CommandBack {
     private static int back(ServerPlayerEntity player) {
         MinecraftServer server = player.getServer();
         if (server != null) {
-            SEPlayerData data = SEPlayerData.getInstance(player);
+            SCEPlayerData data = SCEPlayerData.getInstance(player);
             if (TeleportUtils.isInCooldown(player, data.getLastBackTime(), Config.backCooldownSeconds)) {
                 return 0;
             }

@@ -12,7 +12,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import xyz.scottc.scessential.Config;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -69,7 +69,7 @@ public class CommandWarp {
     }
 
     private static int warp(ServerPlayerEntity player, String name) {
-        SEPlayerData data = SEPlayerData.getInstance(player);
+        SCEPlayerData data = SCEPlayerData.getInstance(player);
         if (TeleportUtils.isInCooldown(player, data.getLastWarpTime(), Config.warpCooldownSeconds)) {
             return 0;
         }

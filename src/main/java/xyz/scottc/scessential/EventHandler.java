@@ -14,7 +14,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -54,7 +54,7 @@ public class EventHandler {
                     }
                 }
                 // Player Fly Time
-                SEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
+                SCEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
                                                               player.isFlyable() &&
                                                               player.getCanFlyUntil() != -1 &&
                                                               player.getCanFlyUntil() <= now)
@@ -79,7 +79,7 @@ public class EventHandler {
     public static void onPlayerDied(LivingDeathEvent event) {
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof ServerPlayerEntity) {
-            SEPlayerData.getInstance(((ServerPlayerEntity) entity)).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
+            SCEPlayerData.getInstance(((ServerPlayerEntity) entity)).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
         }
     }
 
@@ -151,9 +151,9 @@ public class EventHandler {
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
                 JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
-                SEPlayerData data = SEPlayerData.getInstance(event.getPlayer().getGameProfile());
+                SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer().getGameProfile());
                 data.fromJson(jsonObject);
-                SEPlayerData.PLAYER_DATA_LIST.add(data);
+                SCEPlayerData.PLAYER_DATA_LIST.add(data);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -165,7 +165,7 @@ public class EventHandler {
         init();
         String uuid = event.getPlayerUUID();
         File file = new File(playersDataFolder + "/" + uuid + ".json");
-        SEPlayerData data = SEPlayerData.getInstance(event.getPlayer().getGameProfile());
+        SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer().getGameProfile());
         JsonObject jsonObject = data.toJson();
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
             Main.GSON.toJson(jsonObject, writer);

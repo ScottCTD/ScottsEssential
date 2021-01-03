@@ -6,7 +6,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.utils.TextUtils;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +34,7 @@ public class CommandFly {
     }
 
     private static int fly(ServerPlayerEntity source, ServerPlayerEntity target, FlyType type, int... minutes) {
-        SEPlayerData data = SEPlayerData.getInstance(target);
+        SCEPlayerData data = SCEPlayerData.getInstance(target);
         if (target.isCreative()) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "cantsetfly"), data.getPlayerName()), false);

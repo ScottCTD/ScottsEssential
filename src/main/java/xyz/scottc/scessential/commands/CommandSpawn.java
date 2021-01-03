@@ -12,7 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import xyz.scottc.scessential.Config;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -34,7 +34,7 @@ public class CommandSpawn implements Command<CommandSource> {
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
-        SEPlayerData data = SEPlayerData.getInstance(player);
+        SCEPlayerData data = SCEPlayerData.getInstance(player);
 
         if (TeleportUtils.isInCooldown(player, data.getLastSpawnTime(), Config.spawnCooldownSeconds)) {
             return 0;

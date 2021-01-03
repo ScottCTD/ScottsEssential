@@ -15,11 +15,11 @@ import java.util.*;
  * Every player should have an instance of this class.
  * It contains all the data that a player need like the last teleport time, uuid, name, homes, teleport history, and etc.
  */
-public class SEPlayerData {
+public class SCEPlayerData {
 
     // All the player data are stored in it.
     // It will be refilled everytime the server restart.
-    public static final List<SEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
+    public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
     private ServerPlayerEntity player;
     private UUID uuid;
@@ -42,24 +42,24 @@ public class SEPlayerData {
     private long lastWarpTime = 0;
     private long lastTPATime = 0;
 
-    private SEPlayerData(UUID uuid, String playerName) {
+    private SCEPlayerData(UUID uuid, String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
     }
 
-    public static SEPlayerData getInstance(ServerPlayerEntity player) {
+    public static SCEPlayerData getInstance(ServerPlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
-        SEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
+        SCEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
         instance.player = player;
         return instance;
     }
 
-    public static SEPlayerData getInstance(GameProfile gameProfile) {
+    public static SCEPlayerData getInstance(GameProfile gameProfile) {
         return getInstance(gameProfile.getId(), gameProfile.getName());
     }
 
-    public static SEPlayerData getInstance(UUID uuid, String playerName) {
-        SEPlayerData data = new SEPlayerData(uuid, playerName);
+    public static SCEPlayerData getInstance(UUID uuid, String playerName) {
+        SCEPlayerData data = new SCEPlayerData(uuid, playerName);
         int i = PLAYER_DATA_LIST.indexOf(data);
         if (i != -1) {
             data = PLAYER_DATA_LIST.get(i);
@@ -256,8 +256,8 @@ public class SEPlayerData {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SEPlayerData)) return false;
-        SEPlayerData that = (SEPlayerData) o;
+        if (!(o instanceof SCEPlayerData)) return false;
+        SCEPlayerData that = (SCEPlayerData) o;
         return this.uuid.equals(that.uuid);
     }
 

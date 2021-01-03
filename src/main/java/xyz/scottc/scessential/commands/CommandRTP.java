@@ -14,7 +14,7 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
 import xyz.scottc.scessential.Config;
-import xyz.scottc.scessential.core.SEPlayerData;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -41,7 +41,7 @@ public class CommandRTP {
 
     private static int rtp(ServerPlayerEntity player) {
         Thread thread = new Thread(() -> {
-            SEPlayerData data = SEPlayerData.getInstance(player);
+            SCEPlayerData data = SCEPlayerData.getInstance(player);
             if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), Config.rtpCooldownSeconds)) {
                 return;
             }
