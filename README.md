@@ -6,8 +6,9 @@ Feel free to report any bug or enhancement!
 
 # Commands
 
-*All commands have reasonable suggestions!*
-*All list commands (e.g. /listhomes) are interactive! (you could click one in the list to teleport)*
+**All commands have reasonable suggestions!**
+
+**All list commands (e.g. /listhomes) are interactive! (you could click one in the list to teleport)**
 
 - /spawn
 - /back
