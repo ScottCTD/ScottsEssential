@@ -77,9 +77,14 @@ public class CommandTPA {
 
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
+        SEPlayerData sourceData = SEPlayerData.getInstance(source);
+        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
+            return 0;
+        }
+
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
 
-        String sourceName = source.getGameProfile().getName();
+        String sourceName = sourceData.getPlayerName();
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -122,9 +127,14 @@ public class CommandTPA {
     }
 
     private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
+        SEPlayerData sourceData = SEPlayerData.getInstance(source);
+        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
+            return 0;
+        }
+
         TPARequest request = TPARequest.getInstance(nextId(), source, target, true);
 
-        String sourceName = source.getGameProfile().getName();
+        String sourceName = sourceData.getPlayerName();
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -173,10 +183,7 @@ public class CommandTPA {
             return 0;
         }
         ServerPlayerEntity source = request.getSource();
-        SEPlayerData sourceData = SEPlayerData.getInstance(source.getGameProfile());
-        if (TeleportUtils.isInCooldown(player, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
-            return 0;
-        }
+        SEPlayerData sourceData = SEPlayerData.getInstance(source);
         sourceData.addTeleportHistory(new TeleportPos(source));
         TeleportUtils.teleport(source, new TeleportPos(request.getTarget()));
         sourceData.setLastTPATime(System.currentTimeMillis());

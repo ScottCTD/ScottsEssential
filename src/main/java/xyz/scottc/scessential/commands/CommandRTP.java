@@ -41,7 +41,7 @@ public class CommandRTP {
 
     private static int rtp(ServerPlayerEntity player) {
         Thread thread = new Thread(() -> {
-            SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+            SEPlayerData data = SEPlayerData.getInstance(player);
             if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), Config.rtpCooldownSeconds)) {
                 return;
             }

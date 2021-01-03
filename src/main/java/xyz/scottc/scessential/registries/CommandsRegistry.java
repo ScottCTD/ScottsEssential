@@ -21,6 +21,7 @@ public class CommandsRegistry {
         CommandRTP.register(dispatcher);
         CommandWarp.register(dispatcher);
         CommandTPA.register(dispatcher);
+        CommandFly.register(dispatcher);
 
         Main.LOGGER.info("All commands registered!");
     }

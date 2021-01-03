@@ -36,6 +36,7 @@ public class TeleportUtils {
     }
 
     public static boolean isInCooldown(ServerPlayerEntity player, long lastTeleportTime, int cooldownSeconds) {
+        if (cooldownSeconds <= 0) return false;
         double cooldown = TeleportUtils.getCooldown(lastTeleportTime, cooldownSeconds);
         if (cooldown != -1) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,

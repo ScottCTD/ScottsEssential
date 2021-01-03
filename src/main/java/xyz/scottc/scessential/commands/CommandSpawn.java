@@ -34,7 +34,7 @@ public class CommandSpawn implements Command<CommandSource> {
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
         ServerPlayerEntity player = context.getSource().asPlayer();
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        SEPlayerData data = SEPlayerData.getInstance(player);
 
         if (TeleportUtils.isInCooldown(player, data.getLastSpawnTime(), Config.spawnCooldownSeconds)) {
             return 0;

@@ -42,5 +42,13 @@
   "message.scessential.tpasuccessTarget": "Successfully teleported %s to you!",
   "message.scessential.requesttimeout": "Request related to \"%s\" expired!",
   "message.scessential.tpadenySource": "Player %s denied your request.",
-  "message.scessential.tpahereline01": "Player \"%s\" want you to teleport to his/her position."
+  "message.scessential.tpahereline01": "Player \"%s\" want you to teleport to his/her position.",
+
+  "message.scessential.cantsetfly": "You cannot control a creative player \"%s\"!",
+  "message.scessential.cantflynow": "Now, you are unable to fly.",
+  "message.scessential.flypermanentlySource": "Player \"%s\" now can fly permanently!",
+  "message.scessential.flypermanentlyTarget": "Now, you can fly permanently!",
+  "message.scessential.flytempTarget": "Now, you can fly until %s!",
+  "message.scessential.flytempSource": "Player \"%s\" now can fly until %s!"
+
 }

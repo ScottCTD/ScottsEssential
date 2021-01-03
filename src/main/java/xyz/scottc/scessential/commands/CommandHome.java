@@ -30,6 +30,7 @@ import java.util.Set;
  * /delhome /removehome
  * /listhomes
  * /listotherhomes
+ * TODO /delotherhome
  */
 public class CommandHome {
 
@@ -46,7 +47,7 @@ public class CommandHome {
         dispatcher.register(
                 Commands.literal("home")
                         .then(Commands.argument("Name", StringArgumentType.string())
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer().getGameProfile()).getHomes().keySet(), builder))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer()).getHomes().keySet(), builder))
                                 .executes(context -> home(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name")))
                         )
                         .executes(context -> home(context.getSource().asPlayer(), "home"))
@@ -55,7 +56,7 @@ public class CommandHome {
                 .then(Commands.argument("Other", EntityArgument.player())
                         .then(Commands.argument("HomeName", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(EntityArgument.getPlayer(context, "Other").getGameProfile()).getHomes().keySet(), builder))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(EntityArgument.getPlayer(context, "Other")).getHomes().keySet(), builder))
                                 .executes(context -> homeOther(context.getSource().asPlayer(),
                                         EntityArgument.getPlayer(context, "Other"),
                                         StringArgumentType.getString(context, "HomeName"))
@@ -67,7 +68,7 @@ public class CommandHome {
         LiteralCommandNode<CommandSource> delHome = dispatcher.register(
                 Commands.literal("delhome")
                         .then(Commands.argument("Name", StringArgumentType.string())
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer().getGameProfile()).getHomes().keySet(), builder))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SEPlayerData.getInstance(context.getSource().asPlayer()).getHomes().keySet(), builder))
                                 .executes(context -> delHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
                         .executes(context -> delHome(context.getSource().asPlayer(), "home"))
         );
@@ -86,7 +87,7 @@ public class CommandHome {
     }
 
     private static int setHome(ServerPlayerEntity player, String name) {
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        SEPlayerData data = SEPlayerData.getInstance(player);
         if (data.getHomes().size() >= Config.maxHomes) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "reachmaxhome"), Config.maxHomes), false);
@@ -99,7 +100,7 @@ public class CommandHome {
     }
 
     private static int home(ServerPlayerEntity player, String name) {
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        SEPlayerData data = SEPlayerData.getInstance(player);
         if (TeleportUtils.isInCooldown(player, data.getLastHomeTime(), Config.homeCooldownSeconds)) {
             return 0;
         }
@@ -129,11 +130,11 @@ public class CommandHome {
     }
 
     private static int homeOther(ServerPlayerEntity source, ServerPlayerEntity other, String homeName) {
-        SEPlayerData sourceData = SEPlayerData.getInstance(source.getGameProfile());
+        SEPlayerData sourceData = SEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastHomeOtherTime(), Config.homeOtherCooldownSeconds)) {
             return 0;
         }
-        SEPlayerData otherData = SEPlayerData.getInstance(other.getGameProfile());
+        SEPlayerData otherData = SEPlayerData.getInstance(other);
         TeleportPos otherHomePos = otherData.getHomePos(homeName);
         if (otherHomePos == null) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
@@ -149,7 +150,7 @@ public class CommandHome {
     }
 
     private static int delHome(ServerPlayerEntity player, String name) {
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        SEPlayerData data = SEPlayerData.getInstance(player);
         TeleportPos homePos = data.getHomePos(name);
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
@@ -164,7 +165,7 @@ public class CommandHome {
 
     private static int listHome(ServerPlayerEntity player) {
         Thread thread = new Thread(() -> {
-            SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+            SEPlayerData data = SEPlayerData.getInstance(player);
             Map<String, TeleportPos> homes = data.getHomes();
             if (homes.isEmpty()) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
@@ -193,7 +194,7 @@ public class CommandHome {
 
     private static int listOthersHome(ServerPlayerEntity source, ServerPlayerEntity other) {
         Thread thread = new Thread(() -> {
-            SEPlayerData otherData = SEPlayerData.getInstance(other.getGameProfile());
+            SEPlayerData otherData = SEPlayerData.getInstance(other);
             Map<String, TeleportPos> otherHomes = otherData.getHomes();
             if (otherHomes.isEmpty()) {
                 source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,

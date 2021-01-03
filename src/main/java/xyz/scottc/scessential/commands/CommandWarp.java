@@ -69,7 +69,7 @@ public class CommandWarp {
     }
 
     private static int warp(ServerPlayerEntity player, String name) {
-        SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+        SEPlayerData data = SEPlayerData.getInstance(player);
         if (TeleportUtils.isInCooldown(player, data.getLastWarpTime(), Config.warpCooldownSeconds)) {
             return 0;
         }

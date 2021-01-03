@@ -35,7 +35,7 @@ public class EventHandler {
     private static int counter = 0;
 
     /**
-     * Determine if an tpa request was expired.
+     * Determine if an tpa request was expired and if a player fly time expired.
      * @param event ServerTickEvent
      */
     @SubscribeEvent
@@ -43,6 +43,7 @@ public class EventHandler {
         if (event.phase == TickEvent.Phase.END) {
             if (counter >= 20) {
                 long now = System.currentTimeMillis();
+                // TPA Request
                 Collection<TPARequest> requests = TPARequest.getTpaRequest().values();
                 for (TPARequest request : requests) {
                     if ((request.getCreateTime() + Config.maxTPARequestTimeoutSeconds * 1000L) <= now) {
@@ -52,6 +53,18 @@ public class EventHandler {
                         );
                     }
                 }
+                // Player Fly Time
+                SEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
+                                                              player.isFlyable() &&
+                                                              player.getCanFlyUntil() != -1 &&
+                                                              player.getCanFlyUntil() <= now)
+                        .forEach(player -> {
+                            player.setFlyable(false);
+                            player.setCanFlyUntil(-1);
+                            player.getPlayer().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "cantflynow")), false);
+
+                        });
             }
             counter++;
         }
@@ -66,7 +79,7 @@ public class EventHandler {
     public static void onPlayerDied(LivingDeathEvent event) {
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof ServerPlayerEntity) {
-            SEPlayerData.getInstance(((ServerPlayerEntity) entity).getGameProfile()).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
+            SEPlayerData.getInstance(((ServerPlayerEntity) entity)).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
         }
     }
 

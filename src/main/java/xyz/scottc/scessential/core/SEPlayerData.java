@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import xyz.scottc.scessential.Config;
 
 import javax.annotation.Nullable;
@@ -20,14 +21,18 @@ public class SEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
+    private ServerPlayerEntity player;
     private UUID uuid;
     private String playerName;
 
-    private final Map<String, TeleportPos> homes = new HashMap<>(Config.maxHomes);
+    private final Map<String, TeleportPos> homes = new HashMap<>(5);
 
     private final TeleportPos[] teleportHistory = new TeleportPos[Config.maxBacks];
     // 0 -> The most recent teleport
     public int currentBackIndex = 0;
+
+    private boolean isFlyable;
+    private long canFlyUntil = -1;
 
     private long lastSpawnTime = 0;
     private long lastHomeTime = 0;
@@ -42,12 +47,15 @@ public class SEPlayerData {
         this.playerName = playerName;
     }
 
-    public static SEPlayerData getInstance(GameProfile gameProfile) {
-        return getInstance(gameProfile.getId(), gameProfile.getName());
+    public static SEPlayerData getInstance(ServerPlayerEntity player) {
+        GameProfile gameProfile = player.getGameProfile();
+        SEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
+        instance.player = player;
+        return instance;
     }
 
-    public static SEPlayerData getInstance(String uuid, String playerName) {
-        return getInstance(UUID.fromString(uuid), playerName);
+    public static SEPlayerData getInstance(GameProfile gameProfile) {
+        return getInstance(gameProfile.getId(), gameProfile.getName());
     }
 
     public static SEPlayerData getInstance(UUID uuid, String playerName) {
@@ -59,6 +67,36 @@ public class SEPlayerData {
             PLAYER_DATA_LIST.add(data);
         }
         return data;
+    }
+
+    public boolean isFlyable() {
+        return this.isFlyable;
+    }
+
+    /**
+     * This method will do nothing if player is null
+     * @param flyable flyable
+     */
+    public void setFlyable(boolean flyable) {
+        if (this.player != null) {
+            if (flyable) {
+                this.player.abilities.allowFlying = true;
+            } else {
+                this.player.abilities.allowFlying = false;
+                this.player.abilities.isFlying = false;
+                this.canFlyUntil = -1;
+            }
+            this.player.sendPlayerAbilities();
+            this.isFlyable = flyable;
+        }
+    }
+
+    public long getCanFlyUntil() {
+        return canFlyUntil;
+    }
+
+    public void setCanFlyUntil(long canFlyUntil) {
+        this.canFlyUntil = canFlyUntil;
     }
 
     public void addTeleportHistory(TeleportPos teleportPos) {
@@ -89,6 +127,10 @@ public class SEPlayerData {
 
     public Map<String, TeleportPos> getHomes() {
         return this.homes;
+    }
+
+    public ServerPlayerEntity getPlayer() {
+        return player;
     }
 
     public UUID getUuid() {

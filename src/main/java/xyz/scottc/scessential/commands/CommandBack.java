@@ -26,7 +26,7 @@ public class CommandBack {
     private static int back(ServerPlayerEntity player) {
         MinecraftServer server = player.getServer();
         if (server != null) {
-            SEPlayerData data = SEPlayerData.getInstance(player.getGameProfile());
+            SEPlayerData data = SEPlayerData.getInstance(player);
             if (TeleportUtils.isInCooldown(player, data.getLastBackTime(), Config.backCooldownSeconds)) {
                 return 0;
             }
