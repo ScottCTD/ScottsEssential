@@ -16,6 +16,7 @@ import xyz.scottc.scessential.config.ModConfig;
 public class Main {
 
     public static final String MODID = "scessential";
+    public static final String MOD_VERSION = "1.0.0";
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
@@ -24,6 +25,7 @@ public class Main {
 
     public Main() {
         MinecraftForge.EVENT_BUS.register(this);
+        // TODO listen other very early events to init my config
         ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, ModConfig.SERVER_CONFIG);
     }
 

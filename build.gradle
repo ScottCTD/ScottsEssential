@@ -118,6 +118,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations
+    compile group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

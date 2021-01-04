@@ -57,8 +57,8 @@ public class ConfigEntityCleaner extends AbstractModConfig {
 
         itemEntitiesWhitelist = builder
                 .comment("List of item registry names (E.g: minecraft:stone) not being cleaned.",
-                        "You could use /sce getItemRegistryName command with a item hold in your hand to get it's registry name.")
-                // TODO Default value and commands
+                        "You could use /scessential getItemRegistryName item command with a item hold in your main hand to get it's registry name.",
+                        "You could also use minecraft:* or rats:* to add all items of certain mod to the whitelist.")
                 .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ConfigEntityCleaner::isResourceName);
         this.builder.pop();
 
@@ -74,8 +74,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                 .defineInRange("cleanMobEntitiesInterval", 360, 1, Integer.MAX_VALUE);
 
         mobEntitiesWhitelist = builder
-                .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.")
-                // TODO commands to get that name
+                .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
+                        "You could use /scessential getItemRegistryName mob to get the registry names of nearby mobs. (radius specified in Commands section)",
+                        "You could also use minecraft:* or minecolonies:* to add all mobs of certain mod to the whitelist.")
                 .define("MobEntitiesWhitelist", Arrays.asList("minecraft:cat", "minecraft:mule", "minecraft:wolf", "minecraft:horse",
                         "minecraft:donkey", "minecraft:wither", "minecraft:guardian", "minecraft:villager", "minecraft:iron_golem", "minecraft:snow_golem",
                         "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ConfigEntityCleaner::isResourceName);

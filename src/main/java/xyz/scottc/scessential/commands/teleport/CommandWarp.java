@@ -1,4 +1,4 @@
-package xyz.scottc.scessential.commands;
+package xyz.scottc.scessential.commands.teleport;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;

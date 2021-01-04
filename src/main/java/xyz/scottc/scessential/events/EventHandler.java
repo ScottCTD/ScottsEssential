@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.commands.CommandTPA;
+import xyz.scottc.scessential.commands.teleport.CommandTPA;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;

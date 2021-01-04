@@ -55,6 +55,8 @@
   "message.scessential.cleanupitemcountdown": "Item entities will be freed after %d seconds!",
   "message.scessential.itemcleanupcomplete": "%d item entities freed.",
   "message.scessential.mobcleanupcomplete": "%d mob entities freed.",
-  "message.scessential.misccleanupcomplete": "%d miscellaneous entities freed."
+  "message.scessential.misccleanupcomplete": "%d miscellaneous entities freed.",
+  "message.scessential.clicktocopy": "Click to copy to clipboard!",
+  "message.scessential.nearbynoliving": "No nearby living entities found!"
 
 }

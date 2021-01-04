@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
-import xyz.scottc.scessential.commands.CommandBack;
+import xyz.scottc.scessential.commands.teleport.CommandBack;
 
 import javax.annotation.Nullable;
 import java.util.*;

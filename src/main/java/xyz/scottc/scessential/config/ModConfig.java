@@ -32,14 +32,15 @@ public class ModConfig {
         configs.forEach(AbstractModConfig::get);
     }
 
-
     @SubscribeEvent
     public static void onLoading(net.minecraftforge.fml.config.ModConfig.Loading event) {
         get(CONFIGS);
+        Main.LOGGER.info("SCE Config loaded!");
     }
 
     @SubscribeEvent
     public static void onReloading(net.minecraftforge.fml.config.ModConfig.Reloading event) {
         get(CONFIGS);
+        Main.LOGGER.info("SCE Config Reloaded!");
     }
 }

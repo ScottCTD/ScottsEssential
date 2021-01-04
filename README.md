@@ -37,7 +37,13 @@ Feel free to report any bug or enhancement!
     - /fly [Player]
     - /fly [Player] [Minutes]
 - More in progress
-    
+  
+# Services
+
+- Entity Cleaner
+  - Entity Cleaner could clean the entities in all worlds with very high configurability. (Almost all kinds of entities) 
+  - For more information, check the server config file of my mod.
+
 # About
 
 Author: ScottCTD (ScottCTD@outlook.com)

@@ -1,4 +1,4 @@
-package xyz.scottc.scessential.commands;
+package xyz.scottc.scessential.commands.teleport;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -54,7 +54,6 @@ public class CommandSpawn implements Command<CommandSource> {
                         TextUtils.getTranslationKey("message", "spawnsuccess")), true);
             }
         }
-
         return 1;
     }
 

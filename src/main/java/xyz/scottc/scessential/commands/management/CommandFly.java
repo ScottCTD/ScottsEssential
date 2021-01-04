@@ -1,4 +1,4 @@
-package xyz.scottc.scessential.commands;
+package xyz.scottc.scessential.commands.management;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -15,6 +15,8 @@ import java.util.Date;
 
 public class CommandFly {
 
+    @ConfigField
+    public static boolean isFlyEnable = true;
     @ConfigField
     public static String datePattern = "hh:mm:ss MM/dd/yyyy";
 

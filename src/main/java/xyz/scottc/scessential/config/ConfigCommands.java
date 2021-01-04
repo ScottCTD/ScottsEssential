@@ -1,7 +1,9 @@
 package xyz.scottc.scessential.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import xyz.scottc.scessential.commands.*;
+import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
+import xyz.scottc.scessential.commands.management.CommandFly;
+import xyz.scottc.scessential.commands.teleport.*;
 
 public class ConfigCommands extends AbstractModConfig {
 
@@ -51,7 +53,11 @@ public class ConfigCommands extends AbstractModConfig {
             maxRTPRadiusEndConfig;
 
     // fly
+    private static ForgeConfigSpec.BooleanValue isFlyEnable;
     private static ForgeConfigSpec.ConfigValue<? extends String> datePattern;
+
+    // scessential getRegistryName mob
+    private static ForgeConfigSpec.IntValue entitiesWithinRadius;
 
     public ConfigCommands(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -187,12 +193,29 @@ public class ConfigCommands extends AbstractModConfig {
         this.builder.pop();
 
         this.builder.push("Fly");
+        isFlyEnable = this.builder
+                .comment("Set it to false to disable /fly command.",
+                        "Default value: true")
+                .define("IsFlyEnable", true);
+
         datePattern = this.builder
                 .comment("The date format used to display the deadline of flying.",
                         "A valid date format should follow the pattern described in JavaDoc: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html",
                         "If you don't know what it is, please do not modify it.",
                         "Default value: \"hh:mm:ss MM/dd/yyyy\"")
                 .define("DatePattern", "hh:mm:ss MM/dd/yyyy");
+        this.builder.pop();
+
+        // /scessential ....
+        this.builder.push("Scessential");
+        this.builder.push("Info");
+        // getRegistryName
+        entitiesWithinRadius = this.builder
+                .comment("The searching radius of command /scessential getRegistryName mob to get the registry names of nearby mobs in certain radius",
+                        "The radius is specified here.",
+                        "Default value: 3 blocks (a 7 * 7 * 7 cube)")
+                .defineInRange("Radius", 3, 1, Integer.MAX_VALUE);
+        this.builder.pop();
         this.builder.pop();
 
         this.builder.pop();
@@ -247,6 +270,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         // fly
         CommandFly.datePattern = datePattern.get();
+
+        // scessential getRegistryName mob
+        CommandGetRegistryName.entitiesWithinRadius = entitiesWithinRadius.get();
     }
 
 }
