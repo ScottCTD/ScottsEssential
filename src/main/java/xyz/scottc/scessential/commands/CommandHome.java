@@ -13,7 +13,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -34,6 +34,14 @@ import java.util.Set;
  */
 public class CommandHome {
 
+    @ConfigField
+    public static boolean isHomeEnable = true;
+    @ConfigField
+    public static int homeCooldownSeconds = 3;
+    @ConfigField
+    public static int homeOtherCooldownSeconds = 3;
+    @ConfigField
+    public static int maxHomes = 5;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralCommandNode<CommandSource> setHome = dispatcher.register(
@@ -100,21 +108,21 @@ public class CommandHome {
 
     private static int setHome(ServerPlayerEntity player, String name) {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
-        if (data.getHomes().size() >= Config.maxHomes) {
+        if (data.getHomes().size() >= maxHomes) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "reachmaxhome"), Config.maxHomes), false);
-            return 0;
+                    TextUtils.getTranslationKey("message", "reachmaxhome"), maxHomes), false);
+            return 1;
         }
         data.setHome(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "sethomesuccess"), name), false);
-        return 0;
+        return 1;
     }
 
     private static int home(ServerPlayerEntity player, String name) {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
-        if (TeleportUtils.isInCooldown(player, data.getLastHomeTime(), Config.homeCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(player, data.getLastHomeTime(), homeCooldownSeconds)) {
+            return 1;
         }
         TeleportPos homePos = data.getHomePos(name);
         if (homePos == null) {
@@ -131,34 +139,34 @@ public class CommandHome {
             IFormattableTextComponent deny = TextUtils.getRedTextFromI18n(true, true, false,
                     TextUtils.getTranslationKey("message", "deny"));
             player.sendStatusMessage(setNewText.appendString("\n").append(accept).append(new StringTextComponent(" | ").setStyle(Style.EMPTY)).append(deny), false);
-            return 0;
+            return 1;
         }
         data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         TeleportUtils.teleport(player, homePos);
         data.setLastHomeTime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "homesuccess"), name), true);
-        return 0;
+        return 1;
     }
 
     private static int homeOther(ServerPlayerEntity source, ServerPlayerEntity other, String homeName) {
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
-        if (TeleportUtils.isInCooldown(source, sourceData.getLastHomeOtherTime(), Config.homeOtherCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(source, sourceData.getLastHomeOtherTime(), homeOtherCooldownSeconds)) {
+            return 1;
         }
         SCEPlayerData otherData = SCEPlayerData.getInstance(other);
         TeleportPos otherHomePos = otherData.getHomePos(homeName);
         if (otherHomePos == null) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homeothernotfound"), otherData.getPlayerName(), homeName), false);
-            return 0;
+            return 1;
         }
         sourceData.addTeleportHistory(new TeleportPos(source.getServerWorld().getDimensionKey(), source.getPosition()));
         TeleportUtils.teleport(source, otherHomePos);
         sourceData.setLastHomeOtherTime(System.currentTimeMillis());
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "otherhomesuccess"), otherData.getPlayerName(), homeName), true);
-        return 0;
+        return 1;
     }
 
     private static int delHome(ServerPlayerEntity player, String name) {
@@ -167,12 +175,12 @@ public class CommandHome {
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
-            return 0;
+            return 1;
         }
         data.delHome(name);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "delhomesuccess"), name), false);
-        return 0;
+        return 1;
     }
 
     private static int delOthersHome(ServerPlayerEntity source, ServerPlayerEntity target, String name) {
@@ -180,12 +188,12 @@ public class CommandHome {
         if (!data.getHomes().containsKey(name)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homeothernotfound"), data.getPlayerName(), name), false);
-            return 0;
+            return 1;
         }
         data.delHome(name);
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "delothershomesuccess"), data.getPlayerName(), name), false);
-        return 0;
+        return 1;
     }
 
     private static int listHome(ServerPlayerEntity player) {
@@ -214,7 +222,7 @@ public class CommandHome {
             player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
         });
         thread.start();
-        return 0;
+        return 1;
     }
 
     private static int listOthersHome(ServerPlayerEntity source, ServerPlayerEntity other) {
@@ -242,7 +250,7 @@ public class CommandHome {
             source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
         });
         thread.start();
-        return 0;
+        return 1;
     }
 
 }

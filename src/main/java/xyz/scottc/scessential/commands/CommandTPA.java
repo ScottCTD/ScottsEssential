@@ -10,7 +10,8 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.Main;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -27,6 +28,13 @@ import xyz.scottc.scessential.utils.TextUtils;
  * /tpallhere
  */
 public class CommandTPA {
+
+    @ConfigField
+    public static boolean isTPAEnable = true;
+    @ConfigField
+    public static int tpaCooldownSeconds = 3;
+    @ConfigField
+    public static int maxTPARequestTimeoutSeconds = 30;
 
     private static long id = 0;
 
@@ -78,8 +86,8 @@ public class CommandTPA {
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
-        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), tpaCooldownSeconds)) {
+            return 1;
         }
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
@@ -123,13 +131,13 @@ public class CommandTPA {
         target.sendStatusMessage(line03, false);
         target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
 
-        return 0;
+        return 1;
     }
 
     private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
-        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), Config.tpaCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), tpaCooldownSeconds)) {
+            return 1;
         }
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, true);
@@ -172,7 +180,7 @@ public class CommandTPA {
         target.sendStatusMessage(line03, false);
         target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
 
-        return 0;
+        return 1;
     }
 
     private static int tpaaccept(ServerPlayerEntity player, long id) {
@@ -180,7 +188,7 @@ public class CommandTPA {
         if (request == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "tpanotfound")), false);
-            return 0;
+            return 1;
         }
         ServerPlayerEntity source = request.getSource();
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
@@ -192,7 +200,7 @@ public class CommandTPA {
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "tpasuccessSource"), player.getGameProfile().getName()), true);
         TPARequest.getTpaRequest().remove(id);
-        return 0;
+        return 1;
     }
 
     private static int tpadeny(ServerPlayerEntity player, long id) {
@@ -200,7 +208,7 @@ public class CommandTPA {
         if (request == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "tpanotfound")), false);
-            return 0;
+            return 1;
         }
         TPARequest.getTpaRequest().remove(request.getId());
         ServerPlayerEntity source = request.getSource();
@@ -208,20 +216,20 @@ public class CommandTPA {
                 TextUtils.getTranslationKey("message", "tpadenySource"), player.getGameProfile().getName()), false);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "ok")), false);
-        return 0;
+        return 1;
     }
 
     private static int tpHere(ServerPlayerEntity source, ServerPlayerEntity target) {
         TeleportUtils.teleport(target, new TeleportPos(source));
-        return 0;
+        return 1;
     }
 
     private static int tpAllHere(ServerPlayerEntity source) {
-        new Thread(() -> source.getServerWorld().getPlayers().stream()
+        new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
                     .filter(player -> !player.equals(source))
                     .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))
                 .start();
-        return 0;
+        return 1;
     }
 
     private static long nextId() {

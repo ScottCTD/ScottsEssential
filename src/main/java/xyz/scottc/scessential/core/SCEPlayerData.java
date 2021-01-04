@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.commands.CommandBack;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -27,7 +27,7 @@ public class SCEPlayerData {
 
     private final Map<String, TeleportPos> homes = new HashMap<>(5);
 
-    private final TeleportPos[] teleportHistory = new TeleportPos[Config.maxBacks];
+    private final TeleportPos[] teleportHistory = new TeleportPos[CommandBack.maxBacks];
     // 0 -> The most recent teleport
     public int currentBackIndex = 0;
 
@@ -79,7 +79,7 @@ public class SCEPlayerData {
      * @param flyable flyable
      */
     public void setFlyable(boolean flyable) {
-        if (this.player != null) {
+        if (this.player != null && !this.player.isCreative()) {
             if (flyable) {
                 this.player.abilities.allowFlying = true;
             } else {
@@ -101,13 +101,13 @@ public class SCEPlayerData {
     }
 
     public void addTeleportHistory(TeleportPos teleportPos) {
-        System.arraycopy(this.teleportHistory, 0, this.teleportHistory, 1, Config.maxBacks - 1);
+        System.arraycopy(this.teleportHistory, 0, this.teleportHistory, 1, CommandBack.maxBacks - 1);
         this.teleportHistory[0] = teleportPos;
         this.currentBackIndex = 0;
     }
 
     public TeleportPos getTeleportHistory() {
-        if (this.currentBackIndex < Config.maxBacks) {
+        if (this.currentBackIndex < CommandBack.maxBacks) {
             return this.teleportHistory[this.currentBackIndex];
         } else {
             return null;
@@ -132,10 +132,6 @@ public class SCEPlayerData {
 
     public PlayerEntity getPlayer() {
         return player;
-    }
-
-    public UUID getUuid() {
-        return this.uuid;
     }
 
     public String getPlayerName() {

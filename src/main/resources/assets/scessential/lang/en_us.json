@@ -50,6 +50,11 @@
   "message.scessential.flypermanentlySource": "Player \"%s\" now can fly permanently!",
   "message.scessential.flypermanentlyTarget": "Now, you can fly permanently!",
   "message.scessential.flytempTarget": "Now, you can fly until %s!",
-  "message.scessential.flytempSource": "Player \"%s\" now can fly until %s!"
+  "message.scessential.flytempSource": "Player \"%s\" now can fly until %s!",
+
+  "message.scessential.cleanupitemcountdown": "Item entities will be freed after %d seconds!",
+  "message.scessential.itemcleanupcomplete": "%d item entities freed.",
+  "message.scessential.mobcleanupcomplete": "%d mob entities freed.",
+  "message.scessential.misccleanupcomplete": "%d miscellaneous entities freed."
 
 }

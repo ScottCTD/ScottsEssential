@@ -11,7 +11,7 @@ import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -27,6 +27,11 @@ import java.util.Map;
  * /delwarp
  */
 public class CommandWarp {
+
+    @ConfigField
+    public static boolean isWarpEnable = true;
+    @ConfigField
+    public static int warpCooldownSeconds = 3;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
@@ -65,25 +70,25 @@ public class CommandWarp {
         TeleportPos.WARPS.put(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "setwarpsuccess"), name), false);
-        return 0;
+        return 1;
     }
 
     private static int warp(ServerPlayerEntity player, String name) {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
-        if (TeleportUtils.isInCooldown(player, data.getLastWarpTime(), Config.warpCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(player, data.getLastWarpTime(), warpCooldownSeconds)) {
+            return 1;
         }
         if (!TeleportPos.WARPS.containsKey(name)) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "warpnotfound"), name), false);
-            return 0;
+            return 1;
         }
         data.addTeleportHistory(new TeleportPos(player));
         TeleportUtils.teleport(player, TeleportPos.WARPS.get(name));
         data.setLastWarpTime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "warpsuccess"), name), true);
-        return 0;
+        return 1;
     }
 
     private static int listWarps(ServerPlayerEntity player) {
@@ -91,6 +96,7 @@ public class CommandWarp {
             if (TeleportPos.WARPS.isEmpty()) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                         TextUtils.getTranslationKey("message", "nowarp")), false);
+                return;
             }
             player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
             int index = 1;
@@ -107,19 +113,19 @@ public class CommandWarp {
             player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
         });
         thread.start();
-        return 0;
+        return 1;
     }
 
     private static int delWarp(ServerPlayerEntity player, String name) {
         if (!TeleportPos.WARPS.containsKey(name)) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "warpnotfound"), name), false);
-            return 0;
+            return 1;
         }
         TeleportPos.WARPS.remove(name);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "delwarpsuccess"), name), false);
-        return 0;
+        return 1;
     }
 
 }

@@ -5,7 +5,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -17,6 +17,13 @@ import xyz.scottc.scessential.utils.TextUtils;
  */
 public class CommandBack {
 
+    @ConfigField
+    public static boolean isBackEnable = true;
+    @ConfigField
+    public static int backCooldownSeconds;
+    @ConfigField
+    public static int maxBacks = 10;
+
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(Commands.literal("back")
                 .executes(context -> back(context.getSource().asPlayer()))
@@ -27,14 +34,14 @@ public class CommandBack {
         MinecraftServer server = player.getServer();
         if (server != null) {
             SCEPlayerData data = SCEPlayerData.getInstance(player);
-            if (TeleportUtils.isInCooldown(player, data.getLastBackTime(), Config.backCooldownSeconds)) {
-                return 0;
+            if (TeleportUtils.isInCooldown(player, data.getLastBackTime(), backCooldownSeconds)) {
+                return 1;
             }
             TeleportPos teleportPos = data.getTeleportHistory();
             if (teleportPos == null) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, true, true,
                         TextUtils.getTranslationKey("message", "noback")), true);
-                return 0;
+                return 1;
             }
             TeleportUtils.teleport(player, server.getWorld(teleportPos.getDimension()), teleportPos.getPos());
             data.setLastBackTime(System.currentTimeMillis());
@@ -42,7 +49,7 @@ public class CommandBack {
                     TextUtils.getTranslationKey("message", "backsuccess")), true);
             data.currentBackIndex++;
         }
-        return 0;
+        return 1;
     }
 
 }

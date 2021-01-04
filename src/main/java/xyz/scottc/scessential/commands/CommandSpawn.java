@@ -11,7 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -23,11 +23,14 @@ import xyz.scottc.scessential.utils.TextUtils;
  */
 public class CommandSpawn implements Command<CommandSource> {
 
-    private static final CommandSpawn INSTANCE = new CommandSpawn();
+    @ConfigField
+    public static boolean isSpawnEnable = true;
+    @ConfigField
+    public static int spawnCooldownSeconds = 3;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(Commands.literal("spawn")
-                .executes(INSTANCE)
+                .executes(new CommandSpawn())
         );
     }
 
@@ -36,8 +39,8 @@ public class CommandSpawn implements Command<CommandSource> {
         ServerPlayerEntity player = context.getSource().asPlayer();
         SCEPlayerData data = SCEPlayerData.getInstance(player);
 
-        if (TeleportUtils.isInCooldown(player, data.getLastSpawnTime(), Config.spawnCooldownSeconds)) {
-            return 0;
+        if (TeleportUtils.isInCooldown(player, data.getLastSpawnTime(), spawnCooldownSeconds)) {
+            return 1;
         }
         MinecraftServer server = player.getServer();
         if (server != null) {
@@ -52,7 +55,7 @@ public class CommandSpawn implements Command<CommandSource> {
             }
         }
 
-        return 0;
+        return 1;
     }
 
 }

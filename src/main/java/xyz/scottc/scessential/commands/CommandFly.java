@@ -6,6 +6,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.utils.TextUtils;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 
 public class CommandFly {
 
-    // Read from Config
+    @ConfigField
     public static String datePattern = "hh:mm:ss MM/dd/yyyy";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -41,14 +42,14 @@ public class CommandFly {
         if (target.isCreative()) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "cantsetfly"), data.getPlayerName()), false);
-            return 0;
+            return 1;
         } else if (data.isFlyable()) {
             data.setFlyable(false);
             source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "ok")), false);
             target.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "cantflynow")), false);
-            return 0;
+            return 1;
         } else {
             data.setFlyable(true);
         }
@@ -72,7 +73,7 @@ public class CommandFly {
                         TextUtils.getTranslationKey("message", "flytempSource"), data.getPlayerName(), formattedDate), false);
                 break;
         }
-        return 0;
+        return 1;
     }
 
     private enum FlyType {

@@ -1,11 +1,10 @@
-package xyz.scottc.scessential;
+package xyz.scottc.scessential.events;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -14,6 +13,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import xyz.scottc.scessential.Main;
+import xyz.scottc.scessential.commands.CommandTPA;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -25,8 +26,6 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventHandler {
-
-    private static MinecraftServer server;
 
     private static File mainFolder;
     private static File worldDataFolder;
@@ -58,7 +57,7 @@ public class EventHandler {
                 // TPA Request
                 Collection<TPARequest> requests = TPARequest.getTpaRequest().values();
                 for (TPARequest request : requests) {
-                    if ((request.getCreateTime() + Config.maxTPARequestTimeoutSeconds * 1000L) <= now) {
+                    if ((request.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
                         TPARequest.getTpaRequest().remove(request.getId());
                         request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                                 TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
@@ -102,9 +101,9 @@ public class EventHandler {
      */
     @SubscribeEvent
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-        server = event.getServer();
+        Main.SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
-        mainFolder = server.func_240776_a_(new FolderName(Main.MODID)).toFile();
+        mainFolder = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();
         worldDataFolder = new File(mainFolder.getPath() + "/" + "worlddata");
         playersDataFolder = new File(mainFolder.getPath() + "/" + "playersdata");
         init();

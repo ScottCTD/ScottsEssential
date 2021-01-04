@@ -13,7 +13,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.server.ServerWorld;
-import xyz.scottc.scessential.Config;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
@@ -27,6 +27,21 @@ import java.util.Random;
  * /rtp
  */
 public class CommandRTP {
+
+    @ConfigField
+    public static boolean isRTPEnable = true;
+    @ConfigField
+    public static int rtpCooldownSeconds = 10;
+    @ConfigField
+    public static int maxRTPAttempts = 10;
+    @ConfigField
+    public static int minRTPHeightDefault = 40, maxRTPHeightDefault = 120, minRTPRadiusDefault = 1000, maxRTPRadiusDefault = 10000;
+    @ConfigField
+    public static int minRTPHeightOverworld = 1, maxRTPHeightOverworld = 150, minRTPRadiusOverworld = 1000, maxRTPRadiusOverworld = 10000;
+    @ConfigField
+    public static int minRTPHeightNether = 30, maxRTPHeightNether = 100, minRTPRadiusNether = 1000, maxRTPRadiusNether = 10000;
+    @ConfigField
+    public static int minRTPHeightEnd = 40, maxRTPHeightEnd = 140, minRTPRadiusEnd = 1000, maxRTPRadiusEnd = 10000;
 
     private static final String OVERWORLD = "minecraft:overworld";
     private static final String NETHER = "minecraft:the_nether";
@@ -42,7 +57,7 @@ public class CommandRTP {
     private static int rtp(ServerPlayerEntity player) {
         Thread thread = new Thread(() -> {
             SCEPlayerData data = SCEPlayerData.getInstance(player);
-            if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), Config.rtpCooldownSeconds)) {
+            if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), rtpCooldownSeconds)) {
                 return;
             }
             ServerWorld world = player.getServerWorld();
@@ -52,28 +67,28 @@ public class CommandRTP {
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "startrtp")), false);
             boolean nether = false;
-            for (int i = 0; i < Config.maxRTPAttempts; i++) {
+            for (int i = 0; i < maxRTPAttempts; i++) {
                 switch (worldKey) {
                     case OVERWORLD:
-                        y = random.nextInt(Config.maxRTPHeightOverworld - Config.minRTPHeightOverworld) + Config.minRTPHeightOverworld;
-                        x = random.nextInt(Config.maxRTPRadiusOverworld - Config.minRTPRadiusOverworld) + Config.minRTPRadiusOverworld;
-                        z = random.nextInt(Config.maxRTPRadiusOverworld - Config.minRTPRadiusOverworld) + Config.minRTPRadiusOverworld;
+                        y = random.nextInt(maxRTPHeightOverworld - minRTPHeightOverworld) + minRTPHeightOverworld;
+                        x = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
+                        z = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
                         break;
                     case NETHER:
-                        y = random.nextInt(Config.maxRTPHeightNether - Config.minRTPHeightNether) + Config.minRTPHeightNether;
-                        x = random.nextInt(Config.maxRTPRadiusNether - Config.minRTPRadiusNether) + Config.minRTPRadiusNether;
-                        z = random.nextInt(Config.maxRTPRadiusNether - Config.minRTPRadiusNether) + Config.minRTPRadiusNether;
+                        y = random.nextInt(maxRTPHeightNether - minRTPHeightNether) + minRTPHeightNether;
+                        x = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
+                        z = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
                         nether = true;
                         break;
                     case END:
-                        y = random.nextInt(Config.maxRTPHeightEnd - Config.minRTPHeightEnd) + Config.minRTPHeightEnd;
-                        x = random.nextInt(Config.maxRTPRadiusEnd - Config.minRTPRadiusEnd) + Config.minRTPRadiusEnd;
-                        z = random.nextInt(Config.maxRTPRadiusEnd - Config.minRTPRadiusEnd) + Config.minRTPRadiusEnd;
+                        y = random.nextInt(maxRTPHeightEnd - minRTPHeightEnd) + minRTPHeightEnd;
+                        x = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
+                        z = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
                         break;
                     default:
-                        y = random.nextInt(Config.maxRTPHeightDefault - Config.minRTPHeightDefault) + Config.minRTPHeightDefault;
-                        x = random.nextInt(Config.maxRTPRadiusDefault - Config.minRTPRadiusDefault) + Config.minRTPRadiusDefault;
-                        z = random.nextInt(Config.maxRTPRadiusDefault - Config.minRTPRadiusDefault) + Config.minRTPRadiusDefault;
+                        y = random.nextInt(maxRTPHeightDefault - minRTPHeightDefault) + minRTPHeightDefault;
+                        x = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
+                        z = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
                         break;
                 }
                 BlockPos playerPos = player.getPosition();
@@ -109,7 +124,7 @@ public class CommandRTP {
                     TextUtils.getTranslationKey("message", "rtpfail")), false);
         });
         thread.start();
-        return 0;
+        return 1;
     }
 
 }
