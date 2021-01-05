@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class EventHandler {
+public class ForgeBusEventHandler {
 
     private static File mainFolder;
     private static File worldDataFolder;
@@ -101,6 +101,7 @@ public class EventHandler {
      */
     @SubscribeEvent
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+
         Main.SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
         mainFolder = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();
@@ -126,6 +127,7 @@ public class EventHandler {
                 e.printStackTrace();
             }
         }
+        Main.LOGGER.info("SCE Successfully initialize directories!");
     }
 
     /**

@@ -20,13 +20,13 @@ public class Main {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
-    // SERVER initializer is in EventHandler.onServerAboutToStart
+    // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
     public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
 
     public Main() {
         MinecraftForge.EVENT_BUS.register(this);
-        // TODO listen other very early events to init my config
-        ModLoadingContext.get().registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, ModConfig.SERVER_CONFIG);
+        ModLoadingContext context = ModLoadingContext.get();
+        context.registerConfig(net.minecraftforge.fml.config.ModConfig.Type.SERVER, ModConfig.SERVER_CONFIG);
     }
 
     public static void sendMessageToAllPlayers(ITextComponent message, boolean actionBar) {

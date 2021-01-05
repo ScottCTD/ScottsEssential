@@ -26,7 +26,6 @@ import java.util.Optional;
  */
 public class CommandGetRegistryName {
 
-    // TODO
     @ConfigField
     public static int entitiesWithinRadius = 3;
 

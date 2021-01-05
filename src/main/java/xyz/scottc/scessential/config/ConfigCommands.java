@@ -69,7 +69,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("Spawn");
         isSpawnEnableConfig = this.builder
-                .comment("Set it to false to disable /spawn command.\nDefault value: true")
+                .comment("Set it to false to disable /spawn command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsSpawnEnable", true);
         spawnCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /spawn commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -78,7 +80,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("Back");
         isBackEnableConfig = this.builder
-                .comment("Set it to false to disable /back command.\nDefault value: true")
+                .comment("Set it to false to disable /back command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsBackEnable", true);
         backCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /back commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -90,7 +94,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("Home");
         isHomeEnableConfig = this.builder
-                .comment("Set it to false to disable /home, /sethome, /delhome (/removehome), /listhomes, /homeother, and /listotherhomes command.\nDefault value: true")
+                .comment("Set it to false to disable /home, /sethome, /delhome (/removehome), /listhomes, /homeother, and /listotherhomes command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsSpawnEnable", true);
         homeCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /home commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -105,7 +111,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("Warp");
         isWarpEnableConfig = this.builder
-                .comment("Set it to false to disable /warp, /setwarp, /delwarp, and /listwarps command.\nDefault value: true")
+                .comment("Set it to false to disable /warp, /setwarp, /delwarp, and /listwarps command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsWarpEnable", true);
         warpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /warp commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -114,7 +122,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("TPA");
         isTPAEnableConfig = this.builder
-                .comment("Set it to false to disable /tpa, /tpahere, /tpaaccept, /tpadeny, /tphere, and /tpallhere command.\nDefault value: true")
+                .comment("Set it to false to disable /tpa, /tpahere, /tpaaccept, /tpadeny, /tphere, and /tpallhere command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsTPAEnable", true);
         tpaCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /tpa and /tpahere commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -126,7 +136,9 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("RTP");
         isRTPEnableConfig = this.builder
-                .comment("Set it to false to disable /rtp command.\nDefault value: true")
+                .comment("Set it to false to disable /rtp command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
                 .define("IsRTPEnable", true);
         rtpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /rtp commands, or teleport cooldown, in seconds.\nDefault value: 10 seconds")
@@ -195,7 +207,8 @@ public class ConfigCommands extends AbstractModConfig {
         this.builder.push("Fly");
         isFlyEnable = this.builder
                 .comment("Set it to false to disable /fly command.",
-                        "Default value: true")
+                        "Default value: true,",
+                        "This option only work after server restarted.")
                 .define("IsFlyEnable", true);
 
         datePattern = this.builder
@@ -209,12 +222,14 @@ public class ConfigCommands extends AbstractModConfig {
         // /scessential ....
         this.builder.push("Scessential");
         this.builder.push("Info");
+        this.builder.push("GetRegistryName");
         // getRegistryName
         entitiesWithinRadius = this.builder
                 .comment("The searching radius of command /scessential getRegistryName mob to get the registry names of nearby mobs in certain radius",
                         "The radius is specified here.",
                         "Default value: 3 blocks (a 7 * 7 * 7 cube)")
                 .defineInRange("Radius", 3, 1, Integer.MAX_VALUE);
+        this.builder.pop();
         this.builder.pop();
         this.builder.pop();
 
@@ -269,6 +284,7 @@ public class ConfigCommands extends AbstractModConfig {
         CommandRTP.maxRTPRadiusEnd = maxRTPRadiusEndConfig.get();
 
         // fly
+        CommandFly.isFlyEnable = isFlyEnable.get();
         CommandFly.datePattern = datePattern.get();
 
         // scessential getRegistryName mob

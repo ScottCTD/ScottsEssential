@@ -10,7 +10,10 @@ Feel free to report any bug or enhancement!
 
 **All list commands (e.g. /listhomes) are interactive! (you could click one in the list to teleport)**
 
-- /spawn
+- /scessential
+  - /scessential getRegistryName item
+  - /scessential getRegistryName mob
+- /spawn 
 - /back
 - /tpa
     - /tpa

@@ -23,7 +23,9 @@ public class ModConfig {
     }
 
     public static Set<AbstractModConfig> init() {
-        Set<AbstractModConfig> configs = Sets.newHashSet(new ConfigCommands(SERVER_BUILDER), new ConfigEntityCleaner(SERVER_BUILDER));
+        Set<AbstractModConfig> configs = Sets.newHashSet(
+                new ConfigCommands(SERVER_BUILDER),
+                new ConfigEntityCleaner(SERVER_BUILDER));
         configs.forEach(AbstractModConfig::init);
         return configs;
     }
