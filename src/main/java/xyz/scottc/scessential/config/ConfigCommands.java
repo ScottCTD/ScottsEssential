@@ -3,6 +3,9 @@ package xyz.scottc.scessential.config;
 import net.minecraftforge.common.ForgeConfigSpec;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
 import xyz.scottc.scessential.commands.management.CommandFly;
+import xyz.scottc.scessential.commands.management.CommandHat;
+import xyz.scottc.scessential.commands.management.CommandOpenInv;
+import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.*;
 
 public class ConfigCommands extends AbstractModConfig {
@@ -58,6 +61,16 @@ public class ConfigCommands extends AbstractModConfig {
 
     // scessential getRegistryName mob
     private static ForgeConfigSpec.IntValue entitiesWithinRadius;
+
+    // invsee
+    private static ForgeConfigSpec.BooleanValue isOpenInvEnable;
+
+    // hat
+    private static ForgeConfigSpec.BooleanValue isHatEnable;
+
+    // trashcan
+    private static ForgeConfigSpec.BooleanValue isTrashcanEnable;
+    private static ForgeConfigSpec.IntValue cleanTrashcanIntervalSeconds;
 
     public ConfigCommands(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -207,7 +220,7 @@ public class ConfigCommands extends AbstractModConfig {
         this.builder.push("Fly");
         isFlyEnable = this.builder
                 .comment("Set it to false to disable /fly command.",
-                        "Default value: true,",
+                        "Default value: true",
                         "This option only work after server restarted.")
                 .define("IsFlyEnable", true);
 
@@ -217,6 +230,35 @@ public class ConfigCommands extends AbstractModConfig {
                         "If you don't know what it is, please do not modify it.",
                         "Default value: \"hh:mm:ss MM/dd/yyyy\"")
                 .define("DatePattern", "hh:mm:ss MM/dd/yyyy");
+        this.builder.pop();
+
+        this.builder.push("Hat");
+        isHatEnable = this.builder
+                .comment("Set it to false to disable /hat command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
+                .define("IsHatEnable", true);
+        this.builder.pop();
+
+        this.builder.push("Trashcan");
+        isTrashcanEnable = this.builder
+                .comment("Set it to false to disable /trashcan command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
+                .define("isTrashcanEnable", true);
+        cleanTrashcanIntervalSeconds = this.builder
+                .comment("The interval between two actions of deleting items in the trashcan.",
+                        "There is also a button available in the trashcan gui to clear the items.",
+                        "Default value: 60 seconds.")
+                .defineInRange("CleanTrashInterval", 60, 1, Integer.MAX_VALUE);
+        this.builder.pop();
+
+        this.builder.push("OpenInv/Invsee");
+        isOpenInvEnable = this.builder
+                .comment("Set it to false to disable /invsee (/openinv maybe in the future) command.",
+                        "Default value: true",
+                        "This option only work after server restarted.")
+                .define("isInvseeEnable", true);
         this.builder.pop();
 
         // /scessential ....
@@ -289,6 +331,16 @@ public class ConfigCommands extends AbstractModConfig {
 
         // scessential getRegistryName mob
         CommandGetRegistryName.entitiesWithinRadius = entitiesWithinRadius.get();
+
+        // invsee
+        CommandOpenInv.isOpenInvEnable = isOpenInvEnable.get();
+
+        // Hat
+        CommandHat.isHatEnabel = isHatEnable.get();
+
+        // Trashcan
+        CommandTrashcan.isTrashcanEnable = isTrashcanEnable.get();
+        CommandTrashcan.cleanTrashcanIntervalSeconds = cleanTrashcanIntervalSeconds.get();
     }
 
 }

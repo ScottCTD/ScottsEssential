@@ -113,6 +113,10 @@ public class CommandHome {
                     TextUtils.getTranslationKey("message", "reachmaxhome"), maxHomes), false);
             return 1;
         }
+        if (data.getHomePos(name) != null) {
+            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "homeexist"), name), false);
+        }
         data.setHome(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "sethomesuccess"), name), false);

@@ -19,6 +19,13 @@ public class Network {
     private static int id = 0;
 
     public static void register() {
+        INSTANCE.registerMessage(
+                nextId(),
+                PacketClearTrashcan.class,
+                AbstractPacket::encode,
+                PacketClearTrashcan::new,
+                PacketClearTrashcan::handle
+        );
     }
 
     public static void sendToClient(ServerPlayerEntity player, Object packet) {

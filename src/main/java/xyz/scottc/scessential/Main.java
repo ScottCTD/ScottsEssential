@@ -11,6 +11,9 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.scottc.scessential.config.ModConfig;
+import xyz.scottc.scessential.core.SCEPlayerData;
+import xyz.scottc.scessential.core.TPARequest;
+import xyz.scottc.scessential.core.TeleportPos;
 
 @Mod(Main.MODID)
 public class Main {
@@ -31,5 +34,11 @@ public class Main {
 
     public static void sendMessageToAllPlayers(ITextComponent message, boolean actionBar) {
         new Thread(() -> SERVER.getPlayerList().getPlayers().forEach(player -> player.sendStatusMessage(message, actionBar))).start();
+    }
+
+    public static void resetData() {
+        SCEPlayerData.PLAYER_DATA_LIST.clear();
+        TeleportPos.WARPS.clear();
+        TPARequest.TPA_REQUEST.clear();
     }
 }

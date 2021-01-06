@@ -13,7 +13,7 @@ import java.util.Map;
 public class TPARequest {
 
     // All the tpa requests are stored here.
-    private static final Map<Long, TPARequest> TPA_REQUEST = new HashMap<>();
+    public static final Map<Long, TPARequest> TPA_REQUEST = new HashMap<>();
 
     // The id of this tpa request.
     // It is equals to the key in TPA_REQUEST when stored in it.

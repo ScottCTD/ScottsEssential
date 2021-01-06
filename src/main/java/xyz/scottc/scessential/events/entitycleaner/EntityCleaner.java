@@ -20,23 +20,31 @@ import java.util.function.Predicate;
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityCleaner {
 
+    // Clean item
+    @ConfigField
+    public static boolean isItemEntityCleanupEnable = true;
     @ConfigField
     public static int cleanupItemEntitiesIntervalSeconds = 60;
     @ConfigField
     public static int cleanupItemEntitiesCountdownSeconds = 30;
     @ConfigField
+    public static List<? extends String> itemEntitiesWhitelist = Collections.emptyList();
+
+    // clean mob
+    @ConfigField
+    public static boolean isMobEntityCleanupEnable = true;
+    @ConfigField
     public static int cleanupMobEntitiesIntervalSeconds = 60;
     @ConfigField
-    public static int cleanupOtherEntitiesIntervalSeconds = 60;
-    @ConfigField
-    public static List<? extends String> itemEntitiesWhitelist = Collections.emptyList();
+    public static int cleanupMobEntitiesCountdownSeconds = 30;
     @ConfigField
     public static List<? extends String> mobEntitiesWhitelist = Collections.emptyList();
 
+    // clean other
+    @ConfigField
+    public static int cleanupOtherEntitiesIntervalSeconds = 60;
     @ConfigField
     public static boolean
-            isItemEntityCleanupEnable = true,
-            isMobEntityCleanupEnable = true,
             isExperienceOrbEntityCleanupEnable = true,
             isFallingBlocksEntityCleanupEnable = true,
             isArrowEntityCleanupEnable = true,
@@ -51,6 +59,7 @@ public class EntityCleaner {
 
     private static long clearItemTimer = 0;
     private static boolean isCleanupItemMessageSent = false;
+    private static boolean isCleanupMobMessageSent = false;
     private static long clearMobTimer = 0;
     private static long otherTimer = 0;
     private static int counter = 0;
@@ -79,9 +88,16 @@ public class EntityCleaner {
                 }
                 // mob entities cleaner
                 if (isMobEntityCleanupEnable) {
-                    if (clearMobTimer + cleanupMobEntitiesIntervalSeconds * 1000L <= System.currentTimeMillis()) {
+                    long nextCleanupTime = clearMobTimer + cleanupMobEntitiesIntervalSeconds * 1000L;
+                    if (nextCleanupTime - System.currentTimeMillis() <= cleanupMobEntitiesCountdownSeconds * 1000L && !isCleanupMobMessageSent) {
+                        Main.sendMessageToAllPlayers(TextUtils.getYellowTextFromI18n(true, false, false,
+                                TextUtils.getTranslationKey("message", "cleanupmobcountdown"), cleanupMobEntitiesCountdownSeconds), false);
+                        isCleanupMobMessageSent = true;
+                    }
+                    if (nextCleanupTime <= System.currentTimeMillis()) {
                         int amount = cleanupEntity(worlds, MobEntity.class, entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
                         clearMobTimer = System.currentTimeMillis();
+                        isCleanupMobMessageSent = false;
                         Main.sendMessageToAllPlayers(TextUtils.getGreenTextFromI18n(false, false, false,
                                 TextUtils.getTranslationKey("message", "mobcleanupcomplete"), amount), false);
                     }
@@ -112,8 +128,8 @@ public class EntityCleaner {
                     if (isTNTEntityCleanupEnable)
                         amount += cleanupEntity(worlds, TNTEntity.class, entity -> true);
                     otherTimer = System.currentTimeMillis();
-                    Main.sendMessageToAllPlayers(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "misccleanupcomplete"), amount), false);
+/*                    Main.sendMessageToAllPlayers(TextUtils.getGreenTextFromI18n(false, false, false,
+                            TextUtils.getTranslationKey("message", "misccleanupcomplete"), amount), false);*/
                 }
             }
             counter = 0;

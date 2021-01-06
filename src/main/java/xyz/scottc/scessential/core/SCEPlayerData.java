@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandBack;
 
 import javax.annotation.Nullable;
@@ -33,6 +34,8 @@ public class SCEPlayerData {
 
     private boolean isFlyable;
     private long canFlyUntil = -1;
+
+    private CommandTrashcan.Trashcan trashcan;
 
     private long lastSpawnTime = 0;
     private long lastHomeTime = 0;
@@ -68,6 +71,14 @@ public class SCEPlayerData {
             PLAYER_DATA_LIST.add(data);
         }
         return data;
+    }
+
+    public CommandTrashcan.Trashcan getTrashcan() {
+        return trashcan;
+    }
+
+    public void setTrashcan(CommandTrashcan.Trashcan trashcan) {
+        this.trashcan = trashcan;
     }
 
     public boolean isFlyable() {
@@ -246,7 +257,11 @@ public class SCEPlayerData {
             JsonObject temp = back.getAsJsonObject();
             TeleportPos pos = new TeleportPos();
             pos.fromJSON(temp);
-            this.teleportHistory[i] = pos;
+            try {
+                this.teleportHistory[i] = pos;
+            } catch (IndexOutOfBoundsException e) {
+                break;
+            }
             i++;
         }
     }

@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
+import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandTPA;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
@@ -76,6 +77,17 @@ public class ForgeBusEventHandler {
                                     TextUtils.getTranslationKey("message", "cantflynow")), false);
 
                         });
+                // Trashcan count down
+                SCEPlayerData.PLAYER_DATA_LIST.forEach(player -> {
+                    CommandTrashcan.Trashcan trashcan = player.getTrashcan();
+                    if (trashcan == null) return;
+                    if (trashcan.getLastCleanLong() + CommandTrashcan.cleanTrashcanIntervalSeconds * 1000L <= now) {
+                        trashcan.clear();
+                        trashcan.setNextCleanSeconds(CommandTrashcan.cleanTrashcanIntervalSeconds);
+                    } else {
+                        trashcan.setNextCleanSeconds((int) (trashcan.getLastCleanLong() + CommandTrashcan.cleanTrashcanIntervalSeconds * 1000L - now) / 1000);
+                    }
+                });
             }
             counter++;
         }
@@ -101,7 +113,7 @@ public class ForgeBusEventHandler {
      */
     @SubscribeEvent
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-
+        Main.resetData();
         Main.SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
         mainFolder = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();

@@ -24,8 +24,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
             isTNTEntityCleanupEnable;
     private ForgeConfigSpec.IntValue
             cleanupItemEntitiesIntervalSeconds,
-            cleanupitemcountdown,
+            cleanupItemEntitiesCountdownSeconds,
             cleanupMobEntitiesIntervalSeconds,
+            cleanupMobEntitiesCountdownSeconds,
             cleanupOtherEntitiesIntervalSeconds;
     private ForgeConfigSpec.ConfigValue<List<? extends String>>
             itemEntitiesWhitelist,
@@ -50,7 +51,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: 300 seconds (5 minutes)")
                 .defineInRange("cleanItemEntitiesInterval", 300, 1, Integer.MAX_VALUE);
 
-        cleanupitemcountdown = builder
+        cleanupItemEntitiesCountdownSeconds = builder
                 .comment("Seconds of warning message sent before next action of cleaning item entities.",
                         "Default value: 30 seconds")
                 .defineInRange("cleanupItemEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
@@ -72,6 +73,11 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                 .comment("Time interval in seconds between two actions of cleaning mob entities.",
                         "Default value: 360 seconds (6 minutes)")
                 .defineInRange("cleanMobEntitiesInterval", 360, 1, Integer.MAX_VALUE);
+
+        this.cleanupMobEntitiesCountdownSeconds = this.builder
+                .comment("Seconds of warning message sent before next action of cleaning mob entities.",
+                        "Default value: 30 seconds")
+                .defineInRange("cleanupMobEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
 
         mobEntitiesWhitelist = builder
                 .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
@@ -150,8 +156,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
     @Override
     public void get() {
         EntityCleaner.cleanupItemEntitiesIntervalSeconds = cleanupItemEntitiesIntervalSeconds.get();
-        EntityCleaner.cleanupItemEntitiesCountdownSeconds = cleanupitemcountdown.get();
+        EntityCleaner.cleanupItemEntitiesCountdownSeconds = cleanupItemEntitiesCountdownSeconds.get();
         EntityCleaner.cleanupMobEntitiesIntervalSeconds = cleanupMobEntitiesIntervalSeconds.get();
+        EntityCleaner.cleanupMobEntitiesCountdownSeconds = this.cleanupMobEntitiesCountdownSeconds.get();
         EntityCleaner.itemEntitiesWhitelist = itemEntitiesWhitelist.get();
         EntityCleaner.mobEntitiesWhitelist = mobEntitiesWhitelist.get();
 

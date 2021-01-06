@@ -5,6 +5,8 @@ import xyz.scottc.scessential.Main;
 
 public class TextUtils {
 
+    private TextUtils() {}
+
     public static String getTranslationKey(String beforeModid, String afterModid) {
         beforeModid = beforeModid.endsWith(".") ? beforeModid : beforeModid + ".";
         afterModid = afterModid.startsWith(".") ? afterModid : "." + afterModid;
@@ -22,6 +24,14 @@ public class TextUtils {
 
     public static IFormattableTextComponent getWhiteTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
         return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.WHITE), bold, underline, italic, translationKey, parameters);
+    }
+
+    public static IFormattableTextComponent getGrayTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.GRAY), bold, underline, italic, translationKey, parameters);
+    }
+
+    public static IFormattableTextComponent getContainerNameTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(Color.fromHex("3f3f3f"), bold, underline, italic, translationKey, parameters);
     }
 
     public static IFormattableTextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {

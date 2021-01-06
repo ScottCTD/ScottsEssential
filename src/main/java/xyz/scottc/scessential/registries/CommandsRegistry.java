@@ -10,6 +10,9 @@ import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.commands.CommandSCE;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
 import xyz.scottc.scessential.commands.management.CommandFly;
+import xyz.scottc.scessential.commands.management.CommandHat;
+import xyz.scottc.scessential.commands.management.CommandOpenInv;
+import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.*;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -17,7 +20,7 @@ public class CommandsRegistry {
 
     /**
      * See https://github.com/TeamCovertDragon/Harbinger/discussions/96
-     * @param event
+     * @param event FMLServerAboutToStartEvent
      */
     @SubscribeEvent
     public static void register(FMLServerAboutToStartEvent event) {
@@ -36,6 +39,9 @@ public class CommandsRegistry {
 
         // Util Commands
         if (CommandFly.isFlyEnable) CommandFly.register(dispatcher);
+        if (CommandOpenInv.isOpenInvEnable) CommandOpenInv.register(dispatcher);
+        if (CommandHat.isHatEnabel) CommandHat.register(dispatcher);
+        if (CommandTrashcan.isTrashcanEnable) CommandTrashcan.register(dispatcher);
 
         // Info Commands
         CommandGetRegistryName.register(dispatcher);

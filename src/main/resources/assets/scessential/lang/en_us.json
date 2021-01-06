@@ -6,10 +6,13 @@
 
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
 
+  "message.scessential.noback": "You don't have any teleport histroy more.",
+  "message.scessential.backsuccess": "Successfully back to previous position!",
+
   "message.scessential.homenotfound": "Home \"%s\" not found!",
   "message.scessential.homeothernotfound": "Player \"%s\"'s home \"%s\" not found!",
   "message.scessential.otherhomesuccess": "Successfully teleported to player \"%s\"'s home \"%s\"",
-  "message.scessential.sethomesuccess": "Successfully sat home \"%s\"!",
+  "message.scessential.sethomesuccess": "Successfully set home \"%s\"!",
   "message.scessential.homesuccess": "Successfully teleported to home \"%s\"!",
   "message.scessential.delhomesuccess": "Successfully deleted home \"%s\"!",
   "message.scessential.delothershomesuccess": "Successfully deleted player \"%s\"'s home \"%s\"",
@@ -19,6 +22,7 @@
   "message.scessential.clicktoteleport": "Click to teleport!",
   "message.scessential.othernohome": "Player \"%s\" is homeless.",
   "message.scessential.options": "Please choose: ",
+  "message.scessential.homeexist": "Home \"%s\" already set!",
 
   "message.scessential.accept": "Accept",
   "message.scessential.deny": "Deny",
@@ -53,10 +57,15 @@
   "message.scessential.flytempSource": "Player \"%s\" now can fly until %s!",
 
   "message.scessential.cleanupitemcountdown": "Item entities will be freed after %d seconds!",
+  "message.scessential.cleanupmobcountdown": "Mob entities will be freed after %d seconds!",
   "message.scessential.itemcleanupcomplete": "%d item entities freed.",
   "message.scessential.mobcleanupcomplete": "%d mob entities freed.",
   "message.scessential.misccleanupcomplete": "%d miscellaneous entities freed.",
   "message.scessential.clicktocopy": "Click to copy to clipboard!",
-  "message.scessential.nearbynoliving": "No nearby living entities found!"
+  "message.scessential.nearbynoliving": "No nearby living entities found!",
 
+  "text.scessential.playerinv": "Player \"%s\"'s Inventory",
+
+  "text.scessential.clear": "Clear",
+  "text.scessential.trashcantitle": "Clear in %d seconds!"
 }
