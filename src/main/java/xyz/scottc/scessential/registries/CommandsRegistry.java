@@ -55,8 +55,6 @@ public class CommandsRegistry {
      */
     //@SubscribeEvent
     @Deprecated
-    public static void register(RegisterCommandsEvent event) {
-        CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
-    }
+    public static void register(RegisterCommandsEvent event) {}
 
 }

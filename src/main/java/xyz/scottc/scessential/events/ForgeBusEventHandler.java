@@ -22,7 +22,6 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TextUtils;
 
 import java.io.*;
-import java.util.Collection;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -54,40 +53,44 @@ public class ForgeBusEventHandler {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             if (counter >= 20) {
-                long now = System.currentTimeMillis();
-                // TPA Request
-                Collection<TPARequest> requests = TPARequest.getTpaRequest().values();
-                for (TPARequest request : requests) {
-                    if ((request.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
-                        TPARequest.getTpaRequest().remove(request.getId());
-                        request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
-                        );
-                    }
-                }
-                // Player Fly Time
-                SCEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
-                                                              player.isFlyable() &&
-                                                              player.getCanFlyUntil() != -1 &&
-                                                              player.getCanFlyUntil() <= now)
-                        .forEach(player -> {
-                            player.setFlyable(false);
-                            player.setCanFlyUntil(-1);
-                            player.getPlayer().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "cantflynow")), false);
+                new Thread(() -> {
+                    long now = System.currentTimeMillis();
+                    // TPA Request
+                    TPARequest.getTpaRequest().values().forEach(request -> {
+                        if ((request.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
+                            TPARequest.getTpaRequest().remove(request.getId());
+                            request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
+                            );
+                        }
+                    });
 
-                        });
-                // Trashcan count down
-                SCEPlayerData.PLAYER_DATA_LIST.forEach(player -> {
-                    CommandTrashcan.Trashcan trashcan = player.getTrashcan();
-                    if (trashcan == null) return;
-                    if (trashcan.getLastCleanLong() + CommandTrashcan.cleanTrashcanIntervalSeconds * 1000L <= now) {
-                        trashcan.clear();
-                        trashcan.setNextCleanSeconds(CommandTrashcan.cleanTrashcanIntervalSeconds);
-                    } else {
-                        trashcan.setNextCleanSeconds((int) (trashcan.getLastCleanLong() + CommandTrashcan.cleanTrashcanIntervalSeconds * 1000L - now) / 1000);
-                    }
-                });
+                    // Player Fly Time
+                    SCEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
+                            player.isFlyable() &&
+                            player.getCanFlyUntil() != -1 &&
+                            player.getCanFlyUntil() <= now)
+                            .forEach(player -> {
+                                player.setFlyable(false);
+                                player.setCanFlyUntil(-1);
+                                player.getPlayer().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                        TextUtils.getTranslationKey("message", "cantflynow")), false);
+
+                            });
+
+                    // Trashcan count down
+                    SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> {
+                        CommandTrashcan.Trashcan trashcan = data.getTrashcan();
+                        if (trashcan == null) return;
+                        long nextCleanTime = trashcan.getLastCleanLong() + CommandTrashcan.cleanTrashcanIntervalSeconds * 1000L;
+                        if (nextCleanTime <= now) {
+                            trashcan.clear();
+                            trashcan.setNextCleanSeconds(CommandTrashcan.cleanTrashcanIntervalSeconds);
+                        } else {
+                            trashcan.setNextCleanSeconds((int) (nextCleanTime - now) / 1000);
+                        }
+                    });
+                }).start();
             }
             counter++;
         }

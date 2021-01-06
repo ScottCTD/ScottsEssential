@@ -18,6 +18,8 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
+import java.util.Optional;
+
 /**
  * 01/02/2021 21:26
  * /tpa
@@ -85,6 +87,11 @@ public class CommandTPA {
 
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
+        if (source.equals(target)) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "canttpaself")), false);
+            return 1;
+        }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), tpaCooldownSeconds)) {
             return 1;
@@ -135,6 +142,11 @@ public class CommandTPA {
     }
 
     private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
+        if (source.equals(target)) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "canttpahereself")), false);
+            return 1;
+        }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), tpaCooldownSeconds)) {
             return 1;
@@ -225,9 +237,10 @@ public class CommandTPA {
     }
 
     private static int tpAllHere(ServerPlayerEntity source) {
-        new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
-                    .filter(player -> !player.equals(source))
-                    .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))
+        new Thread(() -> Optional.ofNullable(Main.SERVER).ifPresent(server ->
+                server.getPlayerList().getPlayers().stream()
+                        .filter(player -> !player.equals(source))
+                        .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source)))))
                 .start();
         return 1;
     }

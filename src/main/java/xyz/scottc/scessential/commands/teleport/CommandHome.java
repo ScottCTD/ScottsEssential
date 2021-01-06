@@ -10,7 +10,6 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import xyz.scottc.scessential.config.ConfigField;
@@ -132,6 +131,7 @@ public class CommandHome {
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
+/*
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "setnewhome"), name), false);
 
@@ -143,6 +143,7 @@ public class CommandHome {
             IFormattableTextComponent deny = TextUtils.getRedTextFromI18n(true, true, false,
                     TextUtils.getTranslationKey("message", "deny"));
             player.sendStatusMessage(setNewText.appendString("\n").append(accept).append(new StringTextComponent(" | ").setStyle(Style.EMPTY)).append(deny), false);
+*/
             return 1;
         }
         data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));

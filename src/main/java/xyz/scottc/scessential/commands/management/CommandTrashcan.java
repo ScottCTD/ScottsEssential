@@ -11,17 +11,15 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.containers.ContainerTrashcan;
 import xyz.scottc.scessential.core.SCEPlayerData;
+import xyz.scottc.scessential.utils.TextUtils;
 
 public class CommandTrashcan {
 
-    // TODO
     @ConfigField
     public static boolean isTrashcanEnable = true;
     @ConfigField
@@ -44,11 +42,12 @@ public class CommandTrashcan {
         NetworkHooks.openGui(source, new INamedContainerProvider() {
             @Override
             public ITextComponent getDisplayName() {
-                return new StringTextComponent("Trashcan");
+                return TextUtils.getContainerNameTextFromI18n(false, false, false,
+                        TextUtils.getTranslationKey("text", "trashcan"));
             }
 
             @Override
-            public @NotNull Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+            public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                 return ContainerTrashcan.getServerSideInstance(id, playerInventory, data.getTrashcan());
             }
         });

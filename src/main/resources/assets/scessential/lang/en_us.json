@@ -15,7 +15,7 @@
   "message.scessential.sethomesuccess": "Successfully set home \"%s\"!",
   "message.scessential.homesuccess": "Successfully teleported to home \"%s\"!",
   "message.scessential.delhomesuccess": "Successfully deleted home \"%s\"!",
-  "message.scessential.delothershomesuccess": "Successfully deleted player \"%s\"'s home \"%s\"",
+  "message.scessential.delothershomesuccess": "Successfully deleted player \"%s\"'s home \"%s\"!",
   "message.scessential.nohome": "You are Homeless...",
   "message.scessential.setnewhome": "Do you want to set a new home here?",
   "message.scessential.reachmaxhome": "You cannot set more home than %d homes!",
@@ -40,6 +40,8 @@
   "message.scessential.delwarpsuccess": "Successfully delete the warp \"%s\"!",
   "message.scessential.nowarp": "There isn't any warp available!",
 
+  "message.scessential.canttpaself": "You should not tpa to yourself!",
+  "message.scessential.canttpahereself": "You should not teleport yourself to your position!",
   "message.scessential.requestsent": "Request successfully sent to player \"%s\"!",
   "message.scessential.tpaline01": "Player \"%s\" want to teleport to your position.",
   "message.scessential.tpanotfound": "Request expired or not found!",
@@ -64,8 +66,10 @@
   "message.scessential.clicktocopy": "Click to copy to clipboard!",
   "message.scessential.nearbynoliving": "No nearby living entities found!",
 
+  "message.scessential.cantopenselfinv": "You cannot open your own inventory in this way!",
   "text.scessential.playerinv": "Player \"%s\"'s Inventory",
 
+  "text.scessential.trashcan": "Trashcan",
   "text.scessential.clear": "Clear",
   "text.scessential.trashcantitle": "Clear in %d seconds!"
 }

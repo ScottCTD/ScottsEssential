@@ -15,6 +15,9 @@ import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 @Mod(Main.MODID)
 public class Main {
 
@@ -24,7 +27,7 @@ public class Main {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
-    public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
+    public static @Nullable MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
 
     public Main() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -33,7 +36,8 @@ public class Main {
     }
 
     public static void sendMessageToAllPlayers(ITextComponent message, boolean actionBar) {
-        new Thread(() -> SERVER.getPlayerList().getPlayers().forEach(player -> player.sendStatusMessage(message, actionBar))).start();
+        new Thread(() -> Optional.ofNullable(SERVER).ifPresent(server -> server.getPlayerList().getPlayers()
+                .forEach(player -> player.sendStatusMessage(message, actionBar)))).start();
     }
 
     public static void resetData() {

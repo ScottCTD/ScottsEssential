@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -12,13 +13,9 @@ import xyz.scottc.scessential.registries.ContainerTypeRegistry;
 
 public class ContainerTrashcan extends Container {
 
-    private static final int SLOT_LENGTH = 18, START_X = 8,
-            PLAYER_HOTBAR_START_Y = 198, PLAYER_MAININV_START_Y = 140,
-            CHEST_INV_START_Y = 18;
-
-    private PlayerInventory playerInventory;
-    private ItemStackHandler itemStackHandler;
-    private CommandTrashcan.Trashcan trashcan;
+    private final PlayerInventory playerInventory;
+    private final ItemStackHandler itemStackHandler;
+    private final CommandTrashcan.Trashcan trashcan;
 
     protected ContainerTrashcan(int id, PlayerInventory playerInventory, CommandTrashcan.Trashcan trashcan) {
         super(ContainerTypeRegistry.trashcanContainerType, id);
@@ -37,37 +34,55 @@ public class ContainerTrashcan extends Container {
         return new ContainerTrashcan(id, playerInventory, new CommandTrashcan.Trashcan());
     }
 
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        Slot slot = this.inventorySlots.get(index);
+        if (slot == null) return ItemStack.EMPTY;
+        ItemStack itemStack = slot.getStack();
+        if (index < 36) {
+            if (!this.mergeItemStack(itemStack, 36, 85, false)) return ItemStack.EMPTY;
+        } else {
+            if (!this.mergeItemStack(itemStack, 9, 35, false)) {
+                if (!this.mergeItemStack(itemStack, 0, 8, true)) return ItemStack.EMPTY;
+            }
+        }
+        return itemStack;
+    }
+
     private void addSlots() {
+        final int slotLength = 18, startX = 8, playerHotbarStartY = 198, playerMainInvStartY = 140, chestInvStartY = 18;
+
         int index = 0;
         // Player hotbar 0 - 8 inclusive
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(this.playerInventory, index, START_X + SLOT_LENGTH * i, PLAYER_HOTBAR_START_Y));
+            this.addSlot(new Slot(this.playerInventory, index, startX + slotLength * i, playerHotbarStartY));
             index++;
         }
         // player main inv 9 - 35 inclusive
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(this.playerInventory, index, START_X + SLOT_LENGTH * j, PLAYER_MAININV_START_Y + SLOT_LENGTH * i));
+                this.addSlot(new Slot(this.playerInventory, index, startX + slotLength * j, playerMainInvStartY + slotLength * i));
                 index++;
             }
         }
-        // chest inv
+        // chest inv 36 - 49
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 7; j++) {
-                this.addSlot(new SlotItemHandler(this.itemStackHandler, index, START_X + SLOT_LENGTH * j, CHEST_INV_START_Y + SLOT_LENGTH * i));
+                this.addSlot(new SlotItemHandler(this.itemStackHandler, index, startX + slotLength * j, chestInvStartY + slotLength * i));
                 index++;
             }
         }
+        // chest inv 50 - 85
         for (int i = 2; i < 6; i++) {
             for (int j = 0; j < 9; j++) {
-                this.addSlot(new SlotItemHandler(this.itemStackHandler, index, START_X + SLOT_LENGTH * j, CHEST_INV_START_Y + SLOT_LENGTH * i));
+                this.addSlot(new SlotItemHandler(this.itemStackHandler, index, startX + slotLength * j, chestInvStartY + slotLength * i));
                 index++;
             }
         }
     }
 
     public CommandTrashcan.Trashcan getTrashcan() {
-        return trashcan;
+        return this.trashcan;
     }
 
     @Override

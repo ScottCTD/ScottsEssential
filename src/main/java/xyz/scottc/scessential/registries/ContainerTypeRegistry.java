@@ -8,14 +8,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.commands.management.CommandOpenInv;
 import xyz.scottc.scessential.containers.ContainerTrashcan;
+import xyz.scottc.scessential.containers.OthersInvContainer;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContainerTypeRegistry {
 
     @ObjectHolder(Main.MODID + ":others_inventory")
-    public static ContainerType<CommandOpenInv.OthersInvContainer> othersContainerType;
+    public static ContainerType<OthersInvContainer> othersContainerType;
+
     @ObjectHolder(Main.MODID + ":trashcan")
     public static ContainerType<ContainerTrashcan> trashcanContainerType;
 
@@ -24,8 +25,9 @@ public class ContainerTypeRegistry {
         IForgeRegistry<ContainerType<?>> registry = event.getRegistry();
 
         registry.register(IForgeContainerType
-                .create(CommandOpenInv.OthersInvContainer::getClientSideInstance)
+                .create(OthersInvContainer::getClientSideInstance)
                 .setRegistryName("others_inventory"));
+
         registry.register(IForgeContainerType
                 .create(ContainerTrashcan::getClientSideInstance)
                 .setRegistryName("trashcan"));

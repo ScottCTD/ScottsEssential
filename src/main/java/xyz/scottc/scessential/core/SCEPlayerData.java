@@ -73,7 +73,7 @@ public class SCEPlayerData {
         return data;
     }
 
-    public CommandTrashcan.Trashcan getTrashcan() {
+    public @Nullable CommandTrashcan.Trashcan getTrashcan() {
         return trashcan;
     }
 

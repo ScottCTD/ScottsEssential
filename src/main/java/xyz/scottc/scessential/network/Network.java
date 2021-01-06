@@ -2,11 +2,15 @@ package xyz.scottc.scessential.network;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import xyz.scottc.scessential.Main;
 
+@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Network {
 
     private static final String PROTOCAL_VERSION = "1.0";
@@ -18,6 +22,11 @@ public class Network {
     );
     private static int id = 0;
 
+    @SubscribeEvent
+    public static void onFMLCommonSetup(FMLCommonSetupEvent event) {
+        Network.register();
+    }
+
     public static void register() {
         INSTANCE.registerMessage(
                 nextId(),
@@ -28,7 +37,7 @@ public class Network {
         );
     }
 
-    public static void sendToClient(ServerPlayerEntity player, Object packet) {
+    public static void sendToPlayerClient(ServerPlayerEntity player, Object packet) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 

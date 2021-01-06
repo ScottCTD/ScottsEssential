@@ -1,38 +1,38 @@
 package xyz.scottc.scessential.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.commands.management.CommandOpenInv;
+import xyz.scottc.scessential.containers.OthersInvContainer;
 
-public class OthersInvScreen extends ContainerScreen<CommandOpenInv.OthersInvContainer> {
+public class OthersInvScreen extends ContainerScreen<OthersInvContainer> {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/others_inventory.png");
 
-    public static final int TEXTURE_WIDTH = 175, TEXTURE_HEIGHT = 214;
+    private int x, y;
 
-    public OthersInvScreen(CommandOpenInv.OthersInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public OthersInvScreen(OthersInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        this.xSize = TEXTURE_WIDTH;
-        this.ySize = TEXTURE_HEIGHT;
+        this.xSize = 175;
+        this.ySize = 214;
     }
 
     @Override
     protected void init() {
         super.init();
+        this.x = (this.width - this.xSize) / 2;
+        this.y = (this.height - this.ySize) / 2;
         this.playerInventoryTitleY = 120;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
-        blit(matrixStack, (this.width - this.xSize) / 2, (this.height - this.ySize) / 2, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        blit(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize);
     }
 
     @Override

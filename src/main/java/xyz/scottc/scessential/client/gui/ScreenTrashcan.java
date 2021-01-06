@@ -30,7 +30,6 @@ public class ScreenTrashcan extends ContainerScreen<ContainerTrashcan> {
     @Override
     protected void init() {
         super.init();
-        this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
         this.x = (this.width - this.xSize) / 2;
         this.y = (this.height - this.ySize) / 2;
         this.addButton(new ExtendedButton(this.x + 135, this.y + 17, 34, 34,
@@ -40,6 +39,7 @@ public class ScreenTrashcan extends ContainerScreen<ContainerTrashcan> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
         this.blit(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize);
     }
 

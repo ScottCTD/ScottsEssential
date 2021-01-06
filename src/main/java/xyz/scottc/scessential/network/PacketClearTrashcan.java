@@ -25,8 +25,10 @@ public class PacketClearTrashcan extends AbstractPacket<PacketClearTrashcan> {
             Optional<ServerPlayerEntity> sender = Optional.ofNullable(context.get().getSender());
             sender.ifPresent(player -> {
                 SCEPlayerData data = SCEPlayerData.getInstance(player);
-                data.getTrashcan().clear();
-                data.getPlayer().openContainer.detectAndSendChanges();
+                Optional.ofNullable(data.getTrashcan()).ifPresent(trashcan -> {
+                    trashcan.clear();
+                    data.getPlayer().openContainer.detectAndSendChanges();
+                });
             });
         });
     }

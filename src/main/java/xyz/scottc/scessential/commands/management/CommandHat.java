@@ -12,7 +12,6 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 public class CommandHat {
 
-    // TODO
     @ConfigField
     public static boolean isHatEnabel = true;
 

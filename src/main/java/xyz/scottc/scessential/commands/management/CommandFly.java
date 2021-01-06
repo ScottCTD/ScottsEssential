@@ -58,8 +58,10 @@ public class CommandFly {
         switch (type) {
             case PERMANENT:
                 data.setCanFlyUntil(-1L);
-                source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flypermanentlySource"), data.getPlayerName()), false);
+                if (!source.equals(target)) {
+                    source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                            TextUtils.getTranslationKey("message", "flypermanentlySource"), data.getPlayerName()), false);
+                }
                 target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "flypermanentlyTarget")), false);
                 break;
@@ -69,8 +71,10 @@ public class CommandFly {
                 Date date = new Date(canFlyUntil);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
                 String formattedDate = simpleDateFormat.format(date);
-                target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flytempTarget"), formattedDate), false);
+                if (!source.equals(target)) {
+                    target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                            TextUtils.getTranslationKey("message", "flytempTarget"), formattedDate), false);
+                }
                 source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "flytempSource"), data.getPlayerName(), formattedDate), false);
                 break;
