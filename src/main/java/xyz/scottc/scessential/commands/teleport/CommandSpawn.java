@@ -11,7 +11,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -37,7 +36,6 @@ public class CommandSpawn implements Command<CommandSource> {
 
     @Override
     public int run(CommandContext<CommandSource> context) throws CommandSyntaxException {
-        Main.LOGGER.info(spawnCooldownSeconds);
         ServerPlayerEntity player = context.getSource().asPlayer();
         SCEPlayerData data = SCEPlayerData.getInstance(player);
 

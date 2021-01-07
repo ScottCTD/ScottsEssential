@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.containers.OthersInvContainer;
 
-public class OthersInvScreen extends ContainerScreen<OthersInvContainer> {
+public class ScreenOthersInv extends ContainerScreen<OthersInvContainer> {
 
     public static final ResourceLocation TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/others_inventory.png");
 
     private int x, y;
 
-    public OthersInvScreen(OthersInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public ScreenOthersInv(OthersInvContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         this.xSize = 175;
         this.ySize = 214;

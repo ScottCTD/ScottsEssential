@@ -9,7 +9,7 @@ import xyz.scottc.scessential.core.TeleportPos;
 public class TeleportUtils {
 
     public static void teleport(ServerPlayerEntity player, ServerWorld world, BlockPos targetPos) {
-        // +0.5 teleport to the center of a block -> avoiding suffocating
+        // +0.5 teleport to the center of a block -> avoid suffocating
         player.teleport(world, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
     }
 

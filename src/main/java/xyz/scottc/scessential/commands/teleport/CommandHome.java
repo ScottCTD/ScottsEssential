@@ -49,7 +49,7 @@ public class CommandHome {
                                 .executes(context -> setHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
                         .executes(context -> setHome(context.getSource().asPlayer(), "home"))
         );
-        dispatcher.register(Commands.literal("homeset").redirect(setHome));
+        //dispatcher.register(Commands.literal("homeset").redirect(setHome));
 
         dispatcher.register(
                 Commands.literal("home")

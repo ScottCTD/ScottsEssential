@@ -1,6 +1,6 @@
 # Scott's Essential (SCE)
 
-A hightly configurable Minecraft mod which adds many server friendly commands, performance improvements, and other useful things.
+A **highly configurable** Minecraft mod which adds many server friendly commands, performance improvements, and other useful things.
 
 Feel free to report any bug or enhancement!
 
@@ -11,40 +11,89 @@ Feel free to report any bug or enhancement!
 **All list commands (e.g. /listhomes) are interactive! (you could click one in the list to teleport)**
 
 - /scessential
+  - /scessential
+    - Usage: Print current mod version.
   - /scessential getRegistryName item
+      - Usage: Get the registry name (minecraft:stone for eg) of your main hand held item. You could easily copy that name by clicking the message popped up.
+      - Permission: Level 2 (Vanilla permission for temp use.)
   - /scessential getRegistryName mob
+      - Usage: Get the registry names of living entities near you in certain radius (configurable).
+      - Permission: Level 2 (Vanilla permission for temp use.)
 - /spawn 
+    - Usage: Teleport to the world spawn point.
 - /back
+    - Usage: Teleport to the position before last teleport.
 - /tpa
-    - /tpa
-    - /tpahere
-    - /tphere
+    - /tpa [Target]
+      - Usage: Send a teleport request to target to let you teleport to target.
+    - /tpahere [Target]
+      - Usage: Send a teleport request to target to let target teleport to you.
+    - /tphere [Target]
+      - Usage: Teleport the target to your position.
+      - Permission: 2 Level
     - /tpallhere
-    - /tpaaccept
+      - Usage: Teleport all players to your position. 
+    - /tpaaccept [RequestId]
+      - Usage: Accept a tpa / tpahere request. (You don't need to type this command. You can just click "Accept" in the chat.)
     - /tpadeny
+      - Usage: Deny a tpa / tpahere request. (You don't need to type this command. You can just click "Deny" in the chat.)
 - /home
-    - /home
-    - /sethome
-    - /delhome = /removehome
+    - /home [HomeName]
+      - Usage: Teleport you to one of your home. (You don't need to remember the names of your homes because the command will suggest each of your home.)
+    - /sethome [HomeName]
+      - Usage: Set a home at your position.
+    - /delhome = /removehome [HomeName]
+      - Usage: Delete a home.
     - /listhomes
-    - /homeother
-    - /delotherhome = /removeotherhome
-    - /listotherhomes
+      - Usage: List all of your homes. You can click one in the list to teleport to the clicked one.
+    - /homeother [HomeName]
+      - Usage: Teleport to other's home.
+      - Permission: 2 Level
+    - /delotherhome = /removeotherhome [HomeName]
+      - Usage: Delete other's home.
+      - Permission: 2 Level
+    - /listotherhomes [Player]
+      - Usage: List all homes of [Player]
+      - Permission: 2 Level
 - /warp
-    - /warp
-    - /setwarp
-    - /delwarp
+    - /warp [WarpName]
+      - Usage: Teleport to a warp.
+    - /setwarp [WarpName]
+      - Usage: Set a warp.
+      - Permission: 2 Level
+    - /delwarp [WarpName]
+      - Usage: Delete a warp.
+      - Permission: 2 Level
     - /listwarps
+      - Usage: List all warps.
 - /rtp
+    - Usage: Randomly teleport to a safe location in current world.
 - /fly
     - /fly [Player]
+      - Usage: Let a player fly permanently.
+      - Permission: 2 Level
     - /fly [Player] [Minutes]
+      - Usage: Let a player fly in [Minutes]
+      - Permission: 2 Level
+- /hat
+    - /hat
+        - Usage: Let the current held item jump onto your head.
+    - /hat [Target]
+        - Usage: Let the current held item jump onto Target's head.
+        - Permission: 2 Level
+- /invsee [Target]
+    - Usage: Open a GUI containing Target's all items including armor and second hand.
+    - Permission: 2 Level
+- /trashcan
+    - Usage: Open a GUI trashcan that you can put trash items in. You could clear all the items in the trashcan by clicking a button, and the trashcan will clear after some seconds (Configurable). 
 - More in progress
   
 # Services
 
 - Entity Cleaner
   - Entity Cleaner could clean the entities in all worlds with very high configurability. (Almost all kinds of entities) 
+  - You could easily add whitelist of entities that shouldn't be cleaned up. 
+  - You could get the registry name of items or other entities by using /scessential getRegistryName item / mob (OP required).
   - For more information, check the server config file of my mod.
 
 # About
