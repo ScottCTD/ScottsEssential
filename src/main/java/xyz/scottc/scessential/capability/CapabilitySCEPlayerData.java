@@ -97,12 +97,12 @@ public class CapabilitySCEPlayerData {
                         });
                     }
                 },
-                SCEPlayerData::getInstance);
+                SCEPlayerData::new);
     }
 
     public static class Provider implements ICapabilitySerializable<CompoundNBT> {
 
-        private final SCEPlayerData playerData = SCEPlayerData.getInstance();
+        private final SCEPlayerData playerData = new SCEPlayerData();
 
         @NotNull
         @Override

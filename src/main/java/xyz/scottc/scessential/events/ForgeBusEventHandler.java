@@ -3,14 +3,10 @@ package xyz.scottc.scessential.events;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -30,24 +26,13 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 import java.io.*;
 import java.util.Map;
-import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeBusEventHandler {
 
     private static File mainFolder;
-    private static File worldDataFolder;
-    private static File playersDataFolder;
 
     private static int counter = 0;
-
-    @SubscribeEvent
-    public static void onAttachEntityCapability(AttachCapabilitiesEvent<Entity> event) {
-        Entity entity = event.getObject();
-        if (!entity.world.isRemote && entity instanceof PlayerEntity) {
-            event.addCapability(new ResourceLocation(Main.MODID, "sce_player_data"), new CapabilitySCEPlayerData.Provider());
-        }
-    }
 
     /**
      * Make flyable player flyable again after respawn.
@@ -125,6 +110,30 @@ public class ForgeBusEventHandler {
         }
     }
 
+    @SubscribeEvent
+    public static void onPlayerLoaded(PlayerEvent.LoadFromFile event) {
+        LazyOptional<ISCEPlayerData> capability = event.getPlayer().getCapability(CapabilitySCEPlayerData.SCE_PLAYER_DATA_CAPABILITY);
+        capability.ifPresent(cap -> {
+            if (cap instanceof SCEPlayerData) {
+                // If the data for current player exist, then just copy it to the cap
+                SCEPlayerData instance = SCEPlayerData.getInstance(event.getPlayer());
+                int index = SCEPlayerData.PLAYER_DATA_LIST.indexOf(instance);
+                if (index != -1) {
+                    cap.deserializeNBT(instance.serializeNBT());
+                    SCEPlayerData.PLAYER_DATA_LIST.set(index, (SCEPlayerData) cap);
+                } else {
+                    SCEPlayerData.PLAYER_DATA_LIST.add((SCEPlayerData) cap);
+                }
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+        data.setFlyable(data.isFlyable());
+    }
+
     /**
      * Init mod folders and a MinecraftServer instance.
      * Also, deserialize warp data.
@@ -136,12 +145,10 @@ public class ForgeBusEventHandler {
         Main.SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
         mainFolder = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();
-        worldDataFolder = new File(mainFolder.getPath() + "/" + "worlddata");
-        playersDataFolder = new File(mainFolder.getPath() + "/" + "playersdata");
         init();
 
         // Deserialize warps
-        File warpDataFile = new File(worldDataFolder.getPath() + "/" + "warps.json");
+        File warpDataFile = new File(mainFolder.getPath() + "/" + "warps.json");
         if (warpDataFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(warpDataFile)))) {
                 JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
@@ -169,7 +176,7 @@ public class ForgeBusEventHandler {
     public static void onWorldSave(WorldEvent.Save event) {
         init();
         // Serialize warps
-        File warpDataFile = new File(worldDataFolder.getPath() + "/" + "warps.json");
+        File warpDataFile = new File(mainFolder.getPath() + "/" + "warps.json");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpDataFile)))) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", "warps");
@@ -187,46 +194,16 @@ public class ForgeBusEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onPlayerLoaded(PlayerEvent.LoadFromFile event) {
-        LazyOptional<ISCEPlayerData> capability = event.getPlayer().getCapability(CapabilitySCEPlayerData.SCE_PLAYER_DATA_CAPABILITY);
-        capability.ifPresent(cap -> {
-            if (cap instanceof SCEPlayerData) {
-                SCEPlayerData realCap = (SCEPlayerData) cap;
-                realCap.setUuid(UUID.fromString(event.getPlayerUUID()));
-                realCap.setPlayer(event.getPlayer());
-                SCEPlayerData.PLAYER_DATA_LIST.add(realCap);
-            }
-        });
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
-        data.setFlyable(data.isFlyable());
-    }
-
     /**
      * Init mod directory
      * /world/scessential
-     * /world/scessential/playersdata
      * /world/scessential/worlddata
      */
     public static void init() {
-        if (mainFolder == null || worldDataFolder == null || playersDataFolder == null) return;
+        if (mainFolder == null) return;
         if (!mainFolder.exists()) {
             if (!mainFolder.mkdirs()) {
                 throw new RuntimeException("Failed to create necessary scessential folder!");
-            }
-        }
-        if (!worldDataFolder.exists()) {
-            if (!worldDataFolder.mkdirs()) {
-                throw new RuntimeException("Failed to create necessary scessential/worlddata folder!");
-            }
-        }
-        if (!playersDataFolder.exists()) {
-            if (!playersDataFolder.mkdirs()) {
-                throw new RuntimeException("Failed to create necessary scessential/playersdata folder!");
             }
         }
     }

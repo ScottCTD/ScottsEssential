@@ -10,6 +10,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandBack;
@@ -50,15 +51,11 @@ public class SCEPlayerData implements ISCEPlayerData {
     private long lastWarpTime = 0;
     private long lastTPATime = 0;
 
-    private SCEPlayerData() {}
+    public SCEPlayerData() {}
 
     private SCEPlayerData(@NotNull UUID uuid, @Nullable String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
-    }
-
-    public static @NotNull SCEPlayerData getInstance() {
-        return new SCEPlayerData();
     }
 
     /**
@@ -67,20 +64,15 @@ public class SCEPlayerData implements ISCEPlayerData {
      */
     public static @NotNull SCEPlayerData getInstance(PlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
-        SCEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
-        instance.player = player;
-        instance.setFlyable(instance.isFlyable);
-        return instance;
-    }
-
-    public static @NotNull SCEPlayerData getInstance(@NotNull UUID uuid, @Nullable String playerName) {
-        SCEPlayerData data = new SCEPlayerData(uuid, playerName);
+        SCEPlayerData data = new SCEPlayerData(gameProfile.getId(), gameProfile.getName());
         int i = PLAYER_DATA_LIST.indexOf(data);
         if (i != -1) {
             data = PLAYER_DATA_LIST.get(i);
         } else {
             PLAYER_DATA_LIST.add(data);
         }
+        data.player = player;
+        data.setFlyable(data.isFlyable);
         return data;
     }
 
@@ -102,6 +94,7 @@ public class SCEPlayerData implements ISCEPlayerData {
             nbtHome.putString("name", home.getKey());
             nbtHome.put("pos", home.getValue().serializeNBT());
             nbtHomes.add(nbtHome);
+            Main.LOGGER.info("Home: " + home.getKey());
         }
         nbt.put("homes", nbtHomes);
 
