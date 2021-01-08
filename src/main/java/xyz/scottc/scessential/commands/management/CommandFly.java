@@ -43,7 +43,7 @@ public class CommandFly {
         SCEPlayerData data = SCEPlayerData.getInstance(target);
         if (target.isCreative()) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantsetfly"), data.getPlayerName()), false);
+                    TextUtils.getTranslationKey("message", "cantsetfly"), data.getName()), false);
             return 1;
         } else if (data.isFlyable()) {
             data.setFlyable(false);
@@ -60,7 +60,7 @@ public class CommandFly {
                 data.setCanFlyUntil(-1L);
                 if (!source.equals(target)) {
                     source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "flypermanentlySource"), data.getPlayerName()), false);
+                            TextUtils.getTranslationKey("message", "flypermanentlySource"), data.getName()), false);
                 }
                 target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "flypermanentlyTarget")), false);
@@ -76,7 +76,7 @@ public class CommandFly {
                             TextUtils.getTranslationKey("message", "flytempTarget"), formattedDate), false);
                 }
                 source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flytempSource"), data.getPlayerName(), formattedDate), false);
+                        TextUtils.getTranslationKey("message", "flytempSource"), data.getName(), formattedDate), false);
                 break;
         }
         return 1;

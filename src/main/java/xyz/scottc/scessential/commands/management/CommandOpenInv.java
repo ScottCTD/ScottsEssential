@@ -41,7 +41,7 @@ public class CommandOpenInv {
     private static int invSee(ServerPlayerEntity source, ServerPlayerEntity target) {
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "en")), false);
+                    TextUtils.getTranslationKey("message", "cantopenselfinv")), false);
             return 1;
         }
         NetworkHooks.openGui(source, new INamedContainerProvider() {

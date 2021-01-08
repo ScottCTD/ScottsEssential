@@ -2,16 +2,18 @@ package xyz.scottc.scessential.core;
 
 import com.google.gson.JsonObject;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeleportPos {
+public class TeleportPos implements INBTSerializable<CompoundNBT> {
 
     public static final Map<String, TeleportPos> WARPS = new HashMap<>();
 
@@ -70,5 +72,21 @@ public class TeleportPos {
         String dimension = this.dimension.getLocation().getPath();
         String blockpos = "x: " + this.pos.getX() + " y: " + this.pos.getY() + " z: " + this.pos.getZ();
         return "World: " + dimension + "\nPosition: " + blockpos;
+    }
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString("dimension", this.dimension.getLocation().toString());
+        nbt.putInt("x", this.pos.getX());
+        nbt.putInt("y", this.pos.getY());
+        nbt.putInt("z", this.pos.getZ());
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("dimension")));
+        this.pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 }

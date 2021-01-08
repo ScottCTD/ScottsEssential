@@ -79,6 +79,11 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: 30 seconds")
                 .defineInRange("cleanupMobEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
 
+        // TODO find out why default is incorrect
+        /*
+        Incorrect key EntityCleanup.MobEntities.MobEntitiesWhitelist was corrected from [minecraft:cat, minecraft:mule, minecraft:wolf, minecraft:horse, minecraft:donkey, minecraft:wither, minecraft:guardian, minecraft:villager, minecraft:iron_golem, minecraft:snow_golem, minecraft:vindicator, minecraft:ender_dragon, minecraft:elder_guardian]
+        to [minecraft:cat, minecraft:mule, minecraft:wolf, minecraft:horse, minecraft:donkey, minecraft:wither, minecraft:guardian, minecraft:villager, minecraft:iron_golem, minecraft:snow_golem, minecraft:vindicator, minecraft:ender_dragon, minecraft:elder_guardian]
+         */
         mobEntitiesWhitelist = builder
                 .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
                         "You could use /scessential getItemRegistryName mob to get the registry names of nearby mobs. (radius specified in Commands section)",

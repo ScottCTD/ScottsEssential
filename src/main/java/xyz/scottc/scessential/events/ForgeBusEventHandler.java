@@ -3,9 +3,14 @@ package xyz.scottc.scessential.events;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.FolderName;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -14,6 +19,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
+import xyz.scottc.scessential.api.ISCEPlayerData;
+import xyz.scottc.scessential.capability.CapabilitySCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandTPA;
 import xyz.scottc.scessential.core.SCEPlayerData;
@@ -23,6 +30,7 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 import java.io.*;
 import java.util.Map;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeBusEventHandler {
@@ -33,14 +41,22 @@ public class ForgeBusEventHandler {
 
     private static int counter = 0;
 
+    @SubscribeEvent
+    public static void onAttachEntityCapability(AttachCapabilitiesEvent<Entity> event) {
+        Entity entity = event.getObject();
+        if (!entity.world.isRemote && entity instanceof PlayerEntity) {
+            event.addCapability(new ResourceLocation(Main.MODID, "sce_player_data"), new CapabilitySCEPlayerData.Provider());
+        }
+    }
+
     /**
      * Make flyable player flyable again after respawn.
      * @param e PlayerEvent.PlayerRespawnEvent
      */
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
-        SCEPlayerData data = SCEPlayerData.getInstance(e.getPlayer().getGameProfile());
-        if (data.getPlayer() != null && data.isFlyable()) {
+        SCEPlayerData data = SCEPlayerData.getInstance(e.getPlayer());
+        if (data.isFlyable()) {
             data.setFlyable(true);
         }
     }
@@ -173,33 +189,21 @@ public class ForgeBusEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLoaded(PlayerEvent.LoadFromFile event) {
-        init();
-        String uuid = event.getPlayerUUID();
-        File file = new File(playersDataFolder.getPath() + "/" + uuid + ".json");
-        if (file.exists()) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
-                JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
-                SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
-                data.fromJson(jsonObject);
-                SCEPlayerData.PLAYER_DATA_LIST.add(data);
-            } catch (IOException e) {
-                e.printStackTrace();
+        LazyOptional<ISCEPlayerData> capability = event.getPlayer().getCapability(CapabilitySCEPlayerData.SCE_PLAYER_DATA_CAPABILITY);
+        capability.ifPresent(cap -> {
+            if (cap instanceof SCEPlayerData) {
+                SCEPlayerData realCap = (SCEPlayerData) cap;
+                realCap.setUuid(UUID.fromString(event.getPlayerUUID()));
+                realCap.setPlayer(event.getPlayer());
+                SCEPlayerData.PLAYER_DATA_LIST.add(realCap);
             }
-        }
+        });
     }
 
     @SubscribeEvent
-    public static void onPlayerSaved(PlayerEvent.SaveToFile event) {
-        init();
-        String uuid = event.getPlayerUUID();
-        File file = new File(playersDataFolder + "/" + uuid + ".json");
-        SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
-        JsonObject jsonObject = data.toJson();
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))) {
-            Main.GSON.toJson(jsonObject, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+        data.setFlyable(data.isFlyable());
     }
 
     /**

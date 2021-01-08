@@ -99,7 +99,7 @@ public class CommandTPA {
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
 
-        String sourceName = sourceData.getPlayerName();
+        String sourceName = sourceData.getName();
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -154,7 +154,7 @@ public class CommandTPA {
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, true);
 
-        String sourceName = sourceData.getPlayerName();
+        String sourceName = sourceData.getName();
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -208,7 +208,7 @@ public class CommandTPA {
         TeleportUtils.teleport(source, new TeleportPos(request.getTarget()));
         sourceData.setLastTPATime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpasuccessTarget"), sourceData.getPlayerName()), true);
+                TextUtils.getTranslationKey("message", "tpasuccessTarget"), sourceData.getName()), true);
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "tpasuccessSource"), player.getGameProfile().getName()), true);
         TPARequest.getTpaRequest().remove(id);

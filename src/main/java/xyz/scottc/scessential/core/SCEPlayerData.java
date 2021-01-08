@@ -5,10 +5,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandBack;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -16,7 +21,7 @@ import java.util.*;
  * Every player should have an instance of this class.
  * It contains all the data that a player need like the last teleport time, uuid, name, homes, teleport history, and etc.
  */
-public class SCEPlayerData {
+public class SCEPlayerData implements ISCEPlayerData {
 
     // All the player data are stored in it.
     // It will be refilled everytime the server restart.
@@ -30,7 +35,7 @@ public class SCEPlayerData {
 
     private final TeleportPos[] teleportHistory = new TeleportPos[CommandBack.maxBacks];
     // 0 -> The most recent teleport
-    public int currentBackIndex = 0;
+    private int currentBackIndex = 0;
 
     private boolean isFlyable;
     private long canFlyUntil = -1;
@@ -45,12 +50,22 @@ public class SCEPlayerData {
     private long lastWarpTime = 0;
     private long lastTPATime = 0;
 
-    private SCEPlayerData(UUID uuid, String playerName) {
+    private SCEPlayerData() {}
+
+    private SCEPlayerData(@NotNull UUID uuid, @Nullable String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
     }
 
-    public static SCEPlayerData getInstance(PlayerEntity player) {
+    public static @NotNull SCEPlayerData getInstance() {
+        return new SCEPlayerData();
+    }
+
+    /**
+     * This method should be used only after player loaded.
+     * AttachCapability event happened before player loaded.
+     */
+    public static @NotNull SCEPlayerData getInstance(PlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
         SCEPlayerData instance = getInstance(gameProfile.getId(), gameProfile.getName());
         instance.player = player;
@@ -58,11 +73,7 @@ public class SCEPlayerData {
         return instance;
     }
 
-    public static SCEPlayerData getInstance(GameProfile gameProfile) {
-        return getInstance(gameProfile.getId(), gameProfile.getName());
-    }
-
-    public static SCEPlayerData getInstance(UUID uuid, String playerName) {
+    public static @NotNull SCEPlayerData getInstance(@NotNull UUID uuid, @Nullable String playerName) {
         SCEPlayerData data = new SCEPlayerData(uuid, playerName);
         int i = PLAYER_DATA_LIST.indexOf(data);
         if (i != -1) {
@@ -73,14 +84,85 @@ public class SCEPlayerData {
         return data;
     }
 
+    @Override
+    public @NotNull CompoundNBT serializeNBT() {
+        CompoundNBT nbt = new CompoundNBT();
+
+        // Info
+        Optional.ofNullable(this.uuid).ifPresent(id -> nbt.putString("uuid", id.toString()));
+
+        // Fly
+        nbt.putBoolean("flyable", this.isFlyable);
+        nbt.putLong("canFlyUntil", this.canFlyUntil);
+
+        // Homes
+        ListNBT nbtHomes = new ListNBT();
+        for (Map.Entry<String, TeleportPos> home : this.homes.entrySet()) {
+            CompoundNBT nbtHome = new CompoundNBT();
+            nbtHome.putString("name", home.getKey());
+            nbtHome.put("pos", home.getValue().serializeNBT());
+            nbtHomes.add(nbtHome);
+        }
+        nbt.put("homes", nbtHomes);
+
+        // Backs
+        nbt.putInt("currentBackIndex", this.currentBackIndex);
+        ListNBT nbtBacks = new ListNBT();
+        for (TeleportPos backPos : this.teleportHistory) {
+            if (backPos == null) break;
+            nbtBacks.add(backPos.serializeNBT());
+        }
+        nbt.put("backHistory", nbtBacks);
+
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+        try {
+            this.uuid = UUID.fromString(nbt.getString("uuid"));
+        } catch (IllegalArgumentException ignore) {}
+
+        this.isFlyable = nbt.getBoolean("flyable");
+        this.canFlyUntil = nbt.getLong("canFlyUntil");
+
+        Optional.ofNullable((ListNBT) nbt.get("homes")).ifPresent((nbtHomes) -> {
+            for (INBT home : nbtHomes) {
+                CompoundNBT temp = (CompoundNBT) home;
+                TeleportPos pos = new TeleportPos();
+                pos.deserializeNBT(temp.getCompound("pos"));
+                this.homes.put(temp.getString("name"), pos);
+            }
+        });
+
+        this.currentBackIndex = nbt.getInt("currentBackIndex");
+        Optional.ofNullable((ListNBT) nbt.get("backHistory")).ifPresent(backs -> {
+            int i = 0;
+            for (INBT back : backs) {
+                CompoundNBT temp = (CompoundNBT) back;
+                TeleportPos pos = new TeleportPos();
+                pos.deserializeNBT(temp);
+                try {
+                    this.teleportHistory[i] = pos;
+                } catch (IndexOutOfBoundsException e) {
+                    break;
+                }
+                i++;
+            }
+        });
+    }
+
+    @Override
     public @Nullable CommandTrashcan.Trashcan getTrashcan() {
         return trashcan;
     }
 
+    @Override
     public void setTrashcan(CommandTrashcan.Trashcan trashcan) {
         this.trashcan = trashcan;
     }
 
+    @Override
     public boolean isFlyable() {
         return this.isFlyable;
     }
@@ -89,10 +171,16 @@ public class SCEPlayerData {
      * This method will do nothing if player is null
      * @param flyable flyable
      */
+    @Override
     public void setFlyable(boolean flyable) {
-        if (this.player != null && !this.player.isCreative()) {
+        if (this.player.isCreative()) {
+            this.isFlyable = true;
+            return;
+        }
+        if (this.player != null) {
             if (flyable) {
                 this.player.abilities.allowFlying = true;
+                this.player.abilities.isFlying = true;
             } else {
                 this.player.abilities.allowFlying = false;
                 this.player.abilities.isFlying = false;
@@ -103,26 +191,50 @@ public class SCEPlayerData {
         }
     }
 
+    @Override
     public long getCanFlyUntil() {
         return canFlyUntil;
     }
 
+    @Override
     public void setCanFlyUntil(long canFlyUntil) {
         this.canFlyUntil = canFlyUntil;
     }
 
+    @Override
     public void addTeleportHistory(TeleportPos teleportPos) {
         System.arraycopy(this.teleportHistory, 0, this.teleportHistory, 1, CommandBack.maxBacks - 1);
         this.teleportHistory[0] = teleportPos;
         this.currentBackIndex = 0;
     }
 
-    public TeleportPos getTeleportHistory() {
+    @Override
+    public TeleportPos[] getAllTeleportHistory() {
+        return this.teleportHistory;
+    }
+
+    @Override
+    public @Nullable TeleportPos getTeleportHistory() {
         if (this.currentBackIndex < CommandBack.maxBacks) {
             return this.teleportHistory[this.currentBackIndex];
         } else {
             return null;
         }
+    }
+
+    @Override
+    public int getCurrentBackIndex() {
+        return this.currentBackIndex;
+    }
+
+    @Override
+    public void setCurrentBackIndex(int index) {
+        this.currentBackIndex = index;
+    }
+
+    @Override
+    public void moveCurrentBackIndex() {
+        this.currentBackIndex++;
     }
 
     public @Nullable TeleportPos getHomePos(String homeName) {
@@ -137,16 +249,26 @@ public class SCEPlayerData {
         this.homes.put(name, newPos);
     }
 
+    @Override
     public Map<String, TeleportPos> getHomes() {
         return this.homes;
     }
 
-    public PlayerEntity getPlayer() {
-        return player;
+    @Override
+    public @Nullable PlayerEntity getPlayer() {
+        return this.player;
     }
 
-    public String getPlayerName() {
-        return playerName;
+    @Override
+    public void setPlayer(PlayerEntity player) {
+        this.player = player;
+    }
+
+    public @Nullable String getName() {
+        if (this.playerName == null) {
+            this.playerName =  this.player.getGameProfile().getName();
+        }
+        return this.playerName;
     }
 
     public long getLastSpawnTime() {
@@ -205,6 +327,17 @@ public class SCEPlayerData {
         this.lastTPATime = lastTPATime;
     }
 
+    @Override
+    public UUID getUuid() {
+        return this.uuid;
+    }
+
+    @Override
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Deprecated
     public JsonObject toJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("uuid", this.uuid.toString());
@@ -233,6 +366,7 @@ public class SCEPlayerData {
         return jsonObject;
     }
 
+    @Deprecated
     public void fromJson(JsonObject jsonObject) {
         if (this.uuid == null || this.playerName == null) {
             this.uuid = UUID.fromString(jsonObject.get("uuid").getAsString());
@@ -265,6 +399,7 @@ public class SCEPlayerData {
             i++;
         }
     }
+
 
     /**
      * Compare two player data based on uuid.

@@ -47,7 +47,7 @@ public class CommandBack {
             data.setLastBackTime(System.currentTimeMillis());
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "backsuccess")), true);
-            data.currentBackIndex++;
+            data.moveCurrentBackIndex();
         }
         return 1;
     }
