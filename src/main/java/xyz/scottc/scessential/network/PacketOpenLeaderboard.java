@@ -1,6 +1,5 @@
 package xyz.scottc.scessential.network;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -43,8 +42,9 @@ public class PacketOpenLeaderboard extends AbstractPacket<PacketOpenLeaderboard>
     @Override
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {
-            ScreenLeaderboard screen = new ScreenLeaderboard(this.title, this.elements);
-            Minecraft.getInstance().displayGuiScreen(screen);
+            ScreenLeaderboard.open(this.title, this.elements);
+            context.get().setPacketHandled(true);
         });
+
     }
 }

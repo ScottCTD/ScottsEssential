@@ -28,11 +28,11 @@ public class SCEPlayerData implements ISCEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
-    private PlayerEntity player;
+    private @Nullable PlayerEntity player;
     private UUID uuid;
-    private String playerName;
+    private @Nullable String playerName;
 
-    private final PlayerStatistics statistics = new PlayerStatistics();
+    private PlayerStatistics statistics;
 
     private final Map<String, TeleportPos> homes = new HashMap<>(5);
 
@@ -58,6 +58,7 @@ public class SCEPlayerData implements ISCEPlayerData {
     private SCEPlayerData(@NotNull UUID uuid, @Nullable String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
+        this.statistics = PlayerStatistics.getInstance(this.uuid, this.playerName);
     }
 
     /**
@@ -84,8 +85,6 @@ public class SCEPlayerData implements ISCEPlayerData {
 
         // Info
         Optional.ofNullable(this.uuid).ifPresent(id -> nbt.putString("uuid", id.toString()));
-        // Statistics
-        nbt.put("statistics", this.statistics.serializeNBT());
 
         // Fly
         nbt.putBoolean("flyable", this.isFlyable);
@@ -119,7 +118,6 @@ public class SCEPlayerData implements ISCEPlayerData {
         try {
             this.uuid = UUID.fromString(nbt.getString("uuid"));
         } catch (IllegalArgumentException ignore) {}
-        Optional.ofNullable(nbt.get("statistics")).ifPresent(statisticsNbt -> this.statistics.deserializeNBT((CompoundNBT) statisticsNbt));
 
         this.isFlyable = nbt.getBoolean("flyable");
         this.canFlyUntil = nbt.getLong("canFlyUntil");
@@ -152,6 +150,9 @@ public class SCEPlayerData implements ISCEPlayerData {
 
     @Override
     public PlayerStatistics getStatistics() {
+        if (this.statistics == null) {
+            this.statistics = PlayerStatistics.getInstance(this.player);
+        }
         return this.statistics;
     }
 

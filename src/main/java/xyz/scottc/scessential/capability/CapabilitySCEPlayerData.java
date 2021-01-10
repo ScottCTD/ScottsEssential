@@ -34,8 +34,6 @@ public class CapabilitySCEPlayerData {
 
                         // Info
                         Optional.ofNullable(instance.getUuid()).ifPresent(id -> nbt.putString("uuid", id.toString()));
-                        //Statistics
-                        nbt.put("statistics", instance.getStatistics().serializeNBT());
 
                         // Fly
                         nbt.putBoolean("flyable", instance.isFlyable());
@@ -69,7 +67,6 @@ public class CapabilitySCEPlayerData {
                         try {
                             instance.setUuid(UUID.fromString(nbt.getString("uuid")));
                         } catch (IllegalArgumentException ignore) {}
-                        Optional.ofNullable(nbt.get("statistics")).ifPresent(statisticsNbt -> instance.getStatistics().deserializeNBT((CompoundNBT) statisticsNbt));
 
                         instance.setFlyable(nbt.getBoolean("flyable"));
                         instance.setCanFlyUntil(nbt.getLong("canFlyUntil"));

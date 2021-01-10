@@ -43,6 +43,13 @@ public class Network {
                 PacketOpenLeaderboard::new,
                 PacketOpenLeaderboard::handle
         );
+        INSTANCE.registerMessage(
+                nextId(),
+                PacketChangeLeaderboard.class,
+                PacketChangeLeaderboard::encode,
+                PacketChangeLeaderboard::new,
+                PacketChangeLeaderboard::handle
+        );
     }
 
     public static void sendToPlayerClient(ServerPlayerEntity player, AbstractPacket<? extends AbstractPacket<?>> packet) {

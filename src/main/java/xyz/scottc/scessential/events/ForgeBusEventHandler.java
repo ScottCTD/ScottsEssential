@@ -4,7 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
@@ -29,11 +33,13 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeBusEventHandler {
 
-    private static File mainFolder;
+    private static File MAIN_FOLDER;
+    private static File STATISTICS;
 
     private static int counter = 0;
 
@@ -95,13 +101,6 @@ public class ForgeBusEventHandler {
                             trashcan.setNextCleanSeconds((int) (nextCleanTime - now) / 1000);
                         }
                     });
-
-                    // ++Played Time
-                    SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> {
-                        PlayerStatistics statistics = data.getStatistics();
-                        int totalPlayedTimeSeconds = statistics.getTotalPlayedSeconds();
-                        statistics.setTotalPlayedSeconds(++totalPlayedTimeSeconds);
-                    });
                 }).start();
             }
             counter++;
@@ -121,7 +120,7 @@ public class ForgeBusEventHandler {
             if (entity instanceof ServerPlayerEntity) {
                 SCEPlayerData data = SCEPlayerData.getInstance(((ServerPlayerEntity) entity));
                 data.addTeleportHistory(new TeleportPos((ServerPlayerEntity) event.getEntityLiving()));
-                PlayerStatistics statistics = data.getStatistics();
+                PlayerStatistics statistics = PlayerStatistics.getInstance((PlayerEntity) entity);
                 int deathAmount = statistics.getDeathAmount();
                 statistics.setDeathAmount(++deathAmount);
             }
@@ -138,6 +137,7 @@ public class ForgeBusEventHandler {
                 int index = SCEPlayerData.PLAYER_DATA_LIST.indexOf(instance);
                 if (index != -1) {
                     cap.deserializeNBT(instance.serializeNBT());
+                    cap.setPlayer(event.getPlayer());
                     SCEPlayerData.PLAYER_DATA_LIST.set(index, (SCEPlayerData) cap);
                 } else {
                     SCEPlayerData.PLAYER_DATA_LIST.add((SCEPlayerData) cap);
@@ -176,11 +176,11 @@ public class ForgeBusEventHandler {
         Main.resetData();
         Main.SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
-        mainFolder = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();
+        MAIN_FOLDER = Main.SERVER.func_240776_a_(new FolderName(Main.MODID)).toFile();
         init();
 
         // Deserialize warps
-        File warpDataFile = new File(mainFolder.getPath() + "/" + "warps.json");
+        File warpDataFile = new File(MAIN_FOLDER.getPath() + "/" + "warps.json");
         if (warpDataFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(warpDataFile)))) {
                 JsonObject jsonObject = Main.GSON.fromJson(reader, JsonObject.class);
@@ -197,6 +197,20 @@ public class ForgeBusEventHandler {
                 e.printStackTrace();
             }
         }
+
+        // Deserialize statistics
+        if (STATISTICS.exists()) {
+            try {
+                CompoundNBT nbt = CompressedStreamTools.readCompressed(STATISTICS);
+                Optional.ofNullable((ListNBT) nbt.get("statistics")).ifPresent(listnbt -> listnbt.forEach(statistic -> {
+                    PlayerStatistics playerStatistics = new PlayerStatistics();
+                    playerStatistics.deserializeNBT((CompoundNBT) statistic);
+                    PlayerStatistics.ALL_STATISTICS.add(playerStatistics);
+                }));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         Main.LOGGER.info("SCE Successfully initialize directories!");
     }
 
@@ -208,7 +222,7 @@ public class ForgeBusEventHandler {
     public static void onWorldSave(WorldEvent.Save event) {
         init();
         // Serialize warps
-        File warpDataFile = new File(mainFolder.getPath() + "/" + "warps.json");
+        File warpDataFile = new File(MAIN_FOLDER.getPath() + "/" + "warps.json");
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(warpDataFile)))) {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", "warps");
@@ -224,6 +238,20 @@ public class ForgeBusEventHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // Serialize statistics
+        try {
+            CompoundNBT temp = new CompoundNBT();
+            ListNBT listNBT = new ListNBT();
+            PlayerStatistics.ALL_STATISTICS.forEach(statistic -> {
+                CompoundNBT nbt = statistic.serializeNBT();
+                listNBT.add(nbt);
+            });
+            temp.put("statistics", listNBT);
+            CompressedStreamTools.writeCompressed(temp, STATISTICS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -232,12 +260,13 @@ public class ForgeBusEventHandler {
      * /world/scessential/worlddata
      */
     public static void init() {
-        if (mainFolder == null) return;
-        if (!mainFolder.exists()) {
-            if (!mainFolder.mkdirs()) {
+        if (MAIN_FOLDER == null) return;
+        if (!MAIN_FOLDER.exists()) {
+            if (!MAIN_FOLDER.mkdirs()) {
                 throw new RuntimeException("Failed to create necessary scessential folder!");
             }
         }
+        STATISTICS = new File(MAIN_FOLDER.getAbsolutePath() + "/" + "statistics.dat");
     }
 
     @SubscribeEvent

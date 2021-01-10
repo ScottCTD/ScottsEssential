@@ -2,6 +2,7 @@ package xyz.scottc.scessential.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.client.gui.ListWidget;
 import xyz.scottc.scessential.client.utils.ScreenUtils;
+import xyz.scottc.scessential.core.PlayerStatistics;
+import xyz.scottc.scessential.network.Network;
+import xyz.scottc.scessential.network.PacketChangeLeaderboard;
 import xyz.scottc.scessential.utils.TextUtils;
 
 import java.util.List;
@@ -23,7 +27,7 @@ public class ScreenLeaderboard extends Screen {
     private ListWidget listWidget;
     private ListWidget.PageCounter pageCounterWidget;
     private final List<ITextComponent> elements;
-    private final int xSize = 217;
+    private final int xSize = 253;
     private final int ySize = 192;
     private int x;
     private int y;
@@ -33,11 +37,15 @@ public class ScreenLeaderboard extends Screen {
         this.elements = elements;
     }
 
+    public static void open(ITextComponent title, List<ITextComponent> elements) {
+        Minecraft.getInstance().displayGuiScreen(new ScreenLeaderboard(title, elements));
+    }
+
     @Override
     protected void init() {
         this.x = (this.width - this.xSize) / 2;
         this.y = (this.height - this.ySize) / 2;
-        this.listWidget = new ListWidget(this.x + 81, this.y + 20, 123, 151, this.font, elements);
+        this.listWidget = new ListWidget(this.x + 81, this.y + 20, 160, 151, this.font, elements);
         this.pageCounterWidget = new ListWidget.PageCounter(this.x + 77, this.y + 7, this.font, "/", 1, this.listWidget.getTexts().getTotalPages());
 
         // page
@@ -49,7 +57,12 @@ public class ScreenLeaderboard extends Screen {
                 button -> this.listWidget.getTexts().nextPage()));
 
         // Mode
-
+        this.addButton(new ExtendedButton(this.x + 5, this.listWidget.getY(), 73, 20,
+                new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathRank")),
+                button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DEATH_AMOUNT))));
+        this.addButton(new ExtendedButton(this.x + 5, this.listWidget.getY() + 20 + 5,  73, 20,
+                new TranslationTextComponent(TextUtils.getTranslationKey("text", "timeplayedrank")),
+                button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.TIME_PLAYED))));
     }
 
     @Override
@@ -79,6 +92,11 @@ public class ScreenLeaderboard extends Screen {
             this.closeScreen();
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean isPauseScreen() {
         return false;
     }
 }

@@ -27,9 +27,10 @@ public class PacketClearTrashcan extends AbstractPacket<PacketClearTrashcan> {
                 SCEPlayerData data = SCEPlayerData.getInstance(player);
                 Optional.ofNullable(data.getTrashcan()).ifPresent(trashcan -> {
                     trashcan.clear();
-                    data.getPlayer().openContainer.detectAndSendChanges();
+                    player.openContainer.detectAndSendChanges();
                 });
             });
+            context.get().setPacketHandled(true);
         });
     }
 }

@@ -73,8 +73,13 @@
   "text.scessential.clear": "Clear",
   "text.scessential.trashcantitle": "Clear in %d seconds!",
 
-  "message.scessential.deathAmount": "%s (%d)",
-
+  "text.scessential.leaderboard": "Leaderboard",
   "text.scessential.nextpage": "-->",
-  "text.scessential.prevpage": "<--"
+  "text.scessential.prevpage": "<--",
+  "text.scessential.deathRank": "Death",
+  "text.scessential.deathstitle": "Death Rank",
+  "text.scessential.deathAmount": "%s (%d)",
+  "text.scessential.timeplayedrank": "Time Played",
+  "text.scessential.timeplayedtitle": "Time Played Rank",
+  "text.scessential.timeplayed": "%s (%dH, %dMin)"
 }
