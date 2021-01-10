@@ -11,14 +11,17 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.capability.CapabilitySCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandTPA;
+import xyz.scottc.scessential.core.PlayerStatistics;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -48,6 +51,7 @@ public class ForgeBusEventHandler {
 
     /**
      * Determine if an tpa request was expired and if a player fly time expired.
+     * Also ++played time
      * @param event ServerTickEvent
      */
     @SubscribeEvent
@@ -91,6 +95,13 @@ public class ForgeBusEventHandler {
                             trashcan.setNextCleanSeconds((int) (nextCleanTime - now) / 1000);
                         }
                     });
+
+                    // ++Played Time
+                    SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> {
+                        PlayerStatistics statistics = data.getStatistics();
+                        int totalPlayedTimeSeconds = statistics.getTotalPlayedSeconds();
+                        statistics.setTotalPlayedSeconds(++totalPlayedTimeSeconds);
+                    });
                 }).start();
             }
             counter++;
@@ -100,13 +111,20 @@ public class ForgeBusEventHandler {
     /**
      * Listen this event for adding a new back history for a player when that player died, allowing player use /back
      * to return to the death pos.
+     * Also, add a death statistic
      * @param event Player Death event
      */
     @SubscribeEvent
     public static void onPlayerDied(LivingDeathEvent event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (entity instanceof ServerPlayerEntity) {
-            SCEPlayerData.getInstance(((ServerPlayerEntity) entity)).addTeleportHistory(new TeleportPos(((ServerPlayerEntity) entity).getServerWorld().getDimensionKey(), entity.getPosition()));
+        if (!event.getEntityLiving().world.isRemote) {
+            LivingEntity entity = event.getEntityLiving();
+            if (entity instanceof ServerPlayerEntity) {
+                SCEPlayerData data = SCEPlayerData.getInstance(((ServerPlayerEntity) entity));
+                data.addTeleportHistory(new TeleportPos((ServerPlayerEntity) event.getEntityLiving()));
+                PlayerStatistics statistics = data.getStatistics();
+                int deathAmount = statistics.getDeathAmount();
+                statistics.setDeathAmount(++deathAmount);
+            }
         }
     }
 
@@ -132,6 +150,20 @@ public class ForgeBusEventHandler {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
         data.setFlyable(data.isFlyable());
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Main.LOGGER.debug("Removing " + event.getPlayer().getGameProfile().getName() + " fron list!");
+            SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
+            Main.LOGGER.debug("Removed!");
+        }).start();
     }
 
     /**
@@ -206,6 +238,11 @@ public class ForgeBusEventHandler {
                 throw new RuntimeException("Failed to create necessary scessential folder!");
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(FMLServerStoppedEvent event) {
+        Main.resetData();
     }
 
 }

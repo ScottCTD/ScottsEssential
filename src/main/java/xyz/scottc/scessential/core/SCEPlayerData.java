@@ -32,6 +32,8 @@ public class SCEPlayerData implements ISCEPlayerData {
     private UUID uuid;
     private String playerName;
 
+    private final PlayerStatistics statistics = new PlayerStatistics();
+
     private final Map<String, TeleportPos> homes = new HashMap<>(5);
 
     private final TeleportPos[] teleportHistory = new TeleportPos[CommandBack.maxBacks];
@@ -82,6 +84,8 @@ public class SCEPlayerData implements ISCEPlayerData {
 
         // Info
         Optional.ofNullable(this.uuid).ifPresent(id -> nbt.putString("uuid", id.toString()));
+        // Statistics
+        nbt.put("statistics", this.statistics.serializeNBT());
 
         // Fly
         nbt.putBoolean("flyable", this.isFlyable);
@@ -115,6 +119,7 @@ public class SCEPlayerData implements ISCEPlayerData {
         try {
             this.uuid = UUID.fromString(nbt.getString("uuid"));
         } catch (IllegalArgumentException ignore) {}
+        Optional.ofNullable(nbt.get("statistics")).ifPresent(statisticsNbt -> this.statistics.deserializeNBT((CompoundNBT) statisticsNbt));
 
         this.isFlyable = nbt.getBoolean("flyable");
         this.canFlyUntil = nbt.getLong("canFlyUntil");
@@ -143,6 +148,11 @@ public class SCEPlayerData implements ISCEPlayerData {
                 i++;
             }
         });
+    }
+
+    @Override
+    public PlayerStatistics getStatistics() {
+        return this.statistics;
     }
 
     @Override
@@ -245,6 +255,11 @@ public class SCEPlayerData implements ISCEPlayerData {
     @Override
     public Map<String, TeleportPos> getHomes() {
         return this.homes;
+    }
+
+    @Override
+    public @NotNull List<SCEPlayerData> getAllPlayerData() {
+        return PLAYER_DATA_LIST;
     }
 
     @Override

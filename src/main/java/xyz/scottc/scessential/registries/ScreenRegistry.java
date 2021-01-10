@@ -5,8 +5,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.client.gui.ScreenOthersInv;
-import xyz.scottc.scessential.client.gui.ScreenTrashcan;
+import xyz.scottc.scessential.client.screen.ScreenOthersInv;
+import xyz.scottc.scessential.client.screen.ScreenTrashcan;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ScreenRegistry {

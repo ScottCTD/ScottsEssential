@@ -8,6 +8,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.commands.management.CommandOpenInv;
 import xyz.scottc.scessential.registries.ContainerTypeRegistry;
 
@@ -75,18 +76,18 @@ public class OthersInvContainer extends Container {
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
+    public void onContainerClosed(@NotNull PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
         this.targetInventory.closeInventory(playerIn);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean canInteractWith(@NotNull PlayerEntity playerIn) {
         return true;
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public @NotNull ItemStack transferStackInSlot(@NotNull PlayerEntity playerIn, int index) {
         ItemStack itemStack = this.inventorySlots.get(index).getStack();
         if (!itemStack.isItemEqual(ItemStack.EMPTY)) {
             if (index < 36) {

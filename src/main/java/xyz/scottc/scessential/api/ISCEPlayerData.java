@@ -3,10 +3,14 @@ package xyz.scottc.scessential.api;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
+import xyz.scottc.scessential.core.PlayerStatistics;
+import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,6 +18,8 @@ import java.util.UUID;
  * The capability interface for storing mod player data
  */
 public interface ISCEPlayerData extends INBTSerializable<CompoundNBT> {
+
+    @NotNull List<SCEPlayerData> getAllPlayerData();
 
     /**
      * Get the PlayerEntity of this player.
@@ -32,6 +38,8 @@ public interface ISCEPlayerData extends INBTSerializable<CompoundNBT> {
     @Nullable UUID getUuid();
 
     void setUuid(UUID uuid);
+
+    PlayerStatistics getStatistics();
 
     /**
      * If the trashcan of this player had not been initialized, this method will return null.

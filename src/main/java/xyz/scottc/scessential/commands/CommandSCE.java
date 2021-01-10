@@ -15,7 +15,6 @@ public class CommandSCE {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         scessential = dispatcher.register(
                 Commands.literal(Main.MODID)
-                        .requires(source -> source.hasPermissionLevel(2))
                         .executes(context -> scessential(context.getSource().asPlayer()))
         );
     }

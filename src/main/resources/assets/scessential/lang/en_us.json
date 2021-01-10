@@ -71,5 +71,10 @@
 
   "text.scessential.trashcan": "Trashcan",
   "text.scessential.clear": "Clear",
-  "text.scessential.trashcantitle": "Clear in %d seconds!"
+  "text.scessential.trashcantitle": "Clear in %d seconds!",
+
+  "message.scessential.deathAmount": "%s (%d)",
+
+  "text.scessential.nextpage": "-->",
+  "text.scessential.prevpage": "<--"
 }

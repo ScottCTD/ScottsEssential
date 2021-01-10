@@ -1,4 +1,4 @@
-package xyz.scottc.scessential.client.gui;
+package xyz.scottc.scessential.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;

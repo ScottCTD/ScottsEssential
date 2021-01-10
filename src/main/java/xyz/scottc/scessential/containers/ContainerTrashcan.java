@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.registries.ContainerTypeRegistry;
 
@@ -35,7 +36,7 @@ public class ContainerTrashcan extends Container {
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+    public @NotNull ItemStack transferStackInSlot(@NotNull PlayerEntity playerIn, int index) {
         Slot slot = this.inventorySlots.get(index);
         if (slot == null) return ItemStack.EMPTY;
         ItemStack itemStack = slot.getStack();
@@ -86,7 +87,7 @@ public class ContainerTrashcan extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean canInteractWith(@NotNull PlayerEntity playerIn) {
         return true;
     }
 }

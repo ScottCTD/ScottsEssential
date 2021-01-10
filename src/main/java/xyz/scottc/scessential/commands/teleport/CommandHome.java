@@ -115,6 +115,7 @@ public class CommandHome {
         if (data.getHomePos(name) != null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homeexist"), name), false);
+            return 1;
         }
         data.setHome(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
@@ -122,6 +123,7 @@ public class CommandHome {
         return 1;
     }
 
+    // TODO Auto teleport to the first home if "home" not present
     private static int home(ServerPlayerEntity player, String name) {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
         if (TeleportUtils.isInCooldown(player, data.getLastHomeTime(), homeCooldownSeconds)) {

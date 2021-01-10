@@ -5,6 +5,8 @@ import xyz.scottc.scessential.Main;
 
 public class TextUtils {
 
+    public static final int TITLE_COLOR = 0x404040;
+
     private TextUtils() {}
 
     public static String getTranslationKey(String beforeModid, String afterModid) {
@@ -31,7 +33,7 @@ public class TextUtils {
     }
 
     public static IFormattableTextComponent getContainerNameTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromHex("3f3f3f"), bold, underline, italic, translationKey, parameters);
+        return getColoredTextFromI18n(Color.fromHex(String.valueOf(TITLE_COLOR)), bold, underline, italic, translationKey, parameters);
     }
 
     public static IFormattableTextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {

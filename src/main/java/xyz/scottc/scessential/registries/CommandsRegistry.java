@@ -6,9 +6,11 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.commands.CommandSCE;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
+import xyz.scottc.scessential.commands.info.CommandRank;
 import xyz.scottc.scessential.commands.management.CommandFly;
 import xyz.scottc.scessential.commands.management.CommandHat;
 import xyz.scottc.scessential.commands.management.CommandOpenInv;
@@ -18,14 +20,9 @@ import xyz.scottc.scessential.commands.teleport.*;
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CommandsRegistry {
 
-    /**
-     * See https://github.com/TeamCovertDragon/Harbinger/discussions/96
-     * @param event FMLServerAboutToStartEvent
-     */
-    @SubscribeEvent
-    public static void register(FMLServerAboutToStartEvent event) {
-        CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommandManager().getDispatcher();
+    public static boolean init = false;
 
+    private static void register(CommandDispatcher<CommandSource> dispatcher) {
         // Main Commands
         CommandSCE.register(dispatcher);
 
@@ -45,16 +42,38 @@ public class CommandsRegistry {
 
         // Info Commands
         CommandGetRegistryName.register(dispatcher);
+        CommandRank.register(dispatcher);
 
         Main.LOGGER.info("All commands registered!");
     }
 
     /**
-     * Not use it because I want config to be loaded before registering commands
+     * See https://github.com/TeamCovertDragon/Harbinger/discussions/96
+     * @param event FMLServerAboutToStartEvent
+     */
+    @SubscribeEvent
+    public static void register(FMLServerAboutToStartEvent event) {
+        CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommandManager().getDispatcher();
+        if (!init) {
+            register(dispatcher);
+            init = true;
+        }
+    }
+
+    /**
      * @param event RegisterCommandsEvent
      */
-    //@SubscribeEvent
-    @Deprecated
-    public static void register(RegisterCommandsEvent event) {}
+    @SubscribeEvent
+    public static void register(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
+        if (init) {
+            register(dispatcher);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(FMLServerStoppedEvent event) {
+        init = false;
+    }
 
 }

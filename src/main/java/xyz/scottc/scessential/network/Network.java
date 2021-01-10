@@ -14,16 +14,17 @@ import xyz.scottc.scessential.Main;
 public class Network {
 
     private static final String PROTOCAL_VERSION = "1.0";
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-        new ResourceLocation(Main.MODID, "main_network_channel"),
-            () -> PROTOCAL_VERSION,
-            PROTOCAL_VERSION::equals,
-            PROTOCAL_VERSION::equals
-    );
+    public static SimpleChannel INSTANCE;
     private static int id = 0;
 
     @SubscribeEvent
     public static void onFMLCommonSetup(FMLCommonSetupEvent event) {
+        INSTANCE = NetworkRegistry.newSimpleChannel(
+                new ResourceLocation(Main.MODID, "main"),
+                () -> PROTOCAL_VERSION,
+                PROTOCAL_VERSION::equals,
+                PROTOCAL_VERSION::equals
+        );
         Network.register();
     }
 
@@ -35,9 +36,16 @@ public class Network {
                 PacketClearTrashcan::new,
                 PacketClearTrashcan::handle
         );
+        INSTANCE.registerMessage(
+                nextId(),
+                PacketOpenLeaderboard.class,
+                PacketOpenLeaderboard::encode,
+                PacketOpenLeaderboard::new,
+                PacketOpenLeaderboard::handle
+        );
     }
 
-    public static void sendToPlayerClient(ServerPlayerEntity player, Object packet) {
+    public static void sendToPlayerClient(ServerPlayerEntity player, AbstractPacket<? extends AbstractPacket<?>> packet) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 

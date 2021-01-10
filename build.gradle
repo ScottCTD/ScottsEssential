@@ -53,7 +53,7 @@ minecraft {
                 }
             }
 
-            args "--username=Dev"
+            args "--username=Devv"
         }
 
         server {
