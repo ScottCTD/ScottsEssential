@@ -38,13 +38,13 @@ public class ScreenTrashcan extends ContainerScreen<ContainerTrashcan> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void drawGuiContainerBackgroundLayer(@NotNull MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
         this.blit(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+    protected void drawGuiContainerForegroundLayer(@NotNull MatrixStack matrixStack, int x, int y) {
         super.drawGuiContainerForegroundLayer(matrixStack, x, y);
     }
 

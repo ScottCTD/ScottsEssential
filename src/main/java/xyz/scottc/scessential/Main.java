@@ -1,7 +1,5 @@
 package xyz.scottc.scessential;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.storage.FolderName;
@@ -31,7 +29,6 @@ public class Main {
     public static final String MODID = "scessential";
     public static final String MOD_VERSION = "1.0.0";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
     public static @Nullable MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();

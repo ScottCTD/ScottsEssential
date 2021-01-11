@@ -30,7 +30,7 @@ public class ScreenOthersInv extends ContainerScreen<OthersInvContainer> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void drawGuiContainerBackgroundLayer(@NotNull MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
         blit(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize);
     }

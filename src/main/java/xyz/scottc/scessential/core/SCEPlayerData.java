@@ -35,9 +35,9 @@ public class SCEPlayerData implements ISCEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
-    private @Nullable PlayerEntity player;
+    private PlayerEntity player;
     private UUID uuid;
-    private @Nullable String playerName;
+    private String playerName;
 
     private PlayerStatistics statistics;
 
@@ -91,7 +91,7 @@ public class SCEPlayerData implements ISCEPlayerData {
         CompoundNBT nbt = new CompoundNBT();
 
         // Info
-        Optional.ofNullable(this.uuid).ifPresent(id -> nbt.putString("uuid", id.toString()));
+        nbt.putString("uuid", this.uuid.toString());
 
         // Fly
         nbt.putBoolean("flyable", this.isFlyable);

@@ -130,8 +130,6 @@ public class EntityCleaner {
                         if (isTNTEntityCleanupEnable)
                             amount += cleanupEntity(worlds, TNTEntity.class, entity -> true);
                         otherTimer = System.currentTimeMillis();
-/*                    Main.sendMessageToAllPlayers(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "misccleanupcomplete"), amount), false);*/
                     }
 
                 });

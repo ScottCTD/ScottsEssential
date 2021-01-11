@@ -52,7 +52,7 @@ public class CommandOpenInv {
             }
 
             @Override
-            public @NotNull Container createMenu(int id, PlayerInventory sourceInv, PlayerEntity source) {
+            public @NotNull Container createMenu(int id, @NotNull PlayerInventory sourceInv, @NotNull PlayerEntity source) {
                 return OthersInvContainer.getServerSideInstance(id, sourceInv, target.inventory);
             }
         });
@@ -82,13 +82,13 @@ public class CommandOpenInv {
         }
 
         @Override
-        public ItemStack getStackInSlot(int index) {
+        public @NotNull ItemStack getStackInSlot(int index) {
             int realIndex = this.getPlayerInvIndex(index);
             return playerInventory.getStackInSlot(realIndex);
         }
 
         @Override
-        public ItemStack decrStackSize(int index, int count) {
+        public @NotNull ItemStack decrStackSize(int index, int count) {
             int realIndex = this.getPlayerInvIndex(index);
             ItemStack itemStack = this.playerInventory.decrStackSize(realIndex, count);
             this.markDirty();
@@ -96,7 +96,7 @@ public class CommandOpenInv {
         }
 
         @Override
-        public ItemStack removeStackFromSlot(int index) {
+        public @NotNull ItemStack removeStackFromSlot(int index) {
             int realIndex = this.getPlayerInvIndex(index);
             ItemStack itemStack = this.playerInventory.removeStackFromSlot(realIndex);
             this.markDirty();
@@ -104,7 +104,7 @@ public class CommandOpenInv {
         }
 
         @Override
-        public void setInventorySlotContents(int index, ItemStack stack) {
+        public void setInventorySlotContents(int index, @NotNull ItemStack stack) {
             int realIndex = this.getPlayerInvIndex(index);
             this.playerInventory.setInventorySlotContents(realIndex, stack);
             this.markDirty();
@@ -118,7 +118,7 @@ public class CommandOpenInv {
         }
 
         @Override
-        public boolean isUsableByPlayer(PlayerEntity player) {
+        public boolean isUsableByPlayer(@NotNull PlayerEntity player) {
             return true;
         }
 
@@ -134,7 +134,7 @@ public class CommandOpenInv {
         }
 
         @Override
-        public boolean isItemValidForSlot(int index, ItemStack stack) {
+        public boolean isItemValidForSlot(int index, @NotNull ItemStack stack) {
             int realIndex = this.getPlayerInvIndex(index);
             return this.playerInventory.isItemValidForSlot(realIndex, stack);
         }
