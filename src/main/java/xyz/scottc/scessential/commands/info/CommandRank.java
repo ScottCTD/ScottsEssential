@@ -16,10 +16,12 @@ public class CommandRank {
 
     @ConfigField
     public static boolean isRankEnable = true;
+    @ConfigField
+    public static String rankAlias = "rank";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("rank")
+                Commands.literal(rankAlias)
                         .executes(context -> openGUI(context.getSource().asPlayer()))
         );
     }

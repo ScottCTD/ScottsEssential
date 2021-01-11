@@ -26,10 +26,12 @@ public class CommandSpawn implements Command<CommandSource> {
     @ConfigField
     public static boolean isSpawnEnable = true;
     @ConfigField
+    public static String spawnAlias = "spawn";
+    @ConfigField
     public static int spawnCooldownSeconds = 3;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(Commands.literal("spawn")
+        dispatcher.register(Commands.literal(spawnAlias)
                 .executes(new CommandSpawn())
         );
     }

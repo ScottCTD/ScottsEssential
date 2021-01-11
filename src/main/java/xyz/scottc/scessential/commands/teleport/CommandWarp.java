@@ -31,11 +31,17 @@ public class CommandWarp {
     @ConfigField
     public static boolean isWarpEnable = true;
     @ConfigField
+    public static String
+            setWarpAlias    = "setwarp",
+            warpAlias       = "warp",
+            listWarpsAlias  = "listwarps",
+            delWarpAlias    = "delwarp";
+    @ConfigField
     public static int warpCooldownSeconds = 3;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("setwarp")
+                Commands.literal(setWarpAlias)
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> setWarp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
@@ -43,7 +49,7 @@ public class CommandWarp {
         );
 
         dispatcher.register(
-                Commands.literal("warp")
+                Commands.literal(warpAlias)
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(TeleportPos.WARPS.keySet(), builder))
                                 .executes(context -> warp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
@@ -51,12 +57,12 @@ public class CommandWarp {
         );
 
         dispatcher.register(
-                Commands.literal("listwarps")
+                Commands.literal(listWarpsAlias)
                         .executes(context -> listWarps(context.getSource().asPlayer()))
         );
 
         LiteralCommandNode<CommandSource> delWarp = dispatcher.register(
-                Commands.literal("delwarp")
+                Commands.literal(delWarpAlias)
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(TeleportPos.WARPS.keySet(), builder))

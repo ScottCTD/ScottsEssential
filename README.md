@@ -46,10 +46,10 @@ Feel free to report any bug or enhancement!
       - Usage: Delete a home.
     - /listhomes
       - Usage: List all of your homes. You can click one in the list to teleport to the clicked one.
-    - /homeother [HomeName]
+    - /homeother [Target] [HomeName]
       - Usage: Teleport to other's home.
       - Permission: 2 Level
-    - /delotherhome = /removeotherhome [HomeName]
+    - /delotherhome = /removeotherhome [Target] [HomeName]
       - Usage: Delete other's home.
       - Permission: 2 Level
     - /listotherhomes [Player]
@@ -86,6 +86,8 @@ Feel free to report any bug or enhancement!
     - Permission: 2 Level
 - /trashcan
     - Usage: Open a GUI trashcan that you can put trash items in. You could clear all the items in the trashcan by clicking a button, and the trashcan will clear after some seconds (Configurable). 
+- /rank
+    - Usage: Open a GUI, displaying the ranking information of all players. (E.g Number of deaths)
 - More in progress
   
 # Services

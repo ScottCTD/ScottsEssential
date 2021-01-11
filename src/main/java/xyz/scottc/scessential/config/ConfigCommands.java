@@ -13,29 +13,50 @@ public class ConfigCommands extends AbstractModConfig {
 
     // Spawn
     private static ForgeConfigSpec.BooleanValue isSpawnEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String> spawnAlias;
     private static ForgeConfigSpec.IntValue spawnCooldownSecondsConfig;
 
     // Home
     private static ForgeConfigSpec.BooleanValue isHomeEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String>
+            setHomeAlias,
+            homeAlias,
+            homeOtherAlias,
+            delHomeAlias,
+            listHomesAlias,
+            listOtherHomesAlias,
+            delOtherHomeAlias;
     private static ForgeConfigSpec.IntValue homeCooldownSecondsConfig, homeOtherCooldownSecondsConfig;
     private static ForgeConfigSpec.IntValue maxHomesConfig;
 
     // Back
     private static ForgeConfigSpec.BooleanValue isBackEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String> backAlias;
     private static ForgeConfigSpec.IntValue backCooldownSecondsConfig;
     private static ForgeConfigSpec.IntValue maxBacksConfig;
 
     // Warp
     private static ForgeConfigSpec.BooleanValue isWarpEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String>
+            setWarpAlias,
+            warpAlias,
+            listWarpsAlias,
+            delWarpAlias;
     private static ForgeConfigSpec.IntValue warpCooldownSecondsConfig;
 
     // TPA
     private static ForgeConfigSpec.BooleanValue isTPAEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String>
+            tpaAlias,
+            tpaHereAlias,
+            tpHereAlias,
+            tpAllHereAlias;
     private static ForgeConfigSpec.IntValue tpaCooldownSecondsConfig;
     private static ForgeConfigSpec.IntValue maxTPARequestTimeoutSecondsConfig;
 
     // RTP
     private static ForgeConfigSpec.BooleanValue isRTPEnableConfig;
+    private static ForgeConfigSpec.ConfigValue<? extends String> rtpAlias;
     private static ForgeConfigSpec.IntValue rtpCooldownSecondsConfig;
     private static ForgeConfigSpec.IntValue maxRTPAttemptsConfig;
     private static ForgeConfigSpec.IntValue
@@ -58,6 +79,7 @@ public class ConfigCommands extends AbstractModConfig {
 
     // fly
     private static ForgeConfigSpec.BooleanValue isFlyEnable;
+    private static ForgeConfigSpec.ConfigValue<? extends String> flyAlias;
     private static ForgeConfigSpec.ConfigValue<? extends String> datePattern;
 
     // scessential getRegistryName mob
@@ -65,16 +87,20 @@ public class ConfigCommands extends AbstractModConfig {
 
     // invsee
     private static ForgeConfigSpec.BooleanValue isOpenInvEnable;
+    private static ForgeConfigSpec.ConfigValue<? extends String> invseeAlias;
 
     // hat
     private static ForgeConfigSpec.BooleanValue isHatEnable;
+    private static ForgeConfigSpec.ConfigValue<? extends String> hatAlias;
 
     // trashcan
     private static ForgeConfigSpec.BooleanValue isTrashcanEnable;
+    private static ForgeConfigSpec.ConfigValue<? extends String> trashcanAlias;
     private static ForgeConfigSpec.IntValue cleanTrashcanIntervalSeconds;
 
     // Rank
     private static ForgeConfigSpec.BooleanValue isRankEnable;
+    private static ForgeConfigSpec.ConfigValue<? extends String> rankAlias;
 
     public ConfigCommands(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -90,6 +116,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsSpawnEnable", true);
+        spawnAlias = this.builder
+                .comment("how to trigger command spawn. If you set it to \"sp\", you will need to use /sp to back to the spawn point.",
+                        "Default value: spawn",
+                        "Do not add \"/\"!")
+                .define("SpawnAlias", "spawn", ConfigCommands::isValidCommandAlias);
         spawnCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /spawn commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
                 .defineInRange("SpawnCooldown", 3, 0, Integer.MAX_VALUE);
@@ -101,6 +132,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsBackEnable", true);
+        backAlias = this.builder
+                .comment("how to trigger command back. If you set it to \"bk\", you will need to use /bk to back.",
+                        "Default value: back",
+                        "Do not add \"/\"!")
+                .define("BackAlias", "back", ConfigCommands::isValidCommandAlias);
         backCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /back commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
                 .defineInRange("BackCooldown", 3, 0, Integer.MAX_VALUE);
@@ -115,6 +151,41 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsSpawnEnable", true);
+        homeAlias = this.builder
+                .comment("how to trigger command home.",
+                        "Default value: home",
+                        "Do not add \"/\"!")
+                .define("HomeAlias", "home", ConfigCommands::isValidCommandAlias);
+        setHomeAlias = this.builder
+                .comment("how to trigger command to set a home.",
+                        "Default value: sethome",
+                        "Do not add \"/\"!")
+                .define("SetHomeAlias", "sethome", ConfigCommands::isValidCommandAlias);
+        delHomeAlias = this.builder
+                .comment("how to trigger command to delete a home.",
+                        "Default value: delhome",
+                        "Do not add \"/\"!")
+                .define("DelHomeAlias", "delhome", ConfigCommands::isValidCommandAlias);
+        listHomesAlias = this.builder
+                .comment("how to trigger command to list all your homes.",
+                        "Default value: listhomes",
+                        "Do not add \"/\"!")
+                .define("ListHomesAlias", "listhomes", ConfigCommands::isValidCommandAlias);
+        homeOtherAlias = this.builder
+                .comment("how to trigger command to teleport to other's home.",
+                        "Default value: homeother",
+                        "Do not add \"/\"!")
+                .define("HomeOtherAlias", "homeother", ConfigCommands::isValidCommandAlias);
+        delOtherHomeAlias = this.builder
+                .comment("how to trigger command to delete other's home.",
+                        "Default value: delotherhome",
+                        "Do not add \"/\"!")
+                .define("DelOtherHomeAlias", "delotherhome", ConfigCommands::isValidCommandAlias);
+        listOtherHomesAlias = this.builder
+                .comment("how to trigger command to list all someone's homes.",
+                        "Default value: listotherhomes",
+                        "Do not add \"/\"!")
+                .define("ListOtherHomesAlias", "listotherhomes", ConfigCommands::isValidCommandAlias);
         homeCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /home commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
                 .defineInRange("HomeCooldown", 3, 0, Integer.MAX_VALUE);
@@ -132,6 +203,26 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsWarpEnable", true);
+        warpAlias = this.builder
+                .comment("how to trigger command to teleport to a warp.",
+                        "Default value: warp",
+                        "Do not add \"/\"!")
+                .define("WarpAlias", "warp", ConfigCommands::isValidCommandAlias);
+        setWarpAlias = this.builder
+                .comment("how to trigger command to set a warp.",
+                        "Default value: setwarp",
+                        "Do not add \"/\"!")
+                .define("SetWarpAlias", "setwarp", ConfigCommands::isValidCommandAlias);
+        delWarpAlias = this.builder
+                .comment("how to trigger command to delete a warp.",
+                        "Default value: delwarp",
+                        "Do not add \"/\"!")
+                .define("DelWarpAlias", "delwarp", ConfigCommands::isValidCommandAlias);
+        listWarpsAlias = this.builder
+                .comment("how to trigger command to list all warps.",
+                        "Default value: listwarps",
+                        "Do not add \"/\"!")
+                .define("ListWarpsAlias", "listwarps", ConfigCommands::isValidCommandAlias);
         warpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /warp commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
                 .defineInRange("WarpCooldown", 3, 0, Integer.MAX_VALUE);
@@ -143,6 +234,26 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsTPAEnable", true);
+        tpaAlias = this.builder
+                .comment("how to trigger command to tpa.",
+                        "Default value: tpa",
+                        "Do not add \"/\"!")
+                .define("TPAAlias", "tpa", ConfigCommands::isValidCommandAlias);
+        tpaHereAlias = this.builder
+                .comment("how to trigger command to tpahere.",
+                        "Default value: tpahere",
+                        "Do not add \"/\"!")
+                .define("TPAHereAlias", "tpahere", ConfigCommands::isValidCommandAlias);
+        tpHereAlias = this.builder
+                .comment("how to trigger command to teleport player to your position.",
+                        "Default value: tphere",
+                        "Do not add \"/\"!")
+                .define("TPHereAlias", "tphere", ConfigCommands::isValidCommandAlias);
+        tpAllHereAlias = this.builder
+                .comment("how to trigger command to teleport all players to your position.",
+                        "Default value: tpallhere",
+                        "Do not add \"/\"!")
+                .define("TPAllHereAlias", "tpallhere", ConfigCommands::isValidCommandAlias);
         tpaCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /tpa and /tpahere commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
                 .defineInRange("TPACooldown", 3, 0, Integer.MAX_VALUE);
@@ -157,6 +268,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsRTPEnable", true);
+        rtpAlias = this.builder
+                .comment("how to trigger command to randomly teleport to a safe location within the world.",
+                        "Default value: rtp",
+                        "Do not add \"/\"!")
+                .define("RTPAlias", "rtp", ConfigCommands::isValidCommandAlias);
         rtpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /rtp commands, or teleport cooldown, in seconds.\nDefault value: 10 seconds")
                 .defineInRange("RTPCooldown", 10, 0, Integer.MAX_VALUE);
@@ -227,7 +343,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsFlyEnable", true);
-
+        flyAlias = this.builder
+                .comment("how to trigger command to let a player flayble.",
+                        "Default value: fly",
+                        "Do not add \"/\"!")
+                .define("FlyAlias", "fly", ConfigCommands::isValidCommandAlias);
         datePattern = this.builder
                 .comment("The date format used to display the deadline of flying.",
                         "A valid date format should follow the pattern described in JavaDoc: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html",
@@ -242,6 +362,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("IsHatEnable", true);
+        hatAlias = this.builder
+                .comment("how to trigger command hat.",
+                        "Default value: hat",
+                        "Do not add \"/\"!")
+                .define("HatAlias", "hat", ConfigCommands::isValidCommandAlias);
         this.builder.pop();
 
         this.builder.push("Trashcan");
@@ -250,6 +375,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("isTrashcanEnable", true);
+        trashcanAlias = this.builder
+                .comment("how to trigger command to open trashcan.",
+                        "Default value: trashcan",
+                        "Do not add \"/\"!")
+                .define("TrashcanAlias", "trashcan", ConfigCommands::isValidCommandAlias);
         cleanTrashcanIntervalSeconds = this.builder
                 .comment("The interval between two actions of deleting items in the trashcan.",
                         "There is also a button available in the trashcan gui to clear the items.",
@@ -257,12 +387,17 @@ public class ConfigCommands extends AbstractModConfig {
                 .defineInRange("CleanTrashInterval", 60, 1, Integer.MAX_VALUE);
         this.builder.pop();
 
-        this.builder.push("OpenInv/Invsee");
+        this.builder.push("Invsee");
         isOpenInvEnable = this.builder
                 .comment("Set it to false to disable /invsee (/openinv maybe in the future) command.",
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("isInvseeEnable", true);
+        invseeAlias = this.builder
+                .comment("how to trigger command to open someone's inventory.",
+                        "Default value: invsee",
+                        "Do not add \"/\"!")
+                .define("InvseeAlias", "invsee", ConfigCommands::isValidCommandAlias);
         this.builder.pop();
 
         this.builder.push("Rank");
@@ -271,6 +406,11 @@ public class ConfigCommands extends AbstractModConfig {
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
                 .define("isRankEnable", true);
+        rankAlias = this.builder
+                .comment("how to trigger command to open rank gui.",
+                        "Default value: rank",
+                        "Do not add \"/\"!")
+                .define("RankAlias", "rank", ConfigCommands::isValidCommandAlias);
         this.builder.pop();
 
         // /scessential ....
@@ -294,30 +434,48 @@ public class ConfigCommands extends AbstractModConfig {
     public void get() {
         // Spawn
         CommandSpawn.isSpawnEnable = isSpawnEnableConfig.get();
+        CommandSpawn.spawnAlias = spawnAlias.get();
         CommandSpawn.spawnCooldownSeconds = spawnCooldownSecondsConfig.get();
 
         // Back
         CommandBack.isBackEnable = isBackEnableConfig.get();
+        CommandBack.backAlias = backAlias.get();
         CommandBack.backCooldownSeconds = backCooldownSecondsConfig.get();
         CommandBack.maxBacks = maxBacksConfig.get();
 
         // Home
         CommandHome.isHomeEnable = isHomeEnableConfig.get();
+        CommandHome.setHomeAlias = setHomeAlias.get();
+        CommandHome.homeAlias = homeAlias.get();
+        CommandHome.homeOtherAlias = homeOtherAlias.get();
+        CommandHome.delHomeAlias = delHomeAlias.get();
+        CommandHome.listHomesAlias = listHomesAlias.get();
+        CommandHome.listOtherHomesAlias = listOtherHomesAlias.get();
+        CommandHome.delOtherHomeAlias = delOtherHomeAlias.get();
         CommandHome.homeCooldownSeconds = homeCooldownSecondsConfig.get();
         CommandHome.homeOtherCooldownSeconds = homeOtherCooldownSecondsConfig.get();
         CommandHome.maxHomes = maxHomesConfig.get();
 
         // TPA
         CommandTPA.isTPAEnable = isTPAEnableConfig.get();
+        CommandTPA.tpaAlias = tpaAlias.get();
+        CommandTPA.tpaHereAlias = tpaHereAlias.get();
+        CommandTPA.tpHereAlias = tpHereAlias.get();
+        CommandTPA.tpAllHereAlias = tpAllHereAlias.get();
         CommandTPA.tpaCooldownSeconds = tpaCooldownSecondsConfig.get();
         CommandTPA.maxTPARequestTimeoutSeconds = maxTPARequestTimeoutSecondsConfig.get();
 
         // Warp
         CommandWarp.isWarpEnable = isWarpEnableConfig.get();
+        CommandWarp.setWarpAlias = setWarpAlias.get();
+        CommandWarp.warpAlias = warpAlias.get();
+        CommandWarp.listWarpsAlias = listWarpsAlias.get();
+        CommandWarp.delWarpAlias = delWarpAlias.get();
         CommandWarp.warpCooldownSeconds = warpCooldownSecondsConfig.get();
 
         // RTP
         CommandRTP.isRTPEnable = isRTPEnableConfig.get();
+        CommandRTP.rtpAlias = rtpAlias.get();
         CommandRTP.rtpCooldownSeconds = rtpCooldownSecondsConfig.get();
         CommandRTP.maxRTPAttempts = maxRTPAttemptsConfig.get();
         CommandRTP.minRTPHeightDefault = minRTPHeightDefaultConfig.get();
@@ -339,6 +497,7 @@ public class ConfigCommands extends AbstractModConfig {
 
         // fly
         CommandFly.isFlyEnable = isFlyEnable.get();
+        CommandFly.flyAlias = flyAlias.get();
         CommandFly.datePattern = datePattern.get();
 
         // scessential getRegistryName mob
@@ -346,16 +505,27 @@ public class ConfigCommands extends AbstractModConfig {
 
         // invsee
         CommandOpenInv.isOpenInvEnable = isOpenInvEnable.get();
+        CommandOpenInv.invseeAlias = invseeAlias.get();
 
         // Hat
         CommandHat.isHatEnabel = isHatEnable.get();
+        CommandHat.hatAlias = hatAlias.get();
 
         // Trashcan
         CommandTrashcan.isTrashcanEnable = isTrashcanEnable.get();
+        CommandTrashcan.trashcanAlias = trashcanAlias.get();
         CommandTrashcan.cleanTrashcanIntervalSeconds = cleanTrashcanIntervalSeconds.get();
 
         // Rank
         CommandRank.isRankEnable = isRankEnable.get();
+        CommandRank.rankAlias = rankAlias.get();
+    }
+
+    private static boolean isValidCommandAlias(Object o) {
+        if (o instanceof String) {
+            return !o.toString().contains("/");
+        }
+        return false;
     }
 
 }

@@ -34,6 +34,12 @@ public class CommandTPA {
     @ConfigField
     public static boolean isTPAEnable = true;
     @ConfigField
+    public static String
+            tpaAlias        = "tpa",
+            tpaHereAlias    = "tpahere",
+            tpHereAlias     = "tphere",
+            tpAllHereAlias  = "tpallhere";
+    @ConfigField
     public static int tpaCooldownSeconds = 3;
     @ConfigField
     public static int maxTPARequestTimeoutSeconds = 30;
@@ -42,21 +48,21 @@ public class CommandTPA {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("tpa")
+                Commands.literal(tpaAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> tpa(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
         );
 
         dispatcher.register(
-                Commands.literal("tpahere")
+                Commands.literal(tpaHereAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> tpaHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
         );
 
         dispatcher.register(
-                Commands.literal("tphere")
+                Commands.literal(tpHereAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> tpHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
@@ -64,7 +70,7 @@ public class CommandTPA {
         );
 
         dispatcher.register(
-                Commands.literal("tpallhere")
+                Commands.literal(tpAllHereAlias)
                         .requires(commandSource -> commandSource.hasPermissionLevel(2))
                         .executes(context -> tpAllHere(context.getSource().asPlayer()))
         );

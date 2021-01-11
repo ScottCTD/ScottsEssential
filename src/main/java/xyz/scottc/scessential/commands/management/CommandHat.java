@@ -14,10 +14,12 @@ public class CommandHat {
 
     @ConfigField
     public static boolean isHatEnabel = true;
+    @ConfigField
+    public static String hatAlias = "hat";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("hat")
+                Commands.literal(hatAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
                                 .requires(source -> source.hasPermissionLevel(2))
                                 .executes(context -> hat(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target")))

@@ -16,7 +16,7 @@
   "message.scessential.homesuccess": "成功传送到家: %s！",
   "message.scessential.delhomesuccess": "成功删除家: %s！",
   "message.scessential.delothershomesuccess": "成功删除玩家 \"%s\" 的家 \"%s\"！",
-  "message.scessential.nohome": "无家可归呢，真可怜...",
+  "message.scessential.nohome": "您暂时无家可归",
   "message.scessential.setnewhome": "你想在这里设置家吗？",
   "message.scessential.reachmaxhome": "你不能设置超过 %d 个家！",
   "message.scessential.clicktoteleport": "点击传送！",
@@ -40,6 +40,8 @@
   "message.scessential.delwarpsuccess": "成功删除世界传送点： \"%s\"！",
   "message.scessential.nowarp": "未找到任何世界传送点！",
 
+  "message.scessential.canttpaself": "你不能，至少不应该，TPA你自己！",
+  "message.scessential.canttpahereself": "你不能，至少不应该，TPAHERE你自己！",
   "message.scessential.requestsent": "成功发送传送请求至玩家 \"%s\"！",
   "message.scessential.tpaline01": "玩家 \"%s\" 想传送到你的位置。",
   "message.scessential.tpanotfound": "传送请求已失效或错误！",
@@ -60,13 +62,24 @@
   "message.scessential.cleanupmobcountdown": "能动的东西将在 %d 秒后清除！",
   "message.scessential.itemcleanupcomplete": "清除了 %d 个掉落物！",
   "message.scessential.mobcleanupcomplete": "清除了 %d 个能动的东西！",
-  "message.scessential.misccleanupcomplete": "%d miscellaneous entities freed.",
+  "message.scessential.misccleanupcomplete": "清除了 %d 个其他类型实体！",
   "message.scessential.clicktocopy": "单击以粘贴到剪切板！",
   "message.scessential.nearbynoliving": "你旁边没有能动的东西！",
 
+  "message.scessential.cantopenselfinv": "人不能，至少不应该，以这种方式打开自己的背包。",
   "text.scessential.playerinv": "玩家 \"%s\" 的背包",
 
   "text.scessential.trashcan": "垃圾桶",
   "text.scessential.clear": "清除",
-  "text.scessential.trashcantitle": "%d 秒后清除！"
+  "text.scessential.trashcantitle": "%d 秒后清除！",
+
+  "text.scessential.leaderboard": "排行榜",
+  "text.scessential.nextpage": "-->",
+  "text.scessential.prevpage": "<--",
+  "text.scessential.deathRank": "死亡",
+  "text.scessential.deathstitle": "死亡排行榜",
+  "text.scessential.deathAmount": "%s (%d)",
+  "text.scessential.timeplayedrank": "游戏时间",
+  "text.scessential.timeplayedtitle": "游戏时间排行榜",
+  "text.scessential.timeplayed": "%s （%d小时, %d分钟）"
 }

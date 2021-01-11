@@ -31,6 +31,8 @@ public class CommandRTP {
     @ConfigField
     public static boolean isRTPEnable = true;
     @ConfigField
+    public static String rtpAlias = "rtp";
+    @ConfigField
     public static int rtpCooldownSeconds = 10;
     @ConfigField
     public static int maxRTPAttempts = 10;
@@ -49,7 +51,7 @@ public class CommandRTP {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("rtp")
+                Commands.literal(rtpAlias)
                         .executes(context -> rtp(context.getSource().asPlayer()))
         );
     }

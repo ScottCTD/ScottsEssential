@@ -20,12 +20,14 @@ public class CommandBack {
     @ConfigField
     public static boolean isBackEnable = true;
     @ConfigField
+    public static String backAlias = "back";
+    @ConfigField
     public static int backCooldownSeconds;
     @ConfigField
     public static int maxBacks = 10;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(Commands.literal("back")
+        dispatcher.register(Commands.literal(backAlias)
                 .executes(context -> back(context.getSource().asPlayer()))
         );
     }
