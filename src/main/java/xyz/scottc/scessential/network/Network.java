@@ -52,7 +52,7 @@ public class Network {
         );
     }
 
-    public static void sendToPlayerClient(ServerPlayerEntity player, AbstractPacket<? extends AbstractPacket<?>> packet) {
+    public static void sendToPlayerClient(ServerPlayerEntity player, AbstractPacket packet) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 

@@ -123,7 +123,6 @@ public class CommandHome {
         return 1;
     }
 
-    // TODO Auto teleport to the first home if "home" not present
     private static int home(ServerPlayerEntity player, String name) {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
         if (TeleportUtils.isInCooldown(player, data.getLastHomeTime(), homeCooldownSeconds)) {
@@ -131,21 +130,12 @@ public class CommandHome {
         }
         TeleportPos homePos = data.getHomePos(name);
         if (homePos == null) {
+            if (data.getHomes().size() == 1) {
+                home(player, data.getHomes().keySet().toArray()[0].toString());
+                return 1;
+            }
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "homenotfound"), name), false);
-/*
-            player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "setnewhome"), name), false);
-
-            IFormattableTextComponent setNewText = TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "options"));
-            IFormattableTextComponent accept = TextUtils.getGreenTextFromI18n(true, true, false,
-                    TextUtils.getTranslationKey("message", "accept"));
-            accept.setStyle(accept.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/sethome " + name)));
-            IFormattableTextComponent deny = TextUtils.getRedTextFromI18n(true, true, false,
-                    TextUtils.getTranslationKey("message", "deny"));
-            player.sendStatusMessage(setNewText.appendString("\n").append(accept).append(new StringTextComponent(" | ").setStyle(Style.EMPTY)).append(deny), false);
-*/
             return 1;
         }
         data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));

@@ -8,7 +8,7 @@ import xyz.scottc.scessential.core.SCEPlayerData;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public class PacketClearTrashcan extends AbstractPacket<PacketClearTrashcan> {
+public class PacketClearTrashcan extends AbstractPacket {
 
     public PacketClearTrashcan(PacketBuffer buffer) {
         super(buffer);

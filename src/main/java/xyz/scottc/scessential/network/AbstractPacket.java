@@ -5,7 +5,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public abstract class AbstractPacket<T> {
+public abstract class AbstractPacket {
 
     // 等同于decode
     public AbstractPacket(PacketBuffer buffer) {}

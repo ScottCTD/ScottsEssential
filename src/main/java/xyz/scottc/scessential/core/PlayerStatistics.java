@@ -3,15 +3,22 @@ package xyz.scottc.scessential.core;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
@@ -107,6 +114,43 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
     private static class EventHandler {
 
         private static int counter = 0;
+
+        // Deserialize statistics data
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+            // Deserialize statistics
+            if (Main.STATISTICS_FILE.exists()) {
+                try {
+                    CompoundNBT nbt = CompressedStreamTools.readCompressed(Main.STATISTICS_FILE);
+                    Optional.ofNullable((ListNBT) nbt.get("statistics")).ifPresent(listnbt -> listnbt.forEach(statistic -> {
+                        PlayerStatistics playerStatistics = new PlayerStatistics();
+                        playerStatistics.deserializeNBT((CompoundNBT) statistic);
+                        PlayerStatistics.ALL_STATISTICS.add(playerStatistics);
+                    }));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Main.LOGGER.info("Successfully deserialize player statistics data!");
+            }
+        }
+
+        // Serialize statistics data
+        @SubscribeEvent(priority = EventPriority.LOW)
+        public static void onWorldSaved(WorldEvent.Save event) {
+            // Serialize statistics
+            try {
+                CompoundNBT temp = new CompoundNBT();
+                ListNBT listNBT = new ListNBT();
+                PlayerStatistics.ALL_STATISTICS.forEach(statistic -> {
+                    CompoundNBT nbt = statistic.serializeNBT();
+                    listNBT.add(nbt);
+                });
+                temp.put("statistics", listNBT);
+                CompressedStreamTools.writeCompressed(temp, Main.STATISTICS_FILE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         @SubscribeEvent
         public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {

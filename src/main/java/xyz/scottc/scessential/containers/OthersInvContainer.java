@@ -6,8 +6,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.commands.management.CommandOpenInv;
 import xyz.scottc.scessential.registries.ContainerTypeRegistry;
@@ -91,6 +94,22 @@ public class OthersInvContainer extends Container {
         ItemStack itemStack = this.inventorySlots.get(index).getStack();
         if (!itemStack.isItemEqual(ItemStack.EMPTY)) {
             if (index < 36) {
+                Item item = itemStack.getItem();
+                if (item instanceof ArmorItem) {
+                    ResourceLocation registryName = item.getRegistryName();
+                    if (registryName != null) {
+                        String s = registryName.toString();
+                        if (s.contains("helmet")) {
+                            if (this.mergeItemStack(itemStack, 75, 76, false)) return itemStack;
+                        } else if (s.contains("chestplate")) {
+                            if (this.mergeItemStack(itemStack, 74, 75, false)) return itemStack;
+                        } else if (s.contains("leggings")) {
+                            if (this.mergeItemStack(itemStack, 73, 74, false)) return itemStack;
+                        } else if (s.contains("boots")) {
+                            if (this.mergeItemStack(itemStack, 72, 73, false)) return itemStack;
+                        }
+                    }
+                }
                 if (!this.mergeItemStack(itemStack, 45, 71, false)) {
                     if (!this.mergeItemStack(itemStack, 36, 44, false)) return ItemStack.EMPTY;
                 }

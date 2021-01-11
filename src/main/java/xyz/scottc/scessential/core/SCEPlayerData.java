@@ -6,8 +6,13 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.scottc.scessential.Main;
@@ -15,6 +20,8 @@ import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandBack;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -28,9 +35,9 @@ public class SCEPlayerData implements ISCEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
-    private @Nullable PlayerEntity player;
+    private PlayerEntity player;
     private UUID uuid;
-    private @Nullable String playerName;
+    private String playerName;
 
     private PlayerStatistics statistics;
 
@@ -84,7 +91,7 @@ public class SCEPlayerData implements ISCEPlayerData {
         CompoundNBT nbt = new CompoundNBT();
 
         // Info
-        Optional.ofNullable(this.uuid).ifPresent(id -> nbt.putString("uuid", id.toString()));
+        nbt.putString("uuid", this.uuid.toString());
 
         // Fly
         nbt.putBoolean("flyable", this.isFlyable);
@@ -97,7 +104,6 @@ public class SCEPlayerData implements ISCEPlayerData {
             nbtHome.putString("name", home.getKey());
             nbtHome.put("pos", home.getValue().serializeNBT());
             nbtHomes.add(nbtHome);
-            Main.LOGGER.info("Home: " + home.getKey());
         }
         nbt.put("homes", nbtHomes);
 
@@ -430,5 +436,48 @@ public class SCEPlayerData implements ISCEPlayerData {
     @Override
     public String toString() {
         return this.uuid.toString();
+    }
+
+    @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class EventHandler {
+
+        @SubscribeEvent
+        public static void onPlayerSaved(PlayerEvent.SaveToFile event) {
+            try {
+                File dataFile = new File(Main.PLAYER_DATA_FOLDER.getAbsolutePath() + "/" + event.getPlayerUUID() + ".dat");
+                ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                CompressedStreamTools.writeCompressed(data.serializeNBT(), dataFile);
+                Main.LOGGER.debug("Successfully save player " + data.getUuid() + " to file!");
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (data.getPlayer() == null) {
+                        Main.LOGGER.debug("Removing " + event.getPlayer().getGameProfile().getName() + " from list!");
+                        SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
+                        Main.LOGGER.debug("Removed!");
+                    }
+                }).start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Deserialize Player Data
+        @SubscribeEvent(priority = EventPriority.HIGH)
+        public static void onPlayerLoaded(PlayerEvent.LoadFromFile event) {
+            File dataFile = new File(Main.PLAYER_DATA_FOLDER.getAbsolutePath() + "/" + event.getPlayerUUID() + ".dat");
+            if (dataFile.exists()) {
+                try {
+                    CompoundNBT dataNbt = CompressedStreamTools.readCompressed(dataFile);
+                    ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                    data.deserializeNBT(dataNbt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

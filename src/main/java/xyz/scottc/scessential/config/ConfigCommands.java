@@ -2,6 +2,7 @@ package xyz.scottc.scessential.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
+import xyz.scottc.scessential.commands.info.CommandRank;
 import xyz.scottc.scessential.commands.management.CommandFly;
 import xyz.scottc.scessential.commands.management.CommandHat;
 import xyz.scottc.scessential.commands.management.CommandOpenInv;
@@ -72,6 +73,9 @@ public class ConfigCommands extends AbstractModConfig {
     private static ForgeConfigSpec.BooleanValue isTrashcanEnable;
     private static ForgeConfigSpec.IntValue cleanTrashcanIntervalSeconds;
 
+    // Rank
+    private static ForgeConfigSpec.BooleanValue isRankEnable;
+
     public ConfigCommands(ForgeConfigSpec.Builder builder) {
         super(builder);
     }
@@ -84,7 +88,7 @@ public class ConfigCommands extends AbstractModConfig {
         isSpawnEnableConfig = this.builder
                 .comment("Set it to false to disable /spawn command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsSpawnEnable", true);
         spawnCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /spawn commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -95,7 +99,7 @@ public class ConfigCommands extends AbstractModConfig {
         isBackEnableConfig = this.builder
                 .comment("Set it to false to disable /back command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsBackEnable", true);
         backCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /back commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -109,7 +113,7 @@ public class ConfigCommands extends AbstractModConfig {
         isHomeEnableConfig = this.builder
                 .comment("Set it to false to disable /home, /sethome, /delhome (/removehome), /listhomes, /homeother, and /listotherhomes command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsSpawnEnable", true);
         homeCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /home commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -126,7 +130,7 @@ public class ConfigCommands extends AbstractModConfig {
         isWarpEnableConfig = this.builder
                 .comment("Set it to false to disable /warp, /setwarp, /delwarp, and /listwarps command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsWarpEnable", true);
         warpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /warp commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -137,7 +141,7 @@ public class ConfigCommands extends AbstractModConfig {
         isTPAEnableConfig = this.builder
                 .comment("Set it to false to disable /tpa, /tpahere, /tpaaccept, /tpadeny, /tphere, and /tpallhere command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsTPAEnable", true);
         tpaCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /tpa and /tpahere commands, or teleport cooldown, in seconds.\nDefault value: 3 seconds")
@@ -151,7 +155,7 @@ public class ConfigCommands extends AbstractModConfig {
         isRTPEnableConfig = this.builder
                 .comment("Set it to false to disable /rtp command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsRTPEnable", true);
         rtpCooldownSecondsConfig = this.builder
                 .comment("The time interval between two /rtp commands, or teleport cooldown, in seconds.\nDefault value: 10 seconds")
@@ -221,7 +225,7 @@ public class ConfigCommands extends AbstractModConfig {
         isFlyEnable = this.builder
                 .comment("Set it to false to disable /fly command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsFlyEnable", true);
 
         datePattern = this.builder
@@ -236,7 +240,7 @@ public class ConfigCommands extends AbstractModConfig {
         isHatEnable = this.builder
                 .comment("Set it to false to disable /hat command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("IsHatEnable", true);
         this.builder.pop();
 
@@ -244,7 +248,7 @@ public class ConfigCommands extends AbstractModConfig {
         isTrashcanEnable = this.builder
                 .comment("Set it to false to disable /trashcan command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("isTrashcanEnable", true);
         cleanTrashcanIntervalSeconds = this.builder
                 .comment("The interval between two actions of deleting items in the trashcan.",
@@ -257,8 +261,16 @@ public class ConfigCommands extends AbstractModConfig {
         isOpenInvEnable = this.builder
                 .comment("Set it to false to disable /invsee (/openinv maybe in the future) command.",
                         "Default value: true",
-                        "This option only work after server restarted.")
+                        "This option only work after server restarted or typed /reload command")
                 .define("isInvseeEnable", true);
+        this.builder.pop();
+
+        this.builder.push("Rank");
+        isRankEnable = this.builder
+                .comment("Set it to false to disable /rank command.",
+                        "Default value: true",
+                        "This option only work after server restarted or typed /reload command")
+                .define("isRankEnable", true);
         this.builder.pop();
 
         // /scessential ....
@@ -341,6 +353,9 @@ public class ConfigCommands extends AbstractModConfig {
         // Trashcan
         CommandTrashcan.isTrashcanEnable = isTrashcanEnable.get();
         CommandTrashcan.cleanTrashcanIntervalSeconds = cleanTrashcanIntervalSeconds.get();
+
+        // Rank
+        CommandRank.isRankEnable = isRankEnable.get();
     }
 
 }

@@ -14,7 +14,7 @@ public class ModConfig {
     public static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
     public static ForgeConfigSpec SERVER_CONFIG;
 
-    private static final Set<AbstractModConfig> CONFIGS;
+    private static final Set<? extends AbstractModConfig> CONFIGS;
 
     static {
         CONFIGS = init();
@@ -22,15 +22,15 @@ public class ModConfig {
         get(CONFIGS);
     }
 
-    public static Set<AbstractModConfig> init() {
-        Set<AbstractModConfig> configs = Sets.newHashSet(
+    public static Set<? extends AbstractModConfig> init() {
+        Set<? extends AbstractModConfig> configs = Sets.newHashSet(
                 new ConfigCommands(SERVER_BUILDER),
                 new ConfigEntityCleaner(SERVER_BUILDER));
         configs.forEach(AbstractModConfig::init);
         return configs;
     }
 
-    public static void get(Set<AbstractModConfig> configs) {
+    public static void get(Set<? extends AbstractModConfig> configs) {
         configs.forEach(AbstractModConfig::get);
     }
 

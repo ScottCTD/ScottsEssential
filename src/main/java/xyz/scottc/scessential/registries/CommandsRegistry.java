@@ -25,6 +25,7 @@ public class CommandsRegistry {
     private static void register(CommandDispatcher<CommandSource> dispatcher) {
         // Main Commands
         CommandSCE.register(dispatcher);
+        CommandGetRegistryName.register(dispatcher);
 
         // Teleport
         if (CommandSpawn.isSpawnEnable) CommandSpawn.register(dispatcher);
@@ -39,10 +40,7 @@ public class CommandsRegistry {
         if (CommandOpenInv.isOpenInvEnable) CommandOpenInv.register(dispatcher);
         if (CommandHat.isHatEnabel) CommandHat.register(dispatcher);
         if (CommandTrashcan.isTrashcanEnable) CommandTrashcan.register(dispatcher);
-
-        // Info Commands
-        CommandGetRegistryName.register(dispatcher);
-        CommandRank.register(dispatcher);
+        if (CommandRank.isRankEnable) CommandRank.register(dispatcher);
 
         Main.LOGGER.info("All commands registered!");
     }

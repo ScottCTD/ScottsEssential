@@ -9,6 +9,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.core.SCEPlayerData;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@Deprecated
 public class CapabilitySCEPlayerData {
 
     @CapabilityInject(ISCEPlayerData.class)
@@ -120,6 +122,30 @@ public class CapabilitySCEPlayerData {
         @Override
         public void deserializeNBT(CompoundNBT nbt) {
             this.playerData.deserializeNBT(nbt);
+        }
+    }
+
+    @Deprecated
+    //@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class Loader {
+        @Deprecated
+        //@SubscribeEvent
+        public static void onPlayerLoaded(PlayerEvent.LoadFromFile event) {
+            LazyOptional<ISCEPlayerData> capability = event.getPlayer().getCapability(CapabilitySCEPlayerData.SCE_PLAYER_DATA_CAPABILITY);
+            capability.ifPresent(cap -> {
+                if (cap instanceof SCEPlayerData) {
+                    // If the data for current player exist, then just copy it to the cap
+                    SCEPlayerData instance = SCEPlayerData.getInstance(event.getPlayer());
+                    int index = SCEPlayerData.PLAYER_DATA_LIST.indexOf(instance);
+                    if (index != -1) {
+                        cap.deserializeNBT(instance.serializeNBT());
+                        cap.setPlayer(event.getPlayer());
+                        SCEPlayerData.PLAYER_DATA_LIST.set(index, (SCEPlayerData) cap);
+                    } else {
+                        SCEPlayerData.PLAYER_DATA_LIST.add((SCEPlayerData) cap);
+                    }
+                }
+            });
         }
     }
 

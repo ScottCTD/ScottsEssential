@@ -39,8 +39,8 @@ public class CommandBack {
             }
             TeleportPos teleportPos = data.getTeleportHistory();
             if (teleportPos == null) {
-                player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, true, true,
-                        TextUtils.getTranslationKey("message", "noback")), true);
+                player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                        TextUtils.getTranslationKey("message", "noback")), false);
                 return 1;
             }
             TeleportUtils.teleport(player, server.getWorld(teleportPos.getDimension()), teleportPos.getPos());

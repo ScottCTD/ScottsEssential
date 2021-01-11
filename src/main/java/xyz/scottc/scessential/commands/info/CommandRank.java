@@ -5,6 +5,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
+import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.network.Network;
 import xyz.scottc.scessential.network.PacketOpenLeaderboard;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -12,6 +13,9 @@ import xyz.scottc.scessential.utils.TextUtils;
 import java.util.Collections;
 
 public class CommandRank {
+
+    @ConfigField
+    public static boolean isRankEnable = true;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(

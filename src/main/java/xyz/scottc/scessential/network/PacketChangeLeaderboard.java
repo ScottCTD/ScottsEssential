@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-public class PacketChangeLeaderboard extends AbstractPacket<PacketChangeLeaderboard> {
+public class PacketChangeLeaderboard extends AbstractPacket {
 
     private final PlayerStatistics.StatisticsType type;
 

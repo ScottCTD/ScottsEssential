@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class PacketOpenLeaderboard extends AbstractPacket<PacketOpenLeaderboard> {
+public class PacketOpenLeaderboard extends AbstractPacket {
 
     private final ITextComponent title;
     private final List<ITextComponent> elements;
