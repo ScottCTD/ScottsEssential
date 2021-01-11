@@ -60,7 +60,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                 .comment("List of item registry names (E.g: minecraft:stone) not being cleaned.",
                         "You could use /scessential getItemRegistryName item command with a item hold in your main hand to get it's registry name.",
                         "You could also use minecraft:* or rats:* to add all items of certain mod to the whitelist.")
-                .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ConfigEntityCleaner::isResourceName);
+                .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ConfigEntityCleaner::isResourceLocationList);
         this.builder.pop();
 
         this.builder.push("MobEntities");
@@ -79,18 +79,13 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: 30 seconds")
                 .defineInRange("cleanupMobEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
 
-        // TODO find out why default is incorrect
-        /*
-        Incorrect key EntityCleanup.MobEntities.MobEntitiesWhitelist was corrected from [minecraft:cat, minecraft:mule, minecraft:wolf, minecraft:horse, minecraft:donkey, minecraft:wither, minecraft:guardian, minecraft:villager, minecraft:iron_golem, minecraft:snow_golem, minecraft:vindicator, minecraft:ender_dragon, minecraft:elder_guardian]
-        to [minecraft:cat, minecraft:mule, minecraft:wolf, minecraft:horse, minecraft:donkey, minecraft:wither, minecraft:guardian, minecraft:villager, minecraft:iron_golem, minecraft:snow_golem, minecraft:vindicator, minecraft:ender_dragon, minecraft:elder_guardian]
-         */
         mobEntitiesWhitelist = builder
                 .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
                         "You could use /scessential getItemRegistryName mob to get the registry names of nearby mobs. (radius specified in Commands section)",
-                        "You could also use minecraft:* or minecolonies:* to add all mobs of certain mod to the whitelist.")
+                        "You could also use minecraft:* or minecolonies:* to add all living entities of certain mod to whitelist.")
                 .define("MobEntitiesWhitelist", Arrays.asList("minecraft:cat", "minecraft:mule", "minecraft:wolf", "minecraft:horse",
                         "minecraft:donkey", "minecraft:wither", "minecraft:guardian", "minecraft:villager", "minecraft:iron_golem", "minecraft:snow_golem",
-                        "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ConfigEntityCleaner::isResourceName);
+                        "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ConfigEntityCleaner::isResourceLocationList);
         this.builder.pop();
 
         this.builder.push("OtherEntities");
@@ -183,11 +178,17 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         EntityCleaner.isTNTEntityCleanupEnable = isTNTEntityCleanupEnable.get();
     }
 
-    private static boolean isResourceName(Object o) {
-        if (o instanceof String) {
-            return ((String) o).contains(":");
+    private static boolean isResourceLocationList(Object o) {
+        if (!(o instanceof List)) {
+            return false;
         }
-        return false;
+        List<?> list = (List<?>) o;
+        for (Object s : list) {
+            if (!s.toString().contains(":")) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
