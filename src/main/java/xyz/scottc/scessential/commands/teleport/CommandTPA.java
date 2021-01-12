@@ -28,6 +28,9 @@ import java.util.Optional;
  * /tpahere
  * /tphere
  * /tpallhere
+ *
+ * TODO Only sent once but notice many times
+ * TODO safer id
  */
 public class CommandTPA {
 

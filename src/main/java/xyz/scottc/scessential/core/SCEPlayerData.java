@@ -190,7 +190,6 @@ public class SCEPlayerData implements ISCEPlayerData {
         if (this.player != null) {
             if (flyable) {
                 this.player.abilities.allowFlying = true;
-                this.player.abilities.isFlying = true;
             } else {
                 this.player.abilities.allowFlying = false;
                 this.player.abilities.isFlying = false;

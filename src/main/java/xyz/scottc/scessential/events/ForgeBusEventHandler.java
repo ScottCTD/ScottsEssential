@@ -113,4 +113,20 @@ public class ForgeBusEventHandler {
         data.setFlyable(data.isFlyable());
     }
 
+    @SubscribeEvent
+    public static void onPlayerChangeGamemode(PlayerEvent.PlayerChangeGameModeEvent event) {
+        if (event.getCurrentGameMode().isCreative() && event.getNewGameMode().isSurvivalOrAdventure()) {
+            new Thread(() -> {
+                // after gamemode changed, if player is flyable, then flyable
+                ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                data.setFlyable(data.isFlyable());
+            }).start();
+        }
+    }
+
 }

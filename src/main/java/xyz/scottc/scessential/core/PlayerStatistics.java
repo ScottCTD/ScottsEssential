@@ -28,7 +28,7 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
     private String name;
     private UUID uuid;
 
-    private int deathAmount;
+    private int deathAmount = 0;
 
     private int totalPlayedSeconds;
     public long lastUpdateTime = 0;

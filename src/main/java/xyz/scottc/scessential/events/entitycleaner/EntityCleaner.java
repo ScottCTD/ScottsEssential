@@ -18,6 +18,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+/**
+ * TODO commands to manually clean entities
+ */
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityCleaner {
 

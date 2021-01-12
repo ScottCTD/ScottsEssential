@@ -1,7 +1,3 @@
-tasks.withType(Jar) {
-    destinationDir = file("C:\\Games\\Minecraft\\ModdingTestClient\\.minecraft\\mods")
-}
-
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }

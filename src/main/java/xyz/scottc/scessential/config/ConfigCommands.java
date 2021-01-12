@@ -523,7 +523,7 @@ public class ConfigCommands extends AbstractModConfig {
 
     private static boolean isValidCommandAlias(Object o) {
         if (o instanceof String) {
-            return !o.toString().contains("/");
+            return !o.toString().contains("/") && !o.toString().contains(" ");
         }
         return false;
     }
