@@ -12,13 +12,13 @@ import xyz.scottc.scessential.commands.teleport.*;
 public class ConfigCommands extends AbstractModConfig {
 
     // Spawn
-    private static ForgeConfigSpec.BooleanValue isSpawnEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String> spawnAlias;
-    private static ForgeConfigSpec.IntValue spawnCooldownSecondsConfig;
+    private ForgeConfigSpec.BooleanValue isSpawnEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String> spawnAlias;
+    private ForgeConfigSpec.IntValue spawnCooldownSecondsConfig;
 
     // Home
-    private static ForgeConfigSpec.BooleanValue isHomeEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String>
+    private ForgeConfigSpec.BooleanValue isHomeEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String>
             setHomeAlias,
             homeAlias,
             homeOtherAlias,
@@ -26,40 +26,40 @@ public class ConfigCommands extends AbstractModConfig {
             listHomesAlias,
             listOtherHomesAlias,
             delOtherHomeAlias;
-    private static ForgeConfigSpec.IntValue homeCooldownSecondsConfig, homeOtherCooldownSecondsConfig;
-    private static ForgeConfigSpec.IntValue maxHomesConfig;
+    private ForgeConfigSpec.IntValue homeCooldownSecondsConfig, homeOtherCooldownSecondsConfig;
+    private ForgeConfigSpec.IntValue maxHomesConfig;
 
     // Back
-    private static ForgeConfigSpec.BooleanValue isBackEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String> backAlias;
-    private static ForgeConfigSpec.IntValue backCooldownSecondsConfig;
-    private static ForgeConfigSpec.IntValue maxBacksConfig;
+    private ForgeConfigSpec.BooleanValue isBackEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String> backAlias;
+    private ForgeConfigSpec.IntValue backCooldownSecondsConfig;
+    private ForgeConfigSpec.IntValue maxBacksConfig;
 
     // Warp
-    private static ForgeConfigSpec.BooleanValue isWarpEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String>
+    private ForgeConfigSpec.BooleanValue isWarpEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String>
             setWarpAlias,
             warpAlias,
             listWarpsAlias,
             delWarpAlias;
-    private static ForgeConfigSpec.IntValue warpCooldownSecondsConfig;
+    private ForgeConfigSpec.IntValue warpCooldownSecondsConfig;
 
     // TPA
-    private static ForgeConfigSpec.BooleanValue isTPAEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String>
+    private ForgeConfigSpec.BooleanValue isTPAEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String>
             tpaAlias,
             tpaHereAlias,
             tpHereAlias,
             tpAllHereAlias;
-    private static ForgeConfigSpec.IntValue tpaCooldownSecondsConfig;
-    private static ForgeConfigSpec.IntValue maxTPARequestTimeoutSecondsConfig;
+    private ForgeConfigSpec.IntValue tpaCooldownSecondsConfig;
+    private ForgeConfigSpec.IntValue maxTPARequestTimeoutSecondsConfig;
 
     // RTP
-    private static ForgeConfigSpec.BooleanValue isRTPEnableConfig;
-    private static ForgeConfigSpec.ConfigValue<? extends String> rtpAlias;
-    private static ForgeConfigSpec.IntValue rtpCooldownSecondsConfig;
-    private static ForgeConfigSpec.IntValue maxRTPAttemptsConfig;
-    private static ForgeConfigSpec.IntValue
+    private ForgeConfigSpec.BooleanValue isRTPEnableConfig;
+    private ForgeConfigSpec.ConfigValue<? extends String> rtpAlias;
+    private ForgeConfigSpec.IntValue rtpCooldownSecondsConfig;
+    private ForgeConfigSpec.IntValue maxRTPAttemptsConfig;
+    private ForgeConfigSpec.IntValue
             minRTPHeightDefaultConfig,
             maxRTPHeightDefaultConfig,
             minRTPRadiusDefaultConfig,
@@ -78,29 +78,29 @@ public class ConfigCommands extends AbstractModConfig {
             maxRTPRadiusEndConfig;
 
     // fly
-    private static ForgeConfigSpec.BooleanValue isFlyEnable;
-    private static ForgeConfigSpec.ConfigValue<? extends String> flyAlias;
-    private static ForgeConfigSpec.ConfigValue<? extends String> datePattern;
+    private ForgeConfigSpec.BooleanValue isFlyEnable;
+    private ForgeConfigSpec.ConfigValue<? extends String> flyAlias;
+    private ForgeConfigSpec.ConfigValue<? extends String> datePattern;
 
     // scessential getRegistryName mob
-    private static ForgeConfigSpec.IntValue entitiesWithinRadius;
+    private ForgeConfigSpec.IntValue entitiesWithinRadius;
 
     // invsee
-    private static ForgeConfigSpec.BooleanValue isOpenInvEnable;
-    private static ForgeConfigSpec.ConfigValue<? extends String> invseeAlias;
+    private ForgeConfigSpec.BooleanValue isOpenInvEnable;
+    private ForgeConfigSpec.ConfigValue<? extends String> invseeAlias;
 
     // hat
-    private static ForgeConfigSpec.BooleanValue isHatEnable;
-    private static ForgeConfigSpec.ConfigValue<? extends String> hatAlias;
+    private ForgeConfigSpec.BooleanValue isHatEnable;
+    private ForgeConfigSpec.ConfigValue<? extends String> hatAlias;
 
     // trashcan
-    private static ForgeConfigSpec.BooleanValue isTrashcanEnable;
-    private static ForgeConfigSpec.ConfigValue<? extends String> trashcanAlias;
-    private static ForgeConfigSpec.IntValue cleanTrashcanIntervalSeconds;
+    private ForgeConfigSpec.BooleanValue isTrashcanEnable;
+    private ForgeConfigSpec.ConfigValue<? extends String> trashcanAlias;
+    private ForgeConfigSpec.IntValue cleanTrashcanIntervalSeconds;
 
     // Rank
-    private static ForgeConfigSpec.BooleanValue isRankEnable;
-    private static ForgeConfigSpec.ConfigValue<? extends String> rankAlias;
+    private ForgeConfigSpec.BooleanValue isRankEnable;
+    private ForgeConfigSpec.ConfigValue<? extends String> rankAlias;
 
     public ConfigCommands(ForgeConfigSpec.Builder builder) {
         super(builder);

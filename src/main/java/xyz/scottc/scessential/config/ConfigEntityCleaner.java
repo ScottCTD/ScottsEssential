@@ -31,6 +31,12 @@ public class ConfigEntityCleaner extends AbstractModConfig {
     private ForgeConfigSpec.ConfigValue<List<? extends String>>
             itemEntitiesWhitelist,
             mobEntitiesWhitelist;
+    private ForgeConfigSpec.ConfigValue<? extends String>
+            cleanedupItemEntitiesMessage,
+            cleanupItemEntitiesCountdownMessage;
+    private ForgeConfigSpec.ConfigValue<? extends String>
+            cleanedupMobEntitiesMessage,
+            cleanupMobEntitiesCountdownMessage;
 
     public ConfigEntityCleaner(ForgeConfigSpec.Builder builder) {
         super(builder);
@@ -44,17 +50,33 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         isItemEntityCleanupEnable = builder
                 .comment("Set it to false to disable cleaning up item entities in your server.",
                         "Default value: true")
-                .define("isItemEntityCleanupEnable", true);
+                .define("IsItemEntityCleanupEnable", true);
 
         cleanupItemEntitiesIntervalSeconds = builder
                 .comment("Time interval in seconds between two actions of cleaning item entities.",
                         "Default value: 300 seconds (5 minutes)")
-                .defineInRange("cleanItemEntitiesInterval", 300, 1, Integer.MAX_VALUE);
+                .defineInRange("CleanUpItemEntitiesInterval", 300, 1, Integer.MAX_VALUE);
 
-        cleanupItemEntitiesCountdownSeconds = builder
+        this.cleanedupItemEntitiesMessage = this.builder
+                .comment("The customized message for notifying players that items were being cleaned.",
+                        "If you left it blank, no notification will be sent to players.",
+                        "If you set it to \"null\", default notifications from lang file will be sent.",
+                        "You should put \"%d\" at somewhere in your customized message to display the quantity of cleaned entities.",
+                        "Default value: \"null\"")
+                .define("CleanedUpItemEntitiesMessage", "null");
+
+        cleanupItemEntitiesCountdownSeconds = this.builder
                 .comment("Seconds of warning message sent before next action of cleaning item entities.",
                         "Default value: 30 seconds")
-                .defineInRange("cleanupItemEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
+                .defineInRange("CleanUpItemEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
+
+        this.cleanupItemEntitiesCountdownMessage = this.builder
+                .comment("The customized message for notifying players that how many seconds left for next action of cleaning.",
+                        "If you left it blank, no notification will be sent to players.",
+                        "If you set it to \"null\", default notifications from lang file will be sent.",
+                        "You should put \"%d\" at somewhere in your customized message to display how many seconds left. (Set in CleanUpItemEntitiesCountdown)",
+                        "Default value: \"null\"")
+                .define("CleanUpItemEntitiesCountdownMessage", "null");
 
         itemEntitiesWhitelist = builder
                 .comment("List of item registry names (E.g: minecraft:stone) not being cleaned.",
@@ -74,10 +96,26 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: 360 seconds (6 minutes)")
                 .defineInRange("cleanMobEntitiesInterval", 360, 1, Integer.MAX_VALUE);
 
+        this.cleanedupMobEntitiesMessage = this.builder
+                .comment("The customized message for notifying players that living entities were being cleaned.",
+                        "If you left it blank, no notification will be sent to players.",
+                        "If you set it to \"null\", default notifications from lang file will be sent.",
+                        "You should put \"%d\" at somewhere in your customized message to display the quantity of cleaned entities.",
+                        "Default value: \"null\"")
+                .define("CleanedUpMobEntitiesMessage", "null");
+
         this.cleanupMobEntitiesCountdownSeconds = this.builder
                 .comment("Seconds of warning message sent before next action of cleaning mob entities.",
                         "Default value: 30 seconds")
-                .defineInRange("cleanupMobEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
+                .defineInRange("CleanUpMobEntitiesCountdown", 30, 1, Integer.MAX_VALUE);
+
+        this.cleanupMobEntitiesCountdownMessage = this.builder
+                .comment("The customized message for notifying players that how many seconds left for next action of cleaning.",
+                        "If you left it blank, no notification will be sent to players.",
+                        "If you set it to \"null\", notifications from lang file will be sent.",
+                        "You should put \"%d\" at somewhere in your customized message to display how many seconds left. (Set in CleanUpMobEntitiesCountdown)",
+                        "Default value: \"null\"")
+                .define("CleanUpMobEntitiesCountdownMessage", "null");
 
         mobEntitiesWhitelist = builder
                 .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
@@ -155,12 +193,17 @@ public class ConfigEntityCleaner extends AbstractModConfig {
 
     @Override
     public void get() {
-        EntityCleaner.cleanupItemEntitiesIntervalSeconds = cleanupItemEntitiesIntervalSeconds.get();
-        EntityCleaner.cleanupItemEntitiesCountdownSeconds = cleanupItemEntitiesCountdownSeconds.get();
-        EntityCleaner.cleanupMobEntitiesIntervalSeconds = cleanupMobEntitiesIntervalSeconds.get();
+        EntityCleaner.cleanupItemEntitiesIntervalSeconds = this.cleanupItemEntitiesIntervalSeconds.get();
+        EntityCleaner.cleanedupItemEntitiesMessage = this.cleanedupItemEntitiesMessage.get();
+        EntityCleaner.cleanupItemEntitiesCountdownSeconds = this.cleanupItemEntitiesCountdownSeconds.get();
+        EntityCleaner.cleanupItemEntitiesCountdownMessage = this.cleanupItemEntitiesCountdownMessage.get();
+        EntityCleaner.itemEntitiesWhitelist = this.itemEntitiesWhitelist.get();
+
+        EntityCleaner.cleanupMobEntitiesIntervalSeconds = this.cleanupMobEntitiesIntervalSeconds.get();
+        EntityCleaner.cleanedupMobEntitiesMessage = this.cleanedupMobEntitiesMessage.get();
         EntityCleaner.cleanupMobEntitiesCountdownSeconds = this.cleanupMobEntitiesCountdownSeconds.get();
-        EntityCleaner.itemEntitiesWhitelist = itemEntitiesWhitelist.get();
-        EntityCleaner.mobEntitiesWhitelist = mobEntitiesWhitelist.get();
+        EntityCleaner.cleanupMobEntitiesCountdownMessage = this.cleanupMobEntitiesCountdownMessage.get();
+        EntityCleaner.mobEntitiesWhitelist = this.mobEntitiesWhitelist.get();
 
         EntityCleaner.cleanupOtherEntitiesIntervalSeconds = cleanupOtherEntitiesIntervalSeconds.get();
         EntityCleaner.isItemEntityCleanupEnable = isItemEntityCleanupEnable.get();
