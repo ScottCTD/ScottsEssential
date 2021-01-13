@@ -35,6 +35,7 @@ public class Main {
 
     public static File MAIN_FOLDER;
     public static File PLAYER_DATA_FOLDER;
+    public static File INFO_STORAGE_FOLDER;
     public static File WARPS_FILE;
     public static File STATISTICS_FILE;
 
@@ -92,6 +93,12 @@ public class Main {
         if (!PLAYER_DATA_FOLDER.exists()) {
             if (!PLAYER_DATA_FOLDER.mkdirs()) {
                 throw new RuntimeException("Failed to create necessary player data folder!");
+            }
+        }
+        INFO_STORAGE_FOLDER = new File(MAIN_FOLDER.getAbsolutePath() + "/" + "infoRecorder");
+        if (!INFO_STORAGE_FOLDER.exists()) {
+            if (!INFO_STORAGE_FOLDER.mkdirs()) {
+                throw new RuntimeException("Failed to create necessary info recorder folder!");
             }
         }
         WARPS_FILE = new File(MAIN_FOLDER.getAbsolutePath() + "/" + "warps.dat");
