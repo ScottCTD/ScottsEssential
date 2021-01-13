@@ -1,6 +1,7 @@
 package xyz.scottc.scessential.events.inforecorder;
 
 import com.google.gson.JsonElement;
+import xyz.scottc.scessential.core.TeleportPos;
 
 import java.util.UUID;
 
@@ -17,6 +18,10 @@ public interface IInfoStorage {
     long getTime();
 
     void setTime(long time);
+
+    TeleportPos getPos();
+
+    void setPos(TeleportPos pos);
 
     JsonElement serializeJson();
 

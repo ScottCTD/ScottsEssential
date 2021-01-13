@@ -1,6 +1,7 @@
 package xyz.scottc.scessential.events;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -11,7 +12,6 @@ import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandTPA;
-import xyz.scottc.scessential.core.PlayerStatistics;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -78,18 +78,16 @@ public class ForgeBusEventHandler {
     /**
      * Listen this event for adding a new back history for a player when that player died, allowing player use /back
      * to return to the death pos.
-     * Also, add a death statistic
      * @param event Player Death event
      */
     @SubscribeEvent
     public static void onPlayerDied(LivingDeathEvent event) {
-        if (!event.getEntityLiving().world.isRemote) {
-            LivingEntity entity = event.getEntityLiving();
-            if (entity instanceof ServerPlayerEntity) {
-                ISCEPlayerData data = SCEPlayerData.getInstance(((ServerPlayerEntity) entity));
-                data.addTeleportHistory(new TeleportPos((ServerPlayerEntity) event.getEntityLiving()));
-                PlayerStatistics statistics = data.getStatistics();
-                statistics.setDeathAmount(statistics.getDeathAmount() + 1);
+        LivingEntity entity = event.getEntityLiving();
+        if (!entity.world.isRemote) {
+            if (entity instanceof PlayerEntity) {
+                ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                ISCEPlayerData data = SCEPlayerData.getInstance(player);
+                data.addTeleportHistory(new TeleportPos(player));
             }
         }
     }
@@ -104,7 +102,7 @@ public class ForgeBusEventHandler {
     }
 
     /**
-     * Make flyable player flyable again after respawn.
+     * Let flyable player flyable again after respawn.
      * @param e PlayerEvent.PlayerRespawnEvent
      */
     @SubscribeEvent

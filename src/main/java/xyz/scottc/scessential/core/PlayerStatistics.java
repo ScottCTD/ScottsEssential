@@ -1,12 +1,14 @@
 package xyz.scottc.scessential.core;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -172,6 +174,16 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
                     });
                 }
                 counter++;
+            }
+        }
+
+        @SubscribeEvent
+        public static void onPlayerDie(LivingDeathEvent event) {
+            LivingEntity entityLiving = event.getEntityLiving();
+            if (entityLiving instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) entityLiving;
+                PlayerStatistics statistics = PlayerStatistics.getInstance(player);
+                statistics.setDeathAmount(statistics.getDeathAmount() + 1);
             }
         }
     }

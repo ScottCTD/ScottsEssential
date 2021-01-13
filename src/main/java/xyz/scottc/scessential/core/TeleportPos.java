@@ -1,7 +1,7 @@
 package xyz.scottc.scessential.core;
 
 import com.google.gson.JsonObject;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.INBT;
@@ -32,8 +32,8 @@ public class TeleportPos implements INBTSerializable<CompoundNBT> {
     private RegistryKey<World> dimension;
     private BlockPos pos;
 
-    public TeleportPos(ServerPlayerEntity player) {
-        this.dimension = player.getServerWorld().getDimensionKey();
+    public TeleportPos(PlayerEntity player) {
+        this.dimension = player.getEntityWorld().getDimensionKey();
         this.pos = player.getPosition();
     }
 
@@ -65,7 +65,6 @@ public class TeleportPos implements INBTSerializable<CompoundNBT> {
         this.pos = pos;
     }
 
-    @Deprecated
     public JsonObject toJSON() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("dimension", this.dimension.getLocation().toString());
@@ -75,7 +74,6 @@ public class TeleportPos implements INBTSerializable<CompoundNBT> {
         return jsonObject;
     }
 
-    @Deprecated
     public void fromJSON(JsonObject jsonObject) {
         this.dimension = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(jsonObject.get("dimension").getAsString()));
         this.pos = new BlockPos(jsonObject.get("x").getAsInt(), jsonObject.get("y").getAsInt(), jsonObject.get("z").getAsInt());

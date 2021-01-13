@@ -107,7 +107,7 @@ public class ConfigCommands extends AbstractModConfig {
     }
 
     @Override
-    void init() {
+    public void init() {
         this.builder.push("Commands");
 
         this.builder.push("Spawn");

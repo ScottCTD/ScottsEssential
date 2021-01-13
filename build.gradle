@@ -49,7 +49,7 @@ minecraft {
                 }
             }
 
-            args "--username=Scott_CTT"
+            args "--username=star"
         }
 
         server {

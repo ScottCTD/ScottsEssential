@@ -13,7 +13,7 @@ public abstract class AbstractModConfig {
     /**
      * Init the config file
      */
-    abstract void init();
+    public abstract void init();
 
     /**
      * Get the @ConfigField values from config to mod

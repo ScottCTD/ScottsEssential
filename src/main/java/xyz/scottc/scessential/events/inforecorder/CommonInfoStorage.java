@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.player.PlayerEntity;
 import xyz.scottc.scessential.config.ConfigField;
+import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.DateUtils;
 
 import java.text.ParseException;
@@ -11,28 +12,29 @@ import java.util.UUID;
 
 public class CommonInfoStorage implements IInfoStorage {
 
-    // TODO
     @ConfigField
     public static String datePattern = "hh:mm:ss MM/dd/yyyy";
 
     private String playerName;
     private UUID playerUUID;
     private long time;
+    private TeleportPos pos;
     private String info;
 
     public CommonInfoStorage() {
         this.time = System.currentTimeMillis();
     }
 
-    public CommonInfoStorage(String playerName, UUID playerUUID, String info) {
+    public CommonInfoStorage(String playerName, UUID playerUUID, TeleportPos pos, String info) {
         this();
         this.playerName = playerName;
         this.playerUUID = playerUUID;
+        this.pos = pos;
         this.info = info;
     }
 
     public CommonInfoStorage(PlayerEntity player, String info) {
-        this(player.getGameProfile().getName(), player.getGameProfile().getId(), info);
+        this(player.getGameProfile().getName(), player.getGameProfile().getId(), new TeleportPos(player), info);
     }
 
     @Override
@@ -65,6 +67,16 @@ public class CommonInfoStorage implements IInfoStorage {
         this.time = time;
     }
 
+    @Override
+    public TeleportPos getPos() {
+        return this.pos;
+    }
+
+    @Override
+    public void setPos(TeleportPos pos) {
+        this.pos = pos;
+    }
+
     public String getInfo() {
         return info;
     }
@@ -79,6 +91,7 @@ public class CommonInfoStorage implements IInfoStorage {
         json.addProperty("playerName", this.playerName);
         json.addProperty("uuid", this.playerUUID.toString());
         json.addProperty("time", DateUtils.toString(this.time, datePattern));
+        json.add("pos", this.pos.toJSON());
         json.addProperty("info", this.info);
         return json;
     }
@@ -94,6 +107,8 @@ public class CommonInfoStorage implements IInfoStorage {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            this.pos = new TeleportPos();
+            this.pos.fromJSON(json.get("pos").getAsJsonObject());
             this.info = json.get("info").getAsString();
         }
     }

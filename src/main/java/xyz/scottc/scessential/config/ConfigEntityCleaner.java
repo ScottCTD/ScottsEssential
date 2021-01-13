@@ -82,7 +82,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                 .comment("List of item registry names (E.g: minecraft:stone) not being cleaned.",
                         "You could use /scessential getItemRegistryName item command with a item hold in your main hand to get it's registry name.",
                         "You could also use minecraft:* or rats:* to add all items of certain mod to the whitelist.")
-                .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ConfigEntityCleaner::isResourceLocationList);
+                .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ModConfig::isResourceLocationList);
         this.builder.pop();
 
         this.builder.push("MobEntities");
@@ -123,7 +123,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "You could also use minecraft:* or minecolonies:* to add all living entities of certain mod to whitelist.")
                 .define("MobEntitiesWhitelist", Arrays.asList("minecraft:cat", "minecraft:mule", "minecraft:wolf", "minecraft:horse",
                         "minecraft:donkey", "minecraft:wither", "minecraft:guardian", "minecraft:villager", "minecraft:iron_golem", "minecraft:snow_golem",
-                        "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ConfigEntityCleaner::isResourceLocationList);
+                        "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ModConfig::isResourceLocationList);
         this.builder.pop();
 
         this.builder.push("OtherEntities");
@@ -221,17 +221,6 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         EntityCleaner.isTNTEntityCleanupEnable = isTNTEntityCleanupEnable.get();
     }
 
-    private static boolean isResourceLocationList(Object o) {
-        if (!(o instanceof List)) {
-            return false;
-        }
-        List<?> list = (List<?>) o;
-        for (Object s : list) {
-            if (!s.toString().contains(":")) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
 }
