@@ -21,7 +21,10 @@ public class SCEMobEntity {
             AtomicBoolean isIn = new AtomicBoolean(false);
             EntityCleaner.mobEntitiesWhitelist.stream()
                     .filter(s -> s.contains("*"))
-                    .forEach(s -> isIn.set(this.registryName.getNamespace().equals(s.substring(0, s.indexOf(":")))));
+                    .forEach(s -> {
+                        if (isIn.get()) return;
+                        isIn.set(this.registryName.getNamespace().equals(s.substring(0, s.indexOf(":"))));
+                    });
             return isIn.get();
         } else {
             return true;

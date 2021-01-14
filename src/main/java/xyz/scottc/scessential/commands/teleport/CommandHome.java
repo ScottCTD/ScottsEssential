@@ -36,6 +36,16 @@ public class CommandHome {
     @ConfigField
     public static boolean isHomeEnable = true;
     @ConfigField
+    public static String
+            setHomeAlias        = "sethome",
+            homeAlias           = "home",
+            homeOtherAlias      = "homeother",
+            delHomeAlias        = "delhome",
+            listHomesAlias      = "listhomes",
+            listOtherHomesAlias = "listotherhomes",
+            delOtherHomeAlias   = "delotherhome";
+
+    @ConfigField
     public static int homeCooldownSeconds = 3;
     @ConfigField
     public static int homeOtherCooldownSeconds = 3;
@@ -43,23 +53,22 @@ public class CommandHome {
     public static int maxHomes = 5;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        LiteralCommandNode<CommandSource> setHome = dispatcher.register(
-                Commands.literal("sethome")
+        dispatcher.register(
+                Commands.literal(setHomeAlias)
                         .then(Commands.argument("Name", StringArgumentType.string())
                                 .executes(context -> setHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
                         .executes(context -> setHome(context.getSource().asPlayer(), "home"))
         );
-        //dispatcher.register(Commands.literal("homeset").redirect(setHome));
 
         dispatcher.register(
-                Commands.literal("home")
+                Commands.literal(homeAlias)
                         .then(Commands.argument("Name", StringArgumentType.string())
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getInstance(context.getSource().asPlayer()).getHomes().keySet(), builder))
                                 .executes(context -> home(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name")))
                         )
                         .executes(context -> home(context.getSource().asPlayer(), "home"))
         );
-        dispatcher.register(Commands.literal("homeother")
+        dispatcher.register(Commands.literal(homeOtherAlias)
                 .then(Commands.argument("Other", EntityArgument.player())
                         .then(Commands.argument("HomeName", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
@@ -70,10 +79,11 @@ public class CommandHome {
                                 )
                         )
                 )
+                .requires(source -> source.hasPermissionLevel(2))
         );
 
         LiteralCommandNode<CommandSource> delHome = dispatcher.register(
-                Commands.literal("delhome")
+                Commands.literal(delHomeAlias)
                         .then(Commands.argument("Name", StringArgumentType.string())
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getInstance(context.getSource().asPlayer()).getHomes().keySet(), builder))
                                 .executes(context -> delHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
@@ -82,7 +92,7 @@ public class CommandHome {
         dispatcher.register(Commands.literal("removehome").redirect(delHome));
 
         LiteralCommandNode<CommandSource> delOthersHome = dispatcher.register(
-                Commands.literal("delotherhome")
+                Commands.literal(delOtherHomeAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
                                 .then(Commands.argument("Name", StringArgumentType.string())
                                         .requires(source -> source.hasPermissionLevel(2))
@@ -90,18 +100,20 @@ public class CommandHome {
                                         .executes(context -> delOthersHome(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target"), StringArgumentType.getString(context, "Name")))
                                 )
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
         dispatcher.register(Commands.literal("removeotherhome").redirect(delOthersHome));
 
         dispatcher.register(
-                Commands.literal("listhomes")
+                Commands.literal(listHomesAlias)
                         .executes(context -> listHome(context.getSource().asPlayer()))
         );
         dispatcher.register(
-                Commands.literal("listotherhomes")
+                Commands.literal(listOtherHomesAlias)
                         .then(Commands.argument("other", EntityArgument.player())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> listOthersHome(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "other"))))
+                        .requires(source -> source.hasPermissionLevel(2))
         );
     }
 

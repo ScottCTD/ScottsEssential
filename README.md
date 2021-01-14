@@ -8,6 +8,8 @@ Feel free to report any bug or enhancement!
 
 **All commands have reasonable suggestions!**
 
+**All commands can be customized! (You could configure /home to /h)**
+
 **All list commands (e.g. /listhomes) are interactive! (you could click one in the list to teleport)**
 
 - /scessential
@@ -19,6 +21,7 @@ Feel free to report any bug or enhancement!
   - /scessential getRegistryName mob
       - Usage: Get the registry names of living entities near you in certain radius (configurable).
       - Permission: Level 2 (Vanilla permission for temp use.)
+      - <img src="https://i.loli.net/2021/01/13/ZmNRGOH14A6qanS.png" alt="image.png" style="zoom:67%;" />
 - /spawn 
     - Usage: Teleport to the world spawn point.
 - /back
@@ -26,6 +29,7 @@ Feel free to report any bug or enhancement!
 - /tpa
     - /tpa [Target]
       - Usage: Send a teleport request to target to let you teleport to target.
+      - ![image.png](https://i.loli.net/2021/01/14/G8Ryl6sK7Pox4qH.png)
     - /tpahere [Target]
       - Usage: Send a teleport request to target to let target teleport to you.
     - /tphere [Target]
@@ -46,10 +50,11 @@ Feel free to report any bug or enhancement!
       - Usage: Delete a home.
     - /listhomes
       - Usage: List all of your homes. You can click one in the list to teleport to the clicked one.
-    - /homeother [HomeName]
+      - ![image.png](https://i.loli.net/2021/01/13/z45M3e7t2BUGFVA.png)
+    - /homeother [Target] [HomeName]
       - Usage: Teleport to other's home.
       - Permission: 2 Level
-    - /delotherhome = /removeotherhome [HomeName]
+    - /delotherhome = /removeotherhome [Target] [HomeName]
       - Usage: Delete other's home.
       - Permission: 2 Level
     - /listotherhomes [Player]
@@ -84,17 +89,37 @@ Feel free to report any bug or enhancement!
 - /invsee [Target]
     - Usage: Open a GUI containing Target's all items including armor and second hand.
     - Permission: 2 Level
+    - <img src="https://i.loli.net/2021/01/14/aFYtjO9rHf4unTx.png" alt="image.png" style="zoom:90%;" />
 - /trashcan
     - Usage: Open a GUI trashcan that you can put trash items in. You could clear all the items in the trashcan by clicking a button, and the trashcan will clear after some seconds (Configurable). 
+    - <img src="https://i.loli.net/2021/01/13/yP8msuVo7LE6Jcj.png" alt="image.png" style="zoom: 67%;" />
+- /rank
+    - Usage: Open a GUI, displaying the ranking information of all players. (E.g Number of deaths)
+    - <img src="https://i.loli.net/2021/01/14/3aDYzZy9GL6KCXH.png" alt="image.png" style="zoom:67%;" />
 - More in progress
   
 # Services
 
-- Entity Cleaner
+- **Entity Cleaner**
   - Entity Cleaner could clean the entities in all worlds with very high configurability. (Almost all kinds of entities) 
   - You could easily add whitelist of entities that shouldn't be cleaned up. 
-  - You could get the registry name of items or other entities by using /scessential getRegistryName item / mob (OP required).
+  - You could get the registry name of items or other entities by using /scessential getRegistryName item / mob (OP required), and then add it to the whitelist.
   - For more information, check the server config file of my mod.
+- **Information Recorder** (Disabled by default)
+  - Information recorder can record the information of your server to help you find the "bad" one, including player name, position, time, and some extra information about that record.
+  - Currently, my mod supports recording
+    - Player Chats
+    - Player use commands
+    - Player login / logout
+    - Player join dimension
+    - Player death
+    - Player kill other entities
+    - Player open containers
+    - Player place blocks (You could specify blocks need to be recorded in server config file.)
+    - Periodically (A configurable interval) records player's information (name, position, time).
+  - All functions have options to enable / disable.
+  - All recoding actions are performed asynchronous.
+  - Recordings are stored in your world folder/scessential/infoRecorder, separated by date and categories.
 
 # About
 
@@ -102,4 +127,4 @@ Author: ScottCTD (ScottCTD@outlook.com)
 
 You could modify my mod for private use only.
 
-I was inspired by FTB Essential and created it, but I did not copy code from FTB.
+I was inspired by FTB Essential and created it, but I did **not** copy code from FTB.

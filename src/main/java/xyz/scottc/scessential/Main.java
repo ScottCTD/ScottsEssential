@@ -19,7 +19,6 @@ import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Optional;
 
@@ -31,10 +30,11 @@ public class Main {
     public static final Logger LOGGER = LogManager.getLogger();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
-    public static @Nullable MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
+    public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
 
     public static File MAIN_FOLDER;
     public static File PLAYER_DATA_FOLDER;
+    public static File INFO_STORAGE_FOLDER;
     public static File WARPS_FILE;
     public static File STATISTICS_FILE;
 
@@ -52,7 +52,6 @@ public class Main {
     }
 
     private void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-        resetData();
         SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
         MAIN_FOLDER = SERVER.func_240776_a_(new FolderName(MODID)).toFile();
@@ -92,6 +91,12 @@ public class Main {
         if (!PLAYER_DATA_FOLDER.exists()) {
             if (!PLAYER_DATA_FOLDER.mkdirs()) {
                 throw new RuntimeException("Failed to create necessary player data folder!");
+            }
+        }
+        INFO_STORAGE_FOLDER = new File(MAIN_FOLDER.getAbsolutePath() + "/" + "infoRecorder");
+        if (!INFO_STORAGE_FOLDER.exists()) {
+            if (!INFO_STORAGE_FOLDER.mkdirs()) {
+                throw new RuntimeException("Failed to create necessary info recorder folder!");
             }
         }
         WARPS_FILE = new File(MAIN_FOLDER.getAbsolutePath() + "/" + "warps.dat");

@@ -18,11 +18,13 @@ public class CommandFly {
     @ConfigField
     public static boolean isFlyEnable = true;
     @ConfigField
+    public static String flyAlias = "fly";
+    @ConfigField
     public static String datePattern = "hh:mm:ss MM/dd/yyyy";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("fly")
+                Commands.literal(flyAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
                                 .requires(source -> source.hasPermissionLevel(2))
                                 .executes(context -> fly(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target"), FlyType.PERMANENT))

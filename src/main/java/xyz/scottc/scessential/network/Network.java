@@ -56,7 +56,7 @@ public class Network {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 
-    public static void sendToServer(Object packet) {
+    public static void sendToServer(AbstractPacket packet) {
         INSTANCE.sendToServer(packet);
     }
 

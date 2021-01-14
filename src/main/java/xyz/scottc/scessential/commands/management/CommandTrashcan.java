@@ -24,11 +24,13 @@ public class CommandTrashcan {
     @ConfigField
     public static boolean isTrashcanEnable = true;
     @ConfigField
+    public static String trashcanAlias = "trashcan";
+    @ConfigField
     public static int cleanTrashcanIntervalSeconds = 60;
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("trashcan")
+                Commands.literal(trashcanAlias)
                         .executes(context -> trashcan(context.getSource().asPlayer()))
         );
     }

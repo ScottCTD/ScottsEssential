@@ -1,8 +1,8 @@
 {
-  "message.scessential.incooldown": "Teleport Cooldown: %f seconds.",
-
   "message.scessential.ok": "Okay.",
   "message.scessential.you": "You",
+
+  "message.scessential.incooldown": "Teleport Cooldown: %f seconds.",
 
   "message.scessential.spawnsuccess": "Successfully teleported to the overworld spawn point!",
 
@@ -76,10 +76,19 @@
   "text.scessential.leaderboard": "Leaderboard",
   "text.scessential.nextpage": "-->",
   "text.scessential.prevpage": "<--",
-  "text.scessential.deathRank": "Death",
+  "text.scessential.deathButton": "Death",
   "text.scessential.deathstitle": "Death Rank",
   "text.scessential.deathAmount": "%s (%d)",
-  "text.scessential.timeplayedrank": "Time Played",
+  "text.scessential.timeplayedButton": "Time Played",
   "text.scessential.timeplayedtitle": "Time Played Rank",
-  "text.scessential.timeplayed": "%s (%dH, %dMin)"
+  "text.scessential.timeplayed": "%s (%dH, %dMin)",
+  "text.scessential.mobsKilledButton": "Mobs Killed",
+  "text.scessential.mobsKilled": "%s (%d)",
+  "text.scessential.mobsKilledTitle": "Mobs Killed Rank",
+  "text.scessential.distanceWalkedButton": "Meters Walked",
+  "text.scessential.distanceWalked": "%s (%d M)",
+  "text.scessential.distanceWalkedTitle": "Distance Walked Rank",
+  "text.scessential.blocksBrokeButton": "Blocks Broke",
+  "text.scessential.blocksBroke": "%s (%d)",
+  "text.scessential.blocksBrokeTitle": "Blocks Broke Rank"
 }

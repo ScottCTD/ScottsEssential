@@ -1,20 +1,13 @@
 package xyz.scottc.scessential.events;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandTPA;
-import xyz.scottc.scessential.core.PlayerStatistics;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
-import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TextUtils;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -31,17 +24,18 @@ public class ForgeBusEventHandler {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             if (counter >= 20) {
+                counter = 0;
                 new Thread(() -> {
                     long now = System.currentTimeMillis();
                     // TPA Request
-                    TPARequest.getTpaRequest().values().forEach(request -> {
-                        if ((request.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
-                            TPARequest.getTpaRequest().remove(request.getId());
-                            request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
+                    for (TPARequest next : TPARequest.getTpaRequest().values()) {
+                        if ((next.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
+                            TPARequest.getTpaRequest().remove(next.getId());
+                            next.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "requesttimeout"), next.getTarget().getGameProfile().getName()), false
                             );
                         }
-                    });
+                    }
 
                     // Player Fly Time
                     SCEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&
@@ -73,44 +67,6 @@ public class ForgeBusEventHandler {
             }
             counter++;
         }
-    }
-
-    /**
-     * Listen this event for adding a new back history for a player when that player died, allowing player use /back
-     * to return to the death pos.
-     * Also, add a death statistic
-     * @param event Player Death event
-     */
-    @SubscribeEvent
-    public static void onPlayerDied(LivingDeathEvent event) {
-        if (!event.getEntityLiving().world.isRemote) {
-            LivingEntity entity = event.getEntityLiving();
-            if (entity instanceof ServerPlayerEntity) {
-                ISCEPlayerData data = SCEPlayerData.getInstance(((ServerPlayerEntity) entity));
-                data.addTeleportHistory(new TeleportPos((ServerPlayerEntity) event.getEntityLiving()));
-                PlayerStatistics statistics = data.getStatistics();
-                statistics.setDeathAmount(statistics.getDeathAmount() + 1);
-            }
-        }
-    }
-
-    /**
-     * Fix the bug that flyable player not fly after logged in.
-     */
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
-        data.setFlyable(data.isFlyable());
-    }
-
-    /**
-     * Make flyable player flyable again after respawn.
-     * @param e PlayerEvent.PlayerRespawnEvent
-     */
-    @SubscribeEvent
-    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
-        ISCEPlayerData data = SCEPlayerData.getInstance(e.getPlayer());
-        data.setFlyable(data.isFlyable());
     }
 
 }

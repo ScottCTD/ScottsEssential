@@ -18,8 +18,6 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
-import java.util.Optional;
-
 /**
  * 01/02/2021 21:26
  * /tpa
@@ -34,6 +32,12 @@ public class CommandTPA {
     @ConfigField
     public static boolean isTPAEnable = true;
     @ConfigField
+    public static String
+            tpaAlias        = "tpa",
+            tpaHereAlias    = "tpahere",
+            tpHereAlias     = "tphere",
+            tpAllHereAlias  = "tpallhere";
+    @ConfigField
     public static int tpaCooldownSeconds = 3;
     @ConfigField
     public static int maxTPARequestTimeoutSeconds = 30;
@@ -42,29 +46,30 @@ public class CommandTPA {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("tpa")
+                Commands.literal(tpaAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> tpa(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
         );
 
         dispatcher.register(
-                Commands.literal("tpahere")
+                Commands.literal(tpaHereAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .executes(context -> tpaHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
         );
 
         dispatcher.register(
-                Commands.literal("tphere")
+                Commands.literal(tpHereAlias)
                         .then(Commands.argument("target", EntityArgument.player())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> tpHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
 
         dispatcher.register(
-                Commands.literal("tpallhere")
+                Commands.literal(tpAllHereAlias)
                         .requires(commandSource -> commandSource.hasPermissionLevel(2))
                         .executes(context -> tpAllHere(context.getSource().asPlayer()))
         );
@@ -237,10 +242,9 @@ public class CommandTPA {
     }
 
     private static int tpAllHere(ServerPlayerEntity source) {
-        new Thread(() -> Optional.ofNullable(Main.SERVER).ifPresent(server ->
-                server.getPlayerList().getPlayers().stream()
-                        .filter(player -> !player.equals(source))
-                        .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source)))))
+        new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
+                .filter(player -> !player.equals(source))
+                .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))
                 .start();
         return 1;
     }

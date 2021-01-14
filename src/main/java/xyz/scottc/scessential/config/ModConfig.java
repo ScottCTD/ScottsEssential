@@ -6,6 +6,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import xyz.scottc.scessential.Main;
 
+import java.util.List;
 import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -25,7 +26,9 @@ public class ModConfig {
     public static Set<? extends AbstractModConfig> init() {
         Set<? extends AbstractModConfig> configs = Sets.newHashSet(
                 new ConfigCommands(SERVER_BUILDER),
-                new ConfigEntityCleaner(SERVER_BUILDER));
+                new ConfigEntityCleaner(SERVER_BUILDER),
+                new ConfigInfoRecorder(SERVER_BUILDER)
+        );
         configs.forEach(AbstractModConfig::init);
         return configs;
     }
@@ -44,5 +47,18 @@ public class ModConfig {
     public static void onReloading(net.minecraftforge.fml.config.ModConfig.Reloading event) {
         get(CONFIGS);
         Main.LOGGER.info("SCE Config Reloaded!");
+    }
+
+    public static boolean isResourceLocationList(Object o) {
+        if (!(o instanceof List)) {
+            return false;
+        }
+        List<?> list = (List<?>) o;
+        for (Object s : list) {
+            if (!s.toString().contains(":")) {
+                return false;
+            }
+        }
+        return true;
     }
 }

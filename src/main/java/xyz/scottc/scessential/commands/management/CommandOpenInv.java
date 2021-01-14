@@ -27,14 +27,17 @@ public class CommandOpenInv {
 
     @ConfigField
     public static boolean isOpenInvEnable = true;
+    @ConfigField
+    public static String invseeAlias = "invsee";
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal("invsee")
+                Commands.literal(invseeAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
                                 .requires(source -> source.hasPermissionLevel(2))
                                 .executes(context -> invSee(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
     }
 
