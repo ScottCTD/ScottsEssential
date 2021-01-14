@@ -46,6 +46,7 @@ public class CommandWarp {
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> setWarp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
 
         dispatcher.register(
@@ -68,6 +69,7 @@ public class CommandWarp {
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(TeleportPos.WARPS.keySet(), builder))
                                 .executes(context -> delWarp(context.getSource().asPlayer(), StringArgumentType.getString(context, "name")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
         dispatcher.register(Commands.literal("removewarp").requires(commandSource -> commandSource.hasPermissionLevel(2)).redirect(delWarp));
     }

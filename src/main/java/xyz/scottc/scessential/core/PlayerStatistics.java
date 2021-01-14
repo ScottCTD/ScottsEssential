@@ -206,7 +206,7 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         @SubscribeEvent
         public static void onServerTick(TickEvent.ServerTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
-                if (counter >= 5 * 20) {
+                if (counter >= 30 * 20) {
                     counter = 0;
                     // Only update online players
                     SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> data.getStatistics().update());

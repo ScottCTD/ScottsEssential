@@ -79,6 +79,7 @@ public class CommandHome {
                                 )
                         )
                 )
+                .requires(source -> source.hasPermissionLevel(2))
         );
 
         LiteralCommandNode<CommandSource> delHome = dispatcher.register(
@@ -99,6 +100,7 @@ public class CommandHome {
                                         .executes(context -> delOthersHome(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target"), StringArgumentType.getString(context, "Name")))
                                 )
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
         dispatcher.register(Commands.literal("removeotherhome").redirect(delOthersHome));
 
@@ -111,6 +113,7 @@ public class CommandHome {
                         .then(Commands.argument("other", EntityArgument.player())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> listOthersHome(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "other"))))
+                        .requires(source -> source.hasPermissionLevel(2))
         );
     }
 

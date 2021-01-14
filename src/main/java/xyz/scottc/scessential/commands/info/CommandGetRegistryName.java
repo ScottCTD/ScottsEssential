@@ -41,6 +41,7 @@ public class CommandGetRegistryName {
                                         .requires(source -> source.hasPermissionLevel(2))
                                         .executes(context -> getNearbyEntitiesRegistryName(context.getSource().asPlayer()))
                                 )
+                                .requires(source -> source.hasPermissionLevel(2))
                         )
         );
     }

@@ -151,7 +151,7 @@ public class EventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if (isRecordPlayerPeriodically) {
+        if (isInfoRecorderEnable && isRecordPlayerPeriodically) {
             if (counter < 2 * 20) {
                 counter = 0;
                 init();

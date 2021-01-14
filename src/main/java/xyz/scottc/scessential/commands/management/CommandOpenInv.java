@@ -37,6 +37,7 @@ public class CommandOpenInv {
                                 .requires(source -> source.hasPermissionLevel(2))
                                 .executes(context -> invSee(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
     }
 

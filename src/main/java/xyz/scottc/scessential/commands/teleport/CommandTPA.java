@@ -26,9 +26,6 @@ import xyz.scottc.scessential.utils.TextUtils;
  * /tpahere
  * /tphere
  * /tpallhere
- *
- * TODO Only sent once but notice many times
- * TODO safer id
  */
 public class CommandTPA {
 
@@ -68,6 +65,7 @@ public class CommandTPA {
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
                                 .executes(context -> tpHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
                         )
+                        .requires(source -> source.hasPermissionLevel(2))
         );
 
         dispatcher.register(

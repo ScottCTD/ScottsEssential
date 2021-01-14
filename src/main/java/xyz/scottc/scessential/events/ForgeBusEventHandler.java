@@ -28,14 +28,14 @@ public class ForgeBusEventHandler {
                 new Thread(() -> {
                     long now = System.currentTimeMillis();
                     // TPA Request
-                    TPARequest.getTpaRequest().values().forEach(request -> {
-                        if ((request.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
-                            TPARequest.getTpaRequest().remove(request.getId());
-                            request.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "requesttimeout"), request.getTarget().getGameProfile().getName()), false
+                    for (TPARequest next : TPARequest.getTpaRequest().values()) {
+                        if ((next.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
+                            TPARequest.getTpaRequest().remove(next.getId());
+                            next.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "requesttimeout"), next.getTarget().getGameProfile().getName()), false
                             );
                         }
-                    });
+                    }
 
                     // Player Fly Time
                     SCEPlayerData.PLAYER_DATA_LIST.stream().filter(player -> player.getPlayer() != null &&

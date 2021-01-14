@@ -29,6 +29,7 @@ Feel free to report any bug or enhancement!
 - /tpa
     - /tpa [Target]
       - Usage: Send a teleport request to target to let you teleport to target.
+      - ![image.png](https://i.loli.net/2021/01/14/G8Ryl6sK7Pox4qH.png)
     - /tpahere [Target]
       - Usage: Send a teleport request to target to let target teleport to you.
     - /tphere [Target]
@@ -88,6 +89,7 @@ Feel free to report any bug or enhancement!
 - /invsee [Target]
     - Usage: Open a GUI containing Target's all items including armor and second hand.
     - Permission: 2 Level
+    - <img src="https://i.loli.net/2021/01/14/aFYtjO9rHf4unTx.png" alt="image.png" style="zoom:90%;" />
 - /trashcan
     - Usage: Open a GUI trashcan that you can put trash items in. You could clear all the items in the trashcan by clicking a button, and the trashcan will clear after some seconds (Configurable). 
     - <img src="https://i.loli.net/2021/01/13/yP8msuVo7LE6Jcj.png" alt="image.png" style="zoom: 67%;" />
