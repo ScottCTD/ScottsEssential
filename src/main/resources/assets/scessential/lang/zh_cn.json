@@ -1,8 +1,8 @@
 {
-  "message.scessential.incooldown": "传送冷却: %f 秒。",
-
   "message.scessential.ok": "好的。",
   "message.scessential.you": "你",
+
+  "message.scessential.incooldown": "传送冷却: %f 秒。",
 
   "message.scessential.spawnsuccess": "成功传送到主世界的出生点！",
 
@@ -76,10 +76,19 @@
   "text.scessential.leaderboard": "排行榜",
   "text.scessential.nextpage": "-->",
   "text.scessential.prevpage": "<--",
-  "text.scessential.deathRank": "死亡",
+  "text.scessential.deathButton": "死亡次数",
   "text.scessential.deathstitle": "死亡排行榜",
   "text.scessential.deathAmount": "%s (%d)",
-  "text.scessential.timeplayedrank": "游戏时间",
+  "text.scessential.timeplayedButton": "游戏时间",
   "text.scessential.timeplayedtitle": "游戏时间排行榜",
-  "text.scessential.timeplayed": "%s （%d小时, %d分钟）"
+  "text.scessential.timeplayed": "%s （%d小时, %d分钟）",
+  "text.scessential.mobsKilledButton": "杀怪数量",
+  "text.scessential.mobsKilled": "%s (%d)",
+  "text.scessential.mobsKilledTitle": "杀怪排行榜",
+  "text.scessential.distanceWalkedButton": "走路距离",
+  "text.scessential.distanceWalked": "%s (%d 米)",
+  "text.scessential.distanceWalkedTitle": "走路距离排行榜",
+  "text.scessential.blocksBrokeButton": "方块破坏",
+  "text.scessential.blocksBroke": "%s (%d)",
+  "text.scessential.blocksBrokeTitle": "方块破坏排行榜"
 }
