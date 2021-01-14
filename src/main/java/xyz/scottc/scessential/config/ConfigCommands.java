@@ -415,7 +415,6 @@ public class ConfigCommands extends AbstractModConfig {
 
         // /scessential ....
         this.builder.push("Scessential");
-        this.builder.push("Info");
         this.builder.push("GetRegistryName");
         // getRegistryName
         entitiesWithinRadius = this.builder
@@ -423,7 +422,6 @@ public class ConfigCommands extends AbstractModConfig {
                         "The radius is specified here.",
                         "Default value: 3 blocks (a 7 * 7 * 7 cube)")
                 .defineInRange("Radius", 3, 1, Integer.MAX_VALUE);
-        this.builder.pop();
         this.builder.pop();
         this.builder.pop();
 

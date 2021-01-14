@@ -18,8 +18,6 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.TeleportUtils;
 import xyz.scottc.scessential.utils.TextUtils;
 
-import java.util.Optional;
-
 /**
  * 01/02/2021 21:26
  * /tpa
@@ -246,10 +244,9 @@ public class CommandTPA {
     }
 
     private static int tpAllHere(ServerPlayerEntity source) {
-        new Thread(() -> Optional.ofNullable(Main.SERVER).ifPresent(server ->
-                server.getPlayerList().getPlayers().stream()
-                        .filter(player -> !player.equals(source))
-                        .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source)))))
+        new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
+                .filter(player -> !player.equals(source))
+                .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))
                 .start();
         return 1;
     }

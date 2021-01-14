@@ -28,7 +28,6 @@ public class PacketChangeLeaderboard extends AbstractPacket {
         buffer.writeEnumValue(this.type);
     }
 
-    // TODO more
     @Override
     public void handle(Supplier<NetworkEvent.Context> context) {
         context.get().enqueueWork(() -> {

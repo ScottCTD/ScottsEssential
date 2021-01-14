@@ -103,7 +103,7 @@ Feel free to report any bug or enhancement!
   - You could easily add whitelist of entities that shouldn't be cleaned up. 
   - You could get the registry name of items or other entities by using /scessential getRegistryName item / mob (OP required), and then add it to the whitelist.
   - For more information, check the server config file of my mod.
-- **Information Recorder**
+- **Information Recorder** (Disabled by default)
   - Information recorder can record the information of your server to help you find the "bad" one, including player name, position, time, and some extra information about that record.
   - Currently, my mod supports recording
     - Player Chats

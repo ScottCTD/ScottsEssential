@@ -35,17 +35,16 @@ public class ConfigInfoRecorder extends AbstractModConfig {
     public void init() {
         this.builder.push("InformationRecorder");
 
+        this.isInfoRecorderEnable = this.builder
+                .comment("Set it to false to disable the entire information recording system.",
+                        "Default value: false")
+                .define("IsInfoRecorderEnable", false);
         this.timePattern = this.builder
                 .comment("The pattern of time appears in every infomation file. (E.g ChatLog.json)",
                         "A valid date format should follow the pattern described in JavaDoc: https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html",
                         "If you don't know what it is, please do not modify it.",
                         "Default value: \"hh:mm:ss MM/dd/yyyy\"")
                 .define("TimePattern", "hh:mm:ss MM/dd/yyyy");
-
-        this.isInfoRecorderEnable = this.builder
-                .comment("Set it to false to disable the entire information recording system.",
-                        "Default value: true")
-                .define("IsInfoRecorderEnable", true);
 
         this.builder.push("ModuleSettings");
 

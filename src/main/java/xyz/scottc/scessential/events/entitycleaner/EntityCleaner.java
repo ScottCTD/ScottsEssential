@@ -20,9 +20,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-/**
- * TODO commands to manually clean entities
- */
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityCleaner {
 
@@ -124,29 +121,7 @@ public class EntityCleaner {
 
                     // Other entities cleaner
                     if (otherTimer + cleanupOtherEntitiesIntervalSeconds * 1000L <= System.currentTimeMillis()) {
-                        int amount = 0;
-                        if (isExperienceOrbEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, ExperienceOrbEntity.class, entity -> true);
-                        if (isFallingBlocksEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, FallingBlockEntity.class, entity -> true);
-                        if (isArrowEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, AbstractArrowEntity.class, entity -> !(entity instanceof TridentEntity));
-                        if (isTridentEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, TridentEntity.class, entity -> true);
-                        if (isDamagingProjectileEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, DamagingProjectileEntity.class, entity -> true);
-                        if (isShulkerBulletEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, ShulkerBulletEntity.class, entity -> true);
-                        if (isFireworkRocketEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, FireworkRocketEntity.class, entity -> true);
-                        if (isItemFrameEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, ItemFrameEntity.class, entity -> true);
-                        if (isPaintingEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, PaintingEntity.class, entity -> true);
-                        if (isBoatEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, BoatEntity.class, entity -> true);
-                        if (isTNTEntityCleanupEnable)
-                            amount += cleanupEntity(worlds, TNTEntity.class, entity -> true);
+                        int amount = cleanOtherEntities(worlds);
                         otherTimer = System.currentTimeMillis();
                     }
 
@@ -156,7 +131,34 @@ public class EntityCleaner {
         counter++;
     }
 
-    private static int cleanupEntity(Iterable<ServerWorld> worlds, Class<? extends Entity> Type, Predicate<Entity> additionalPredicate) {
+    public static int cleanOtherEntities(Iterable<ServerWorld> worlds) {
+        int amount = 0;
+        if (isExperienceOrbEntityCleanupEnable)
+            amount += cleanupEntity(worlds, ExperienceOrbEntity.class, entity -> true);
+        if (isFallingBlocksEntityCleanupEnable)
+            amount += cleanupEntity(worlds, FallingBlockEntity.class, entity -> true);
+        if (isArrowEntityCleanupEnable)
+            amount += cleanupEntity(worlds, AbstractArrowEntity.class, entity -> !(entity instanceof TridentEntity));
+        if (isTridentEntityCleanupEnable)
+            amount += cleanupEntity(worlds, TridentEntity.class, entity -> true);
+        if (isDamagingProjectileEntityCleanupEnable)
+            amount += cleanupEntity(worlds, DamagingProjectileEntity.class, entity -> true);
+        if (isShulkerBulletEntityCleanupEnable)
+            amount += cleanupEntity(worlds, ShulkerBulletEntity.class, entity -> true);
+        if (isFireworkRocketEntityCleanupEnable)
+            amount += cleanupEntity(worlds, FireworkRocketEntity.class, entity -> true);
+        if (isItemFrameEntityCleanupEnable)
+            amount += cleanupEntity(worlds, ItemFrameEntity.class, entity -> true);
+        if (isPaintingEntityCleanupEnable)
+            amount += cleanupEntity(worlds, PaintingEntity.class, entity -> true);
+        if (isBoatEntityCleanupEnable)
+            amount += cleanupEntity(worlds, BoatEntity.class, entity -> true);
+        if (isTNTEntityCleanupEnable)
+            amount += cleanupEntity(worlds, TNTEntity.class, entity -> true);
+        return amount;
+    }
+
+    public static int cleanupEntity(Iterable<ServerWorld> worlds, Class<? extends Entity> Type, Predicate<Entity> additionalPredicate) {
         AtomicInteger amount = new AtomicInteger();
         worlds.forEach(world -> world.getEntities()
                 .filter(Type::isInstance)

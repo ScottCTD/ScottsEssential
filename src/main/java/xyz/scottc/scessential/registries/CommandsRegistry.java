@@ -11,10 +11,7 @@ import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.commands.CommandSCE;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
 import xyz.scottc.scessential.commands.info.CommandRank;
-import xyz.scottc.scessential.commands.management.CommandFly;
-import xyz.scottc.scessential.commands.management.CommandHat;
-import xyz.scottc.scessential.commands.management.CommandOpenInv;
-import xyz.scottc.scessential.commands.management.CommandTrashcan;
+import xyz.scottc.scessential.commands.management.*;
 import xyz.scottc.scessential.commands.teleport.*;
 
 @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -26,6 +23,7 @@ public class CommandsRegistry {
         // Main Commands
         CommandSCE.register(dispatcher);
         CommandGetRegistryName.register(dispatcher);
+        CommandClear.register(dispatcher);
 
         // Teleport
         if (CommandSpawn.isSpawnEnable) CommandSpawn.register(dispatcher);

@@ -19,7 +19,6 @@ import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TPARequest;
 import xyz.scottc.scessential.core.TeleportPos;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Optional;
 
@@ -31,7 +30,7 @@ public class Main {
     public static final Logger LOGGER = LogManager.getLogger();
     // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
-    public static @Nullable MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
+    public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
 
     public static File MAIN_FOLDER;
     public static File PLAYER_DATA_FOLDER;

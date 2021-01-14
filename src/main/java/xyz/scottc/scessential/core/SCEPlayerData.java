@@ -4,12 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,7 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.api.ISCEPlayerData;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.commands.teleport.CommandBack;
 
@@ -30,7 +31,7 @@ import java.util.*;
  * Every player should have an instance of this class.
  * It contains all the data that a player need like the last teleport time, uuid, name, homes, teleport history, and etc.
  */
-public class SCEPlayerData implements ISCEPlayerData {
+public class SCEPlayerData {
 
     // All the player data are stored in it.
     // It will be refilled everytime the server restart.
@@ -84,12 +85,12 @@ public class SCEPlayerData implements ISCEPlayerData {
         return data;
     }
 
-    @Override
     public @NotNull CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
 
         // Info
         nbt.putString("uuid", this.uuid.toString());
+        nbt.putString("name", this.playerName);
 
         // Fly
         nbt.putBoolean("flyable", this.isFlyable);
@@ -117,11 +118,11 @@ public class SCEPlayerData implements ISCEPlayerData {
         return nbt;
     }
 
-    @Override
     public void deserializeNBT(CompoundNBT nbt) {
         try {
             this.uuid = UUID.fromString(nbt.getString("uuid"));
         } catch (IllegalArgumentException ignore) {}
+        this.playerName = nbt.getString("name");
 
         this.isFlyable = nbt.getBoolean("flyable");
         this.canFlyUntil = nbt.getLong("canFlyUntil");
@@ -152,7 +153,6 @@ public class SCEPlayerData implements ISCEPlayerData {
         });
     }
 
-    @Override
     public PlayerStatistics getStatistics() {
         if (!this.player.world.isRemote) {
             this.statistics = PlayerStatistics.getInstance((ServerPlayerEntity) this.player);
@@ -160,17 +160,14 @@ public class SCEPlayerData implements ISCEPlayerData {
         return this.statistics;
     }
 
-    @Override
     public @Nullable CommandTrashcan.Trashcan getTrashcan() {
         return trashcan;
     }
 
-    @Override
     public void setTrashcan(CommandTrashcan.Trashcan trashcan) {
         this.trashcan = trashcan;
     }
 
-    @Override
     public boolean isFlyable() {
         return this.isFlyable;
     }
@@ -179,7 +176,6 @@ public class SCEPlayerData implements ISCEPlayerData {
      * This method will do nothing if player is null
      * @param flyable flyable
      */
-    @Override
     public void setFlyable(boolean flyable) {
         if (this.player.isCreative()) {
             this.isFlyable = true;
@@ -198,29 +194,20 @@ public class SCEPlayerData implements ISCEPlayerData {
         }
     }
 
-    @Override
     public long getCanFlyUntil() {
         return canFlyUntil;
     }
 
-    @Override
     public void setCanFlyUntil(long canFlyUntil) {
         this.canFlyUntil = canFlyUntil;
     }
 
-    @Override
     public void addTeleportHistory(TeleportPos teleportPos) {
         System.arraycopy(this.teleportHistory, 0, this.teleportHistory, 1, CommandBack.maxBacks - 1);
         this.teleportHistory[0] = teleportPos;
         this.currentBackIndex = 0;
     }
 
-    @Override
-    public TeleportPos[] getAllTeleportHistory() {
-        return this.teleportHistory;
-    }
-
-    @Override
     public @Nullable TeleportPos getTeleportHistory() {
         if (this.currentBackIndex < CommandBack.maxBacks) {
             return this.teleportHistory[this.currentBackIndex];
@@ -229,17 +216,6 @@ public class SCEPlayerData implements ISCEPlayerData {
         }
     }
 
-    @Override
-    public int getCurrentBackIndex() {
-        return this.currentBackIndex;
-    }
-
-    @Override
-    public void setCurrentBackIndex(int index) {
-        this.currentBackIndex = index;
-    }
-
-    @Override
     public void moveCurrentBackIndex() {
         this.currentBackIndex++;
     }
@@ -256,22 +232,14 @@ public class SCEPlayerData implements ISCEPlayerData {
         this.homes.put(name, newPos);
     }
 
-    @Override
     public Map<String, TeleportPos> getHomes() {
         return this.homes;
     }
 
-    @Override
-    public @NotNull List<SCEPlayerData> getAllPlayerData() {
-        return PLAYER_DATA_LIST;
-    }
-
-    @Override
     public @Nullable PlayerEntity getPlayer() {
         return this.player;
     }
 
-    @Override
     public void setPlayer(PlayerEntity player) {
         this.player = player;
     }
@@ -339,14 +307,8 @@ public class SCEPlayerData implements ISCEPlayerData {
         this.lastTPATime = lastTPATime;
     }
 
-    @Override
     public UUID getUuid() {
         return this.uuid;
-    }
-
-    @Override
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     @Deprecated
@@ -412,13 +374,11 @@ public class SCEPlayerData implements ISCEPlayerData {
         }
     }
 
-
     /**
      * Compare two player data based on uuid.
      * @param o Object being compared.
      * @return true if equal
      */
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SCEPlayerData)) return false;
@@ -442,24 +402,25 @@ public class SCEPlayerData implements ISCEPlayerData {
         public static void onPlayerSaved(PlayerEvent.SaveToFile event) {
             try {
                 File dataFile = new File(Main.PLAYER_DATA_FOLDER.getAbsolutePath() + "/" + event.getPlayerUUID() + ".dat");
-                ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
                 CompressedStreamTools.writeCompressed(data.serializeNBT(), dataFile);
                 Main.LOGGER.debug("Successfully save player " + data.getUuid() + " to file!");
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (data.getPlayer() == null) {
-                        Main.LOGGER.debug("Removing " + event.getPlayer().getGameProfile().getName() + " from list!");
-                        SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
-                        Main.LOGGER.debug("Removed!");
-                    }
-                }).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        @SubscribeEvent
+        public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+            // delay to remove player because this event is fired before SaveToFile event.
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
+            }).start();
         }
 
         // Deserialize Player Data
@@ -469,11 +430,65 @@ public class SCEPlayerData implements ISCEPlayerData {
             if (dataFile.exists()) {
                 try {
                     CompoundNBT dataNbt = CompressedStreamTools.readCompressed(dataFile);
-                    ISCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                    SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
                     data.deserializeNBT(dataNbt);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+
+        /**
+         * Listen this event for adding a new back history for a player when that player died, allowing player use /back
+         * to return to the death pos.
+         * @param event Player Death event
+         */
+        @SubscribeEvent
+        public static void onPlayerDied(LivingDeathEvent event) {
+            LivingEntity entity = event.getEntityLiving();
+            if (!entity.world.isRemote) {
+                if (entity instanceof PlayerEntity) {
+                    ServerPlayerEntity player = (ServerPlayerEntity) entity;
+                    SCEPlayerData data = SCEPlayerData.getInstance(player);
+                    data.addTeleportHistory(new TeleportPos(player));
+                }
+            }
+        }
+
+        /**
+         * Fix the bug that flyable player not fly after logged in.
+         */
+        @SubscribeEvent
+        public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+            SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+            data.setFlyable(data.isFlyable());
+        }
+
+        /**
+         * Let flyable player flyable again after respawn.
+         */
+        @SubscribeEvent
+        public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent e) {
+            SCEPlayerData data = SCEPlayerData.getInstance(e.getPlayer());
+            data.setFlyable(data.isFlyable());
+        }
+
+        /**
+         * Let creative player flyable or not after he/she switching to survival mode.
+         */
+        @SubscribeEvent
+        public static void onPlayerChangeGameMode(PlayerEvent.PlayerChangeGameModeEvent event) {
+            if (event.getCurrentGameMode().isCreative() && event.getNewGameMode().isSurvivalOrAdventure()) {
+                new Thread(() -> {
+                    // after game mode changed, if player is flyable, then flyable
+                    SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    data.setFlyable(data.isFlyable());
+                }).start();
             }
         }
     }
