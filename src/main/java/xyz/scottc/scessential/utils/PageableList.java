@@ -28,10 +28,6 @@ public class PageableList<T> {
         }
     }
 
-    public List<T> getCurrentPage() {
-        return this.pages.get(this.index);
-    }
-
     private void init(int onePage, int totalPages) {
         this.pages = new ArrayList<>(totalPages);
         int index = 0;
@@ -46,6 +42,10 @@ public class PageableList<T> {
             index++;
         }
         this.pages.add(temp);
+    }
+
+    public List<T> getCurrentPage() {
+        return this.pages.get(this.index);
     }
 
     public List<T> getAll() {

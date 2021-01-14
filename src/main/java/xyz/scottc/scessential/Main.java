@@ -53,7 +53,6 @@ public class Main {
     }
 
     private void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-        resetData();
         SERVER = event.getServer();
         // Bascially, this function return a path like .\saves\New World\scessential
         MAIN_FOLDER = SERVER.func_240776_a_(new FolderName(MODID)).toFile();

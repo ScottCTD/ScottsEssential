@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.INBT;
@@ -60,19 +61,16 @@ public class SCEPlayerData implements ISCEPlayerData {
     private long lastWarpTime = 0;
     private long lastTPATime = 0;
 
-    public SCEPlayerData() {}
-
     private SCEPlayerData(@NotNull UUID uuid, @Nullable String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
-        this.statistics = PlayerStatistics.getInstance(this.uuid, this.playerName);
     }
 
     /**
      * This method should be used only after player loaded.
      * AttachCapability event happened before player loaded.
      */
-    public static @NotNull SCEPlayerData getInstance(PlayerEntity player) {
+    public static @NotNull SCEPlayerData getInstance(@NotNull PlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
         SCEPlayerData data = new SCEPlayerData(gameProfile.getId(), gameProfile.getName());
         int i = PLAYER_DATA_LIST.indexOf(data);
@@ -156,8 +154,8 @@ public class SCEPlayerData implements ISCEPlayerData {
 
     @Override
     public PlayerStatistics getStatistics() {
-        if (this.statistics == null) {
-            this.statistics = PlayerStatistics.getInstance(this.player);
+        if (!this.player.world.isRemote) {
+            this.statistics = PlayerStatistics.getInstance((ServerPlayerEntity) this.player);
         }
         return this.statistics;
     }

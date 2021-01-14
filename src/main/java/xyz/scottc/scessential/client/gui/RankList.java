@@ -4,17 +4,20 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.IRenderable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.*;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.scottc.scessential.client.utils.ScreenUtils;
 import xyz.scottc.scessential.utils.PageableList;
+import xyz.scottc.scessential.utils.TextUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ListWidget implements IRenderable, IGuiEventListener {
+public class RankList implements IRenderable, IGuiEventListener {
 
     private final int x;
     private final int y;
@@ -25,10 +28,10 @@ public class ListWidget implements IRenderable, IGuiEventListener {
 
     private final PageableList<ITextComponent> texts;
 
-    public ListWidget(int x, int y, int width, int height, FontRenderer fontRenderer, List<ITextComponent> elements) {
+    public RankList(int x, int y, int width, int height, FontRenderer fontRenderer, List<ITextComponent> elements) {
         this.x = x + 5;
         this.y = y + 5;
-        this.width = width;
+        this.width = width - 5 * 2;
         this.height = height;
         this.fontRenderer = fontRenderer;
         this.elementHeight = this.fontRenderer.FONT_HEIGHT + 5;
@@ -44,11 +47,42 @@ public class ListWidget implements IRenderable, IGuiEventListener {
             int realY = this.y + this.elementHeight * i;
             if (realY < this.y + this.height) {
                 ITextComponent text = this.texts.getCurrentPage().get(i);
+                String string = text.getString();
+                if (this.fontRenderer.getStringWidth(string) > this.width) {
+                    int index = string.length() - 1;
+                    while (this.fontRenderer.getStringWidth(string) > this.width) {
+                        string = string.substring(0, index) + "...";
+                        index--;
+                    }
+                    index = string.indexOf(':');
+                    // +2 because of space
+                    String rank = string.substring(0, index + 2);
+                    string = string.substring(index + 2);
+                    text = new StringTextComponent(rank).append(TextUtils.getWhiteTextFromString(false, false, false, string)).mergeStyle(text.getStyle());
+                }
                 AtomicInteger color = new AtomicInteger(0xFFFFFF);
                 Optional.ofNullable(text.getStyle().getColor()).ifPresent(c -> color.set(c.getColor()));
                 ScreenUtils.drawStringDropShadow(matrixStack, this.fontRenderer, text, this.x, realY, color.get());
             }
         }
+        Optional.ofNullable(this.getMouseOver(mouseX, mouseY)).ifPresent(tooltip ->
+                GuiUtils.drawHoveringText(matrixStack, Collections.singletonList(tooltip), mouseX, mouseY, this.x + this.width, this.y + this.height, -1, this.fontRenderer));
+    }
+
+    public @Nullable ITextComponent getMouseOver(double mouseX, double mouseY) {
+        if (isMouseOver(mouseX, mouseY)) {
+            int index = (int) ((mouseY - this.y) / this.elementHeight);
+            if (index >= this.texts.getCurrentPage().size()) {
+                return null;
+            }
+            return this.texts.getCurrentPage().get(index);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
     }
 
     public PageableList<ITextComponent> getTexts() {

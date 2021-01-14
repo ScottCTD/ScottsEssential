@@ -1,20 +1,21 @@
 package xyz.scottc.scessential.core;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.stats.ServerStatisticsManager;
+import net.minecraft.stats.Stats;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
 
 import java.io.IOException;
@@ -22,40 +23,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 01/11/2021 23:28
+ */
 public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
 
     public static final List<PlayerStatistics> ALL_STATISTICS = new ArrayList<>();
 
+    private ServerPlayerEntity player;
     private String name;
     private UUID uuid;
 
     private int deathAmount = 0;
-
-    private int totalPlayedSeconds;
-    public long lastUpdateTime = 0;
+    private int totalPlayedTicks;
+    private int mobsKilled;
+    private int distanceWalked;
+    private int blocksBroke;
 
     private PlayerStatistics(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
     }
 
-    public PlayerStatistics() {}
+    private PlayerStatistics() {}
 
-    public static PlayerStatistics getInstance(PlayerEntity player) {
+    public static @NotNull PlayerStatistics getInstance(@NotNull ServerPlayerEntity player) {
         GameProfile gameProfile = player.getGameProfile();
-        return getInstance(gameProfile.getId(), gameProfile.getName());
-    }
-
-    public static PlayerStatistics getInstance(UUID uuid, String name) {
-        PlayerStatistics instance = new PlayerStatistics(uuid, name);
+        PlayerStatistics instance = new PlayerStatistics(gameProfile.getId(), gameProfile.getName());
         int index = ALL_STATISTICS.indexOf(instance);
         if (index != -1) {
             instance = ALL_STATISTICS.get(index);
         } else {
             ALL_STATISTICS.add(instance);
         }
+        instance.player = player;
+        instance.update();
         return instance;
+    }
+
+    public void update() {
+        ServerStatisticsManager stats = this.player.getStats();
+        this.setDeathAmount(stats.getValue(Stats.CUSTOM.get(Stats.DEATHS)));
+        this.setTotalPlayedTicks(stats.getValue(Stats.CUSTOM.get(Stats.PLAY_ONE_MINUTE)));
+        this.setMobsKilled(stats.getValue(Stats.CUSTOM.get(Stats.MOB_KILLS)));
+        this.setDistanceWalked(stats.getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)));
+        AtomicInteger temp = new AtomicInteger();
+        ForgeRegistries.BLOCKS.getValues().forEach(block -> temp.getAndAdd(stats.getValue(Stats.BLOCK_MINED.get(block))));
+        this.setBlocksBroke(temp.get());
     }
 
     @Override
@@ -64,7 +80,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         nbt.putUniqueId("uuid", this.uuid);
         nbt.putString("name", this.name);
         nbt.putInt("deathAmount", this.deathAmount);
-        nbt.putInt("totalPlayedSeconds", this.totalPlayedSeconds);
+        nbt.putInt("totalPlayedTicks", this.totalPlayedTicks);
+        nbt.putInt("mobsKilled", this.mobsKilled);
+        nbt.putInt("distanceWalked", this.distanceWalked);
+        nbt.putInt("blocksBroke", this.blocksBroke);
         return nbt;
     }
 
@@ -73,7 +92,14 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         this.uuid = nbt.getUniqueId("uuid");
         this.name = nbt.getString("name");
         this.deathAmount = nbt.getInt("deathAmount");
-        this.totalPlayedSeconds = nbt.getInt("totalPlayedSeconds");
+        this.totalPlayedTicks = nbt.getInt("totalPlayedTicks");
+        this.mobsKilled = nbt.getInt("mobsKilled");
+        this.distanceWalked = nbt.getInt("distanceWalked");
+        this.blocksBroke = nbt.getInt("blocksBroke");
+    }
+
+    public ServerPlayerEntity getPlayer() {
+        return player;
     }
 
     public String getName() {
@@ -88,16 +114,36 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         this.deathAmount = deathAmount;
     }
 
-    public void addToPlayedSeconds(int seconds) {
-        this.totalPlayedSeconds += seconds;
+    public int getTotalPlayedTicks() {
+        return this.totalPlayedTicks;
     }
 
-    public int getTotalPlayedSeconds() {
-        return this.totalPlayedSeconds;
+    public void setTotalPlayedTicks(int totalPlayedTicks) {
+        this.totalPlayedTicks = totalPlayedTicks;
     }
 
-    public void setTotalPlayedSeconds(int totalPlayedSeconds) {
-        this.totalPlayedSeconds = totalPlayedSeconds;
+    public int getMobsKilled() {
+        return mobsKilled;
+    }
+
+    public void setMobsKilled(int mobsKilled) {
+        this.mobsKilled = mobsKilled;
+    }
+
+    public int getDistanceWalked() {
+        return distanceWalked;
+    }
+
+    public void setDistanceWalked(int distanceWalked) {
+        this.distanceWalked = distanceWalked;
+    }
+
+    public int getBlocksBroke() {
+        return blocksBroke;
+    }
+
+    public void setBlocksBroke(int blocksBroke) {
+        this.blocksBroke = blocksBroke;
     }
 
     @Override
@@ -109,7 +155,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
 
     public enum StatisticsType {
         DEATH_AMOUNT,
-        TIME_PLAYED
+        TIME_PLAYED,
+        MOBS_KILLED,
+        DISTANCE_WALKED,
+        BLOCKS_BROKE
     }
 
     @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -155,35 +204,14 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         }
 
         @SubscribeEvent
-        public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-            PlayerStatistics instance = PlayerStatistics.getInstance(event.getPlayer());
-            instance.lastUpdateTime = System.currentTimeMillis();
-        }
-
-        @SubscribeEvent
         public static void onServerTick(TickEvent.ServerTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
-                if (counter >= 10 * 20) {
+                if (counter >= 5 * 20) {
                     counter = 0;
-                    long now = System.currentTimeMillis();
-                    SCEPlayerData.PLAYER_DATA_LIST.forEach(player -> {
-                        PlayerStatistics statistics = player.getStatistics();
-                        int diff = (int) ((now - statistics.lastUpdateTime) / 1000);
-                        statistics.addToPlayedSeconds(diff);
-                        statistics.lastUpdateTime = now;
-                    });
+                    // Only update online players
+                    SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> data.getStatistics().update());
                 }
                 counter++;
-            }
-        }
-
-        @SubscribeEvent
-        public static void onPlayerDie(LivingDeathEvent event) {
-            LivingEntity entityLiving = event.getEntityLiving();
-            if (entityLiving instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity) entityLiving;
-                PlayerStatistics statistics = PlayerStatistics.getInstance(player);
-                statistics.setDeathAmount(statistics.getDeathAmount() + 1);
             }
         }
     }

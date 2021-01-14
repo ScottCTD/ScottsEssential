@@ -93,7 +93,7 @@ Feel free to report any bug or enhancement!
     - <img src="https://i.loli.net/2021/01/13/yP8msuVo7LE6Jcj.png" alt="image.png" style="zoom: 67%;" />
 - /rank
     - Usage: Open a GUI, displaying the ranking information of all players. (E.g Number of deaths)
-    - <img src="https://i.loli.net/2021/01/13/2FNVTxvZzOGQ9cH.png" alt="image.png" style="zoom:67%;" />
+    - <img src="https://i.loli.net/2021/01/14/3aDYzZy9GL6KCXH.png" alt="image.png" style="zoom:67%;" />
 - More in progress
   
 # Services
