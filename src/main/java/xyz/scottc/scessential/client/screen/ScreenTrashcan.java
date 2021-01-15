@@ -54,7 +54,7 @@ public class ScreenTrashcan extends ContainerScreen<ContainerTrashcan> {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
         drawString(matrixStack, this.font, TextUtils.getContainerNameTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("text", "trashcantitle"), this.container.getTrashcan().getNextCleanSeconds()),
+                TextUtils.getTranslationKey("text", "trashcanTitle"), this.container.getTrashcan().getNextCleanSeconds()),
                 this.x + 65, this.y + this.titleY, 0xfbfb54);
     }
 }

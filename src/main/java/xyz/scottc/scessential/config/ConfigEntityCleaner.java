@@ -194,13 +194,13 @@ public class ConfigEntityCleaner extends AbstractModConfig {
     @Override
     public void get() {
         EntityCleaner.cleanupItemEntitiesIntervalSeconds = this.cleanupItemEntitiesIntervalSeconds.get();
-        EntityCleaner.cleanedupItemEntitiesMessage = this.cleanedupItemEntitiesMessage.get();
+        EntityCleaner.cleanedUpItemEntitiesMessage = this.cleanedupItemEntitiesMessage.get();
         EntityCleaner.cleanupItemEntitiesCountdownSeconds = this.cleanupItemEntitiesCountdownSeconds.get();
         EntityCleaner.cleanupItemEntitiesCountdownMessage = this.cleanupItemEntitiesCountdownMessage.get();
         EntityCleaner.itemEntitiesWhitelist = this.itemEntitiesWhitelist.get();
 
         EntityCleaner.cleanupMobEntitiesIntervalSeconds = this.cleanupMobEntitiesIntervalSeconds.get();
-        EntityCleaner.cleanedupMobEntitiesMessage = this.cleanedupMobEntitiesMessage.get();
+        EntityCleaner.cleanedUpMobEntitiesMessage = this.cleanedupMobEntitiesMessage.get();
         EntityCleaner.cleanupMobEntitiesCountdownSeconds = this.cleanupMobEntitiesCountdownSeconds.get();
         EntityCleaner.cleanupMobEntitiesCountdownMessage = this.cleanupMobEntitiesCountdownMessage.get();
         EntityCleaner.mobEntitiesWhitelist = this.mobEntitiesWhitelist.get();

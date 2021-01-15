@@ -29,7 +29,7 @@ public class EntityCleaner {
     @ConfigField
     public static int cleanupItemEntitiesIntervalSeconds = 60;
     @ConfigField
-    public static String cleanedupItemEntitiesMessage = "null";
+    public static String cleanedUpItemEntitiesMessage = "null";
     @ConfigField
     public static int cleanupItemEntitiesCountdownSeconds = 30;
     @ConfigField
@@ -43,7 +43,7 @@ public class EntityCleaner {
     @ConfigField
     public static int cleanupMobEntitiesIntervalSeconds = 60;
     @ConfigField
-    public static String cleanedupMobEntitiesMessage = "null";
+    public static String cleanedUpMobEntitiesMessage = "null";
     @ConfigField
     public static int cleanupMobEntitiesCountdownSeconds = 30;
     @ConfigField
@@ -89,7 +89,7 @@ public class EntityCleaner {
                         // countdown
                         if (nextCleanupTime - System.currentTimeMillis() <= cleanupItemEntitiesCountdownSeconds * 1000L && !isCleanupItemCountdownMessageSent) {
                             sendMessage(cleanupItemEntitiesCountdownMessage, TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "cleanupitemcountdown"), cleanupItemEntitiesCountdownSeconds), cleanupItemEntitiesCountdownSeconds);
+                                    TextUtils.getTranslationKey("message", "cleanupItemCountdown"), cleanupItemEntitiesCountdownSeconds), cleanupItemEntitiesCountdownSeconds);
                             isCleanupItemCountdownMessageSent = true;
                         }
                         // real clean
@@ -97,8 +97,8 @@ public class EntityCleaner {
                             int amount = cleanupEntity(worlds, ItemEntity.class, entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist());
                             clearItemTimer = System.currentTimeMillis();
                             isCleanupItemCountdownMessageSent = false;
-                            sendMessage(cleanedupItemEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
-                                    TextUtils.getTranslationKey("message", "itemcleanupcomplete"), amount), amount);
+                            sendMessage(cleanedUpItemEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("message", "itemCleanupComplete"), amount), amount);
                         }
                     }
 
@@ -107,15 +107,15 @@ public class EntityCleaner {
                         long nextCleanupTime = clearMobTimer + cleanupMobEntitiesIntervalSeconds * 1000L;
                         if (nextCleanupTime - System.currentTimeMillis() <= cleanupMobEntitiesCountdownSeconds * 1000L && !isCleanupMobMessageSent) {
                             sendMessage(cleanupMobEntitiesCountdownMessage, TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "cleanupmobcountdown"), cleanupMobEntitiesCountdownSeconds), cleanupMobEntitiesCountdownSeconds);
+                                    TextUtils.getTranslationKey("message", "cleanupMobCountdown"), cleanupMobEntitiesCountdownSeconds), cleanupMobEntitiesCountdownSeconds);
                             isCleanupMobMessageSent = true;
                         }
                         if (nextCleanupTime <= System.currentTimeMillis()) {
                             int amount = cleanupEntity(worlds, MobEntity.class, entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
                             clearMobTimer = System.currentTimeMillis();
                             isCleanupMobMessageSent = false;
-                            sendMessage(cleanedupMobEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
-                                    TextUtils.getTranslationKey("message", "mobcleanupcomplete"), amount), amount);
+                            sendMessage(cleanedUpMobEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("message", "mobCleanupComplete"), amount), amount);
                         }
                     }
 

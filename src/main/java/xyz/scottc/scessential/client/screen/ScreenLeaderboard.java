@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
@@ -51,11 +52,11 @@ public class ScreenLeaderboard extends Screen {
 
         // page
         this.addButton(new ExtendedButton(this.rankList.getX() - 6, this.rankList.getY() + this.rankList.getHeight() - 1, 60, 22,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "prevpage")),
+                new StringTextComponent("<--"),
                 button -> this.rankList.getTexts().prevPage()));
         this.addButton(new ExtendedButton(this.rankList.getX() + this.rankList.getWidth() - 60 - 4,
                 this.rankList.getY() + this.rankList.getHeight() - 1, 60, 22,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "nextpage")),
+                new StringTextComponent("-->"),
                 button -> this.rankList.getTexts().nextPage()));
 
         // Mode
@@ -64,7 +65,7 @@ public class ScreenLeaderboard extends Screen {
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DEATH_AMOUNT)));
         ExtendedButton playedTimeButton = new ExtendedButton(deathRankButton.x, deathRankButton.y + deathRankButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "timeplayedButton")),
+                new TranslationTextComponent(TextUtils.getTranslationKey("text", "timePlayedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.TIME_PLAYED)));
         ExtendedButton mobsKilledButton = new ExtendedButton(deathRankButton.x, playedTimeButton.y + playedTimeButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "mobsKilledButton")),

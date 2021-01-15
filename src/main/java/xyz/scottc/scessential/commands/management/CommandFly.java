@@ -45,14 +45,14 @@ public class CommandFly {
         SCEPlayerData data = SCEPlayerData.getInstance(target);
         if (target.isCreative()) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantsetfly"), data.getName()), false);
+                    TextUtils.getTranslationKey("message", "cantSetFly"), data.getName()), false);
             return 1;
         } else if (data.isFlyable()) {
             data.setFlyable(false);
             source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                     TextUtils.getTranslationKey("message", "ok")), false);
             target.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantflynow")), false);
+                    TextUtils.getTranslationKey("message", "cantFlyNow")), false);
             return 1;
         } else {
             data.setFlyable(true);
@@ -60,12 +60,13 @@ public class CommandFly {
         switch (type) {
             case PERMANENT:
                 data.setCanFlyUntil(-1L);
+                // TODO Test it
                 if (!source.equals(target)) {
                     source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "flypermanentlySource"), data.getName()), false);
+                            TextUtils.getTranslationKey("message", "flyPermanentlySource"), data.getName()), false);
                 }
                 target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flypermanentlyTarget")), false);
+                        TextUtils.getTranslationKey("message", "flyPermanentlyTarget")), false);
                 break;
             case TEMPORARY:
                 long canFlyUntil = System.currentTimeMillis() + minutes[0] * 60 * 1000L;
@@ -75,10 +76,10 @@ public class CommandFly {
                 String formattedDate = simpleDateFormat.format(date);
                 if (!source.equals(target)) {
                     target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "flytempTarget"), formattedDate), false);
+                            TextUtils.getTranslationKey("message", "flyTempTarget"), formattedDate), false);
                 }
                 source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flytempSource"), data.getName(), formattedDate), false);
+                        TextUtils.getTranslationKey("message", "flyTempSource"), data.getName(), formattedDate), false);
                 break;
         }
         return 1;

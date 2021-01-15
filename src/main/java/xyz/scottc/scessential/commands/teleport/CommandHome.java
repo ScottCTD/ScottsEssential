@@ -2,7 +2,6 @@ package xyz.scottc.scessential.commands.teleport;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -82,16 +81,15 @@ public class CommandHome {
                 .requires(source -> source.hasPermissionLevel(2))
         );
 
-        LiteralCommandNode<CommandSource> delHome = dispatcher.register(
+        dispatcher.register(
                 Commands.literal(delHomeAlias)
                         .then(Commands.argument("Name", StringArgumentType.string())
                                 .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getInstance(context.getSource().asPlayer()).getHomes().keySet(), builder))
                                 .executes(context -> delHome(context.getSource().asPlayer(), StringArgumentType.getString(context, "Name"))))
                         .executes(context -> delHome(context.getSource().asPlayer(), "home"))
         );
-        dispatcher.register(Commands.literal("removehome").redirect(delHome));
 
-        LiteralCommandNode<CommandSource> delOthersHome = dispatcher.register(
+        dispatcher.register(
                 Commands.literal(delOtherHomeAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
                                 .then(Commands.argument("Name", StringArgumentType.string())
@@ -102,7 +100,6 @@ public class CommandHome {
                         )
                         .requires(source -> source.hasPermissionLevel(2))
         );
-        dispatcher.register(Commands.literal("removeotherhome").redirect(delOthersHome));
 
         dispatcher.register(
                 Commands.literal(listHomesAlias)
@@ -121,17 +118,17 @@ public class CommandHome {
         SCEPlayerData data = SCEPlayerData.getInstance(player);
         if (data.getHomes().size() >= maxHomes) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "reachmaxhome"), maxHomes), false);
+                    TextUtils.getTranslationKey("message", "reachMaxHome"), maxHomes), false);
             return 1;
         }
         if (data.getHomePos(name) != null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "homeexist"), name), false);
+                    TextUtils.getTranslationKey("message", "homeExist"), name), false);
             return 1;
         }
         data.setHome(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "sethomesuccess"), name), false);
+                TextUtils.getTranslationKey("message", "setHomeSuccess"), name), false);
         return 1;
     }
 
@@ -147,14 +144,14 @@ public class CommandHome {
                 return 1;
             }
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "homenotfound"), name), false);
+                    TextUtils.getTranslationKey("message", "homeNotFound"), name), false);
             return 1;
         }
         data.addTeleportHistory(new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         TeleportUtils.teleport(player, homePos);
         data.setLastHomeTime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "homesuccess"), name), true);
+                TextUtils.getTranslationKey("message", "homeSuccess"), name), true);
         return 1;
     }
 
@@ -167,14 +164,14 @@ public class CommandHome {
         TeleportPos otherHomePos = otherData.getHomePos(homeName);
         if (otherHomePos == null) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "homeothernotfound"), otherData.getName(), homeName), false);
+                    TextUtils.getTranslationKey("message", "homeOtherNotFound"), otherData.getName(), homeName), false);
             return 1;
         }
         sourceData.addTeleportHistory(new TeleportPos(source.getServerWorld().getDimensionKey(), source.getPosition()));
         TeleportUtils.teleport(source, otherHomePos);
         sourceData.setLastHomeOtherTime(System.currentTimeMillis());
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "otherhomesuccess"), otherData.getName(), homeName), true);
+                TextUtils.getTranslationKey("message", "otherHomeSuccess"), otherData.getName(), homeName), true);
         return 1;
     }
 
@@ -183,12 +180,12 @@ public class CommandHome {
         TeleportPos homePos = data.getHomePos(name);
         if (homePos == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "homenotfound"), name), false);
+                    TextUtils.getTranslationKey("message", "homeNotFound"), name), false);
             return 1;
         }
         data.delHome(name);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "delhomesuccess"), name), false);
+                TextUtils.getTranslationKey("message", "delHomeSuccess"), name), false);
         return 1;
     }
 
@@ -196,12 +193,12 @@ public class CommandHome {
         SCEPlayerData data = SCEPlayerData.getInstance(target);
         if (!data.getHomes().containsKey(name)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "homeothernotfound"), data.getName(), name), false);
+                    TextUtils.getTranslationKey("message", "homeOtherNotFound"), data.getName(), name), false);
             return 1;
         }
         data.delHome(name);
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "delothershomesuccess"), data.getName(), name), false);
+                TextUtils.getTranslationKey("message", "delOthersHomeSuccess"), data.getName(), name), false);
         return 1;
     }
 
@@ -211,7 +208,7 @@ public class CommandHome {
             Map<String, TeleportPos> homes = data.getHomes();
             if (homes.isEmpty()) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "nohome")), false);
+                        TextUtils.getTranslationKey("message", "noHome")), false);
                 return;
             }
             player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
@@ -223,7 +220,7 @@ public class CommandHome {
                 text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
                                 .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                        TextUtils.getTranslationKey("message", "clicktoteleport"))
+                                        TextUtils.getTranslationKey("message", "clickToTeleport"))
                                 ))));
                 player.sendStatusMessage(text, false);
                 index++;
@@ -240,7 +237,7 @@ public class CommandHome {
             Map<String, TeleportPos> otherHomes = otherData.getHomes();
             if (otherHomes.isEmpty()) {
                 source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "othernohome"), otherData.getName()), false);
+                        TextUtils.getTranslationKey("message", "otherNoHome"), otherData.getName()), false);
                 return;
             }
             source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
@@ -251,7 +248,7 @@ public class CommandHome {
                 text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
                                 .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                        TextUtils.getTranslationKey("message", "clicktoteleport"))
+                                        TextUtils.getTranslationKey("message", "clickToTeleport"))
                                 ))));
                 source.sendStatusMessage(text, false);
                 index++;

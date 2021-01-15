@@ -35,8 +35,8 @@ public class PacketChangeLeaderboard extends AbstractPacket {
                 case DEATH_AMOUNT:
                     openRank(context, (stat01, stat02) -> stat02.getDeathAmount() - stat01.getDeathAmount(),
                             statistics -> TextUtils.getWhiteTextFromI18n(false, false, false,
-                                    TextUtils.getTranslationKey("text", "deathAmount"), statistics.getName(), statistics.getDeathAmount()),
-                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathstitle"))
+                                    TextUtils.getTranslationKey("text", "deaths"), statistics.getName(), statistics.getDeathAmount()),
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathTitle"))
                     );
                     break;
                 case TIME_PLAYED:
@@ -45,8 +45,8 @@ public class PacketChangeLeaderboard extends AbstractPacket {
                                 int seconds = statistics.getTotalPlayedTicks() / 20, minutes = seconds / 60, hours = minutes / 60;
                                 minutes -= hours * 60;
                                 return TextUtils.getWhiteTextFromI18n(false, false, false,
-                                        TextUtils.getTranslationKey("text", "timeplayed"), statistics.getName(), hours, minutes);},
-                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "timeplayedtitle"))
+                                        TextUtils.getTranslationKey("text", "timePlayed"), statistics.getName(), hours, minutes);},
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "timePlayedTitle"))
                     );
                     break;
                 case MOBS_KILLED:

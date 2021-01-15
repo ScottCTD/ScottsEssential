@@ -67,7 +67,7 @@ public class CommandRTP {
             int x, y, z;
             String worldKey = world.getDimensionKey().getLocation().toString();
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "startrtp")), false);
+                    TextUtils.getTranslationKey("message", "startRTP")), false);
             boolean nether = false;
             for (int i = 0; i < maxRTPAttempts; i++) {
                 switch (worldKey) {
@@ -115,15 +115,15 @@ public class CommandRTP {
                         .forEach(blockpos -> world.destroyBlock(blockpos, true));
                 data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpattempts"), i + 1), false);
+                        TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), false);
                 TeleportUtils.teleport(player, world, targetPos.up());
                 data.setLastRTPTime(System.currentTimeMillis());
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpsuccess"), x, y, z), true);
+                        TextUtils.getTranslationKey("message", "rtpSuccess"), x, y, z), true);
                 return;
             }
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "rtpfail")), false);
+                    TextUtils.getTranslationKey("message", "rtpFail")), false);
         });
         thread.start();
         return 1;

@@ -53,7 +53,7 @@ public class CommandSpawn implements Command<CommandSource> {
                 TeleportUtils.teleport(player, world, spawnPoint);
                 data.setLastSpawnTime(System.currentTimeMillis());
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false ,false, false,
-                        TextUtils.getTranslationKey("message", "spawnsuccess")), true);
+                        TextUtils.getTranslationKey("message", "spawnSuccess")), true);
             }
         }
         return 1;

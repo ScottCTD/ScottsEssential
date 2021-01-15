@@ -54,7 +54,7 @@ public class CommandGetRegistryName {
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                         new StringTextComponent(resourceLocation.toString() + "\n").append(
                                                 TextUtils.getGreenTextFromI18n(true, false, false,
-                                                        TextUtils.getTranslationKey("message", "clicktocopy"))
+                                                        TextUtils.getTranslationKey("message", "clickToCopy"))
                         )))), false));
         return 1;
     }
@@ -68,7 +68,7 @@ public class CommandGetRegistryName {
                 pos.getX() + entitiesWithinRadius, pos.getY() + entitiesWithinRadius, pos.getZ() + entitiesWithinRadius));
         if (entities.size() == 0) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "nearbynoliving")), false);
+                    TextUtils.getTranslationKey("message", "nearbyNoLiving")), false);
             return 1;
         }
         entities.forEach(target -> Optional.ofNullable(target.getEntityString())
@@ -78,7 +78,7 @@ public class CommandGetRegistryName {
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                         new StringTextComponent(entityString + "\n").append(
                                                 TextUtils.getGreenTextFromI18n(true, false, false,
-                                                        TextUtils.getTranslationKey("message", "clicktocopy"))
+                                                        TextUtils.getTranslationKey("message", "clickToCopy"))
                                         )))), false)));
         return 1;
     }

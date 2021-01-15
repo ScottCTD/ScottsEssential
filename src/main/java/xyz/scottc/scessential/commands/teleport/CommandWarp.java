@@ -77,7 +77,7 @@ public class CommandWarp {
     private static int setWarp(ServerPlayerEntity player, String name) {
         TeleportPos.WARPS.put(name, new TeleportPos(player.getServerWorld().getDimensionKey(), player.getPosition()));
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "setwarpsuccess"), name), false);
+                TextUtils.getTranslationKey("message", "setWarpSuccess"), name), false);
         return 1;
     }
 
@@ -88,14 +88,14 @@ public class CommandWarp {
         }
         if (!TeleportPos.WARPS.containsKey(name)) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "warpnotfound"), name), false);
+                    TextUtils.getTranslationKey("message", "warpNotFound"), name), false);
             return 1;
         }
         data.addTeleportHistory(new TeleportPos(player));
         TeleportUtils.teleport(player, TeleportPos.WARPS.get(name));
         data.setLastWarpTime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "warpsuccess"), name), true);
+                TextUtils.getTranslationKey("message", "warpSuccess"), name), true);
         return 1;
     }
 
@@ -103,7 +103,7 @@ public class CommandWarp {
         Thread thread = new Thread(() -> {
             if (TeleportPos.WARPS.isEmpty()) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "nowarp")), false);
+                        TextUtils.getTranslationKey("message", "noWarp")), false);
                 return;
             }
             player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
@@ -112,7 +112,7 @@ public class CommandWarp {
                 IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + warp.getKey());
                 IFormattableTextComponent hoverText = new StringTextComponent(warp.getValue().toString() + "\n")
                         .append(TextUtils.getGreenTextFromI18n(false, false, false,
-                                TextUtils.getTranslationKey("message", "clicktoteleport")));
+                                TextUtils.getTranslationKey("message", "clickToTeleport")));
                 player.sendStatusMessage(text.setStyle(text.getStyle()
                         .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warp.getKey()))
                         .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))), false
@@ -127,12 +127,12 @@ public class CommandWarp {
     private static int delWarp(ServerPlayerEntity player, String name) {
         if (!TeleportPos.WARPS.containsKey(name)) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "warpnotfound"), name), false);
+                    TextUtils.getTranslationKey("message", "warpNotFound"), name), false);
             return 1;
         }
         TeleportPos.WARPS.remove(name);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "delwarpsuccess"), name), false);
+                TextUtils.getTranslationKey("message", "delWarpSuccess"), name), false);
         return 1;
     }
 

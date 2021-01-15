@@ -42,13 +42,13 @@ public class CommandBack {
             TeleportPos teleportPos = data.getTeleportHistory();
             if (teleportPos == null) {
                 player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "noback")), false);
+                        TextUtils.getTranslationKey("message", "noBack")), false);
                 return 1;
             }
             TeleportUtils.teleport(player, server.getWorld(teleportPos.getDimension()), teleportPos.getPos());
             data.setLastBackTime(System.currentTimeMillis());
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "backsuccess")), true);
+                    TextUtils.getTranslationKey("message", "backSuccess")), true);
             data.moveCurrentBackIndex();
         }
         return 1;

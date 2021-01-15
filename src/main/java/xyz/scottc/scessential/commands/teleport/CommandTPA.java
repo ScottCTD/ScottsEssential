@@ -94,7 +94,7 @@ public class CommandTPA {
     private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "canttpaself")), false);
+                    TextUtils.getTranslationKey("message", "cantTPASelf")), false);
             return 1;
         }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
@@ -108,10 +108,10 @@ public class CommandTPA {
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "requestsent"), targetName), false);
+                TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
 
         IFormattableTextComponent line01 = TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpaline01"), sourceName);
+                TextUtils.getTranslationKey("message", "tpaRequestMessage"), sourceName);
 
         IFormattableTextComponent line0201 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
         IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
@@ -149,7 +149,7 @@ public class CommandTPA {
     private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "canttpahereself")), false);
+                    TextUtils.getTranslationKey("message", "cantTPASelf")), false);
             return 1;
         }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
@@ -163,10 +163,10 @@ public class CommandTPA {
         String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "requestsent"), targetName), false);
+                TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
 
         IFormattableTextComponent line01 = TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpahereline01"), sourceName);
+                TextUtils.getTranslationKey("message", "tpaHereRequestMessage"), sourceName);
 
         IFormattableTextComponent line0201 = TextUtils.getGreenTextFromString(false, false, false, "You");
         IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
@@ -204,7 +204,7 @@ public class CommandTPA {
         TPARequest request = TPARequest.getInstance(id);
         if (request == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "tpanotfound")), false);
+                    TextUtils.getTranslationKey("message", "requestNotFound")), false);
             return 1;
         }
         ServerPlayerEntity source = request.getSource();
@@ -213,9 +213,9 @@ public class CommandTPA {
         TeleportUtils.teleport(source, new TeleportPos(request.getTarget()));
         sourceData.setLastTPATime(System.currentTimeMillis());
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpasuccessTarget"), sourceData.getName()), true);
+                TextUtils.getTranslationKey("message", "tpaSuccessTarget"), sourceData.getName()), true);
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpasuccessSource"), player.getGameProfile().getName()), true);
+                TextUtils.getTranslationKey("message", "tpaSuccessSource"), player.getGameProfile().getName()), true);
         TPARequest.getTpaRequest().remove(id);
         return 1;
     }
@@ -224,13 +224,13 @@ public class CommandTPA {
         TPARequest request = TPARequest.getInstance(id);
         if (request == null) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "tpanotfound")), false);
+                    TextUtils.getTranslationKey("message", "requestNotFound")), false);
             return 1;
         }
         TPARequest.getTpaRequest().remove(request.getId());
         ServerPlayerEntity source = request.getSource();
         source.sendStatusMessage(TextUtils.getRedTextFromI18n(true, false, false,
-                TextUtils.getTranslationKey("message", "tpadenySource"), player.getGameProfile().getName()), false);
+                TextUtils.getTranslationKey("message", "tpaDenySource"), player.getGameProfile().getName()), false);
         player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "ok")), false);
         return 1;

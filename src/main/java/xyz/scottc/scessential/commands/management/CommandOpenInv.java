@@ -44,14 +44,14 @@ public class CommandOpenInv {
     private static int invSee(ServerPlayerEntity source, ServerPlayerEntity target) {
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantopenselfinv")), false);
+                    TextUtils.getTranslationKey("message", "cantOpenSelfInv")), false);
             return 1;
         }
         NetworkHooks.openGui(source, new INamedContainerProvider() {
             @Override
             public @NotNull ITextComponent getDisplayName() {
                 return TextUtils.getContainerNameTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("text", "playerinv"), target.getGameProfile().getName());
+                        TextUtils.getTranslationKey("text", "playerInv"), target.getGameProfile().getName());
             }
 
             @Override

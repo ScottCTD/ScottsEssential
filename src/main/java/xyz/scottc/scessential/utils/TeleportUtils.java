@@ -41,7 +41,7 @@ public class TeleportUtils {
         double cooldown = TeleportUtils.getCooldown(lastTeleportTime, cooldownSeconds);
         if (cooldown != -1) {
             player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "incooldown"), cooldown), false);
+                    TextUtils.getTranslationKey("message", "inCoolDown"), cooldown), false);
             return true;
         } else {
             return false;
