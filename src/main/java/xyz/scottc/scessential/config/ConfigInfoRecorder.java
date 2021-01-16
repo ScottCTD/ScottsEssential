@@ -10,6 +10,7 @@ import java.util.List;
 public class ConfigInfoRecorder extends AbstractModConfig {
 
     private ForgeConfigSpec.ConfigValue<? extends String> timePattern;
+    private ForgeConfigSpec.BooleanValue isRecordPlayerUUID;
     private ForgeConfigSpec.BooleanValue
             isInfoRecorderEnable,
             isRecordPlayerLogInOut,
@@ -45,6 +46,10 @@ public class ConfigInfoRecorder extends AbstractModConfig {
                         "If you don't know what it is, please do not modify it.",
                         "Default value: \"hh:mm:ss MM/dd/yyyy\"")
                 .define("TimePattern", "hh:mm:ss MM/dd/yyyy");
+        this.isRecordPlayerUUID = this.builder
+                .comment("Set it to false to disable recording player UUID.",
+                        "Default value: true")
+                .define("IsRecordPlayerUUID", true);
 
         this.builder.push("ModuleSettings");
 
@@ -117,6 +122,7 @@ public class ConfigInfoRecorder extends AbstractModConfig {
     @Override
     public void get() {
         CommonInfoStorage.datePattern = this.timePattern.get();
+        CommonInfoStorage.isRecordPlayerUUID = this.isRecordPlayerUUID.get();
         EventHandler.isInfoRecorderEnable = this.isInfoRecorderEnable.get();
 
         EventHandler.isRecordPlayerLogInOut = isRecordPlayerLogInOut.get();
