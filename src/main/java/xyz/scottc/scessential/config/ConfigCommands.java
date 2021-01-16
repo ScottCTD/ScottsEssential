@@ -117,7 +117,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsSpawnEnable", true);
         spawnAlias = this.builder
-                .comment("how to trigger command spawn. If you set it to \"sp\", you will need to use /sp to back to the spawn point.",
+                .comment("How to trigger command spawn. If you set it to \"sp\", you will need to use /sp to back to the spawn point.",
                         "Default value: spawn",
                         "Do not add \"/\"!")
                 .define("SpawnAlias", "spawn", ConfigCommands::isValidCommandAlias);
@@ -133,7 +133,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsBackEnable", true);
         backAlias = this.builder
-                .comment("how to trigger command back. If you set it to \"bk\", you will need to use /bk to back.",
+                .comment("How to trigger command back. If you set it to \"bk\", you will need to use /bk to back.",
                         "Default value: back",
                         "Do not add \"/\"!")
                 .define("BackAlias", "back", ConfigCommands::isValidCommandAlias);
@@ -147,42 +147,42 @@ public class ConfigCommands extends AbstractModConfig {
 
         this.builder.push("Home");
         isHomeEnableConfig = this.builder
-                .comment("Set it to false to disable /home, /sethome, /delhome (/removehome), /listhomes, /homeother, and /listotherhomes command.",
+                .comment("Set it to false to disable /home, /sethome, /delhome, /listhomes, /homeother, and /listotherhomes command.",
                         "Default value: true",
                         "This option only work after server restarted or typed /reload command")
-                .define("IsSpawnEnable", true);
+                .define("IsHomeEnable", true);
         homeAlias = this.builder
-                .comment("how to trigger command home.",
+                .comment("How to trigger command home.",
                         "Default value: home",
                         "Do not add \"/\"!")
                 .define("HomeAlias", "home", ConfigCommands::isValidCommandAlias);
         setHomeAlias = this.builder
-                .comment("how to trigger command to set a home.",
+                .comment("How to trigger command to set a home.",
                         "Default value: sethome",
                         "Do not add \"/\"!")
                 .define("SetHomeAlias", "sethome", ConfigCommands::isValidCommandAlias);
         delHomeAlias = this.builder
-                .comment("how to trigger command to delete a home.",
+                .comment("How to trigger command to delete a home.",
                         "Default value: delhome",
                         "Do not add \"/\"!")
                 .define("DelHomeAlias", "delhome", ConfigCommands::isValidCommandAlias);
         listHomesAlias = this.builder
-                .comment("how to trigger command to list all your homes.",
+                .comment("How to trigger command to list all your homes.",
                         "Default value: listhomes",
                         "Do not add \"/\"!")
                 .define("ListHomesAlias", "listhomes", ConfigCommands::isValidCommandAlias);
         homeOtherAlias = this.builder
-                .comment("how to trigger command to teleport to other's home.",
+                .comment("How to trigger command to teleport to other's home.",
                         "Default value: homeother",
                         "Do not add \"/\"!")
                 .define("HomeOtherAlias", "homeother", ConfigCommands::isValidCommandAlias);
         delOtherHomeAlias = this.builder
-                .comment("how to trigger command to delete other's home.",
+                .comment("How to trigger command to delete other's home.",
                         "Default value: delotherhome",
                         "Do not add \"/\"!")
                 .define("DelOtherHomeAlias", "delotherhome", ConfigCommands::isValidCommandAlias);
         listOtherHomesAlias = this.builder
-                .comment("how to trigger command to list all someone's homes.",
+                .comment("How to trigger command to list all someone's homes.",
                         "Default value: listotherhomes",
                         "Do not add \"/\"!")
                 .define("ListOtherHomesAlias", "listotherhomes", ConfigCommands::isValidCommandAlias);
@@ -204,22 +204,22 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsWarpEnable", true);
         warpAlias = this.builder
-                .comment("how to trigger command to teleport to a warp.",
+                .comment("How to trigger command to teleport to a warp.",
                         "Default value: warp",
                         "Do not add \"/\"!")
                 .define("WarpAlias", "warp", ConfigCommands::isValidCommandAlias);
         setWarpAlias = this.builder
-                .comment("how to trigger command to set a warp.",
+                .comment("How to trigger command to set a warp.",
                         "Default value: setwarp",
                         "Do not add \"/\"!")
                 .define("SetWarpAlias", "setwarp", ConfigCommands::isValidCommandAlias);
         delWarpAlias = this.builder
-                .comment("how to trigger command to delete a warp.",
+                .comment("How to trigger command to delete a warp.",
                         "Default value: delwarp",
                         "Do not add \"/\"!")
                 .define("DelWarpAlias", "delwarp", ConfigCommands::isValidCommandAlias);
         listWarpsAlias = this.builder
-                .comment("how to trigger command to list all warps.",
+                .comment("How to trigger command to list all warps.",
                         "Default value: listwarps",
                         "Do not add \"/\"!")
                 .define("ListWarpsAlias", "listwarps", ConfigCommands::isValidCommandAlias);
@@ -235,22 +235,22 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsTPAEnable", true);
         tpaAlias = this.builder
-                .comment("how to trigger command to tpa.",
+                .comment("How to trigger command to tpa.",
                         "Default value: tpa",
                         "Do not add \"/\"!")
                 .define("TPAAlias", "tpa", ConfigCommands::isValidCommandAlias);
         tpaHereAlias = this.builder
-                .comment("how to trigger command to tpahere.",
+                .comment("How to trigger command to tpahere.",
                         "Default value: tpahere",
                         "Do not add \"/\"!")
                 .define("TPAHereAlias", "tpahere", ConfigCommands::isValidCommandAlias);
         tpHereAlias = this.builder
-                .comment("how to trigger command to teleport player to your position.",
+                .comment("How to trigger command to teleport player to your position.",
                         "Default value: tphere",
                         "Do not add \"/\"!")
                 .define("TPHereAlias", "tphere", ConfigCommands::isValidCommandAlias);
         tpAllHereAlias = this.builder
-                .comment("how to trigger command to teleport all players to your position.",
+                .comment("How to trigger command to teleport all players to your position.",
                         "Default value: tpallhere",
                         "Do not add \"/\"!")
                 .define("TPAllHereAlias", "tpallhere", ConfigCommands::isValidCommandAlias);
@@ -269,7 +269,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsRTPEnable", true);
         rtpAlias = this.builder
-                .comment("how to trigger command to randomly teleport to a safe location within the world.",
+                .comment("How to trigger command to randomly teleport to a safe location within the world.",
                         "Default value: rtp",
                         "Do not add \"/\"!")
                 .define("RTPAlias", "rtp", ConfigCommands::isValidCommandAlias);
@@ -344,7 +344,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsFlyEnable", true);
         flyAlias = this.builder
-                .comment("how to trigger command to let a player flayble.",
+                .comment("How to trigger command to let a player flyable.",
                         "Default value: fly",
                         "Do not add \"/\"!")
                 .define("FlyAlias", "fly", ConfigCommands::isValidCommandAlias);
@@ -363,7 +363,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("IsHatEnable", true);
         hatAlias = this.builder
-                .comment("how to trigger command hat.",
+                .comment("How to trigger command hat.",
                         "Default value: hat",
                         "Do not add \"/\"!")
                 .define("HatAlias", "hat", ConfigCommands::isValidCommandAlias);
@@ -376,7 +376,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("isTrashcanEnable", true);
         trashcanAlias = this.builder
-                .comment("how to trigger command to open trashcan.",
+                .comment("How to trigger command to open trashcan.",
                         "Default value: trashcan",
                         "Do not add \"/\"!")
                 .define("TrashcanAlias", "trashcan", ConfigCommands::isValidCommandAlias);
@@ -394,7 +394,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("isInvseeEnable", true);
         invseeAlias = this.builder
-                .comment("how to trigger command to open someone's inventory.",
+                .comment("How to trigger command to open someone's inventory.",
                         "Default value: invsee",
                         "Do not add \"/\"!")
                 .define("InvseeAlias", "invsee", ConfigCommands::isValidCommandAlias);
@@ -407,7 +407,7 @@ public class ConfigCommands extends AbstractModConfig {
                         "This option only work after server restarted or typed /reload command")
                 .define("isRankEnable", true);
         rankAlias = this.builder
-                .comment("how to trigger command to open rank gui.",
+                .comment("How to trigger command to open rank gui.",
                         "Default value: rank",
                         "Do not add \"/\"!")
                 .define("RankAlias", "rank", ConfigCommands::isValidCommandAlias);
