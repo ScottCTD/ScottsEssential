@@ -8,12 +8,15 @@ import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.DateUtils;
 
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CommonInfoStorage implements IInfoStorage {
 
     @ConfigField
-    public static String datePattern = "hh:mm:ss MM/dd/yyyy";
+    public static String datePattern = "HH:mm:ss MM/dd/yyyy";
+    @ConfigField
+    public static boolean isRecordPlayerUUID = true;
 
     private String playerName;
     private UUID playerUUID;
@@ -89,7 +92,7 @@ public class CommonInfoStorage implements IInfoStorage {
     public JsonElement serializeJson() {
         JsonObject json = new JsonObject();
         json.addProperty("playerName", this.playerName);
-        json.addProperty("uuid", this.playerUUID.toString());
+        if (isRecordPlayerUUID && this.playerUUID != null) json.addProperty("uuid", this.playerUUID.toString());
         json.addProperty("time", DateUtils.toString(this.time, datePattern));
         json.add("pos", this.pos.toJSON());
         json.addProperty("info", this.info);
@@ -101,7 +104,7 @@ public class CommonInfoStorage implements IInfoStorage {
         if (jsonElement instanceof JsonObject) {
             JsonObject json = (JsonObject) jsonElement;
             this.playerName = json.get("playerName").getAsString();
-            this.playerUUID = UUID.fromString(json.get("uuid").getAsString());
+            Optional.ofNullable(json.get("uuid").getAsString()).ifPresent(uuid -> this.playerUUID = UUID.fromString(uuid));
             try {
                 this.time = DateUtils.getTime(json.get("time").getAsString(), datePattern);
             } catch (ParseException e) {
