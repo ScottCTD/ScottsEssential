@@ -3,6 +3,7 @@ package xyz.scottc.scessential.events.entitycleaner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.*;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.projectile.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -39,7 +40,10 @@ public class EntityCleaner {
 
     // clean mob
     @ConfigField
-    public static boolean isMobEntityCleanupEnable = true;
+    public static boolean
+            isMobEntityCleanupEnable = true,
+            isAnimalEntitiesCleanupEnable = true,
+            isMonsterEntitiesCleanupEnable = true;
     @ConfigField
     public static int cleanupMobEntitiesIntervalSeconds = 60;
     @ConfigField
@@ -94,7 +98,7 @@ public class EntityCleaner {
                         }
                         // real clean
                         if (nextCleanupTime <= System.currentTimeMillis()) {
-                            int amount = cleanupEntity(worlds, ItemEntity.class, entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist());
+                            int amount = cleanupEntity(worlds, entity -> entity instanceof ItemEntity, entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist());
                             clearItemTimer = System.currentTimeMillis();
                             isCleanupItemCountdownMessageSent = false;
                             sendMessage(cleanedUpItemEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
@@ -111,7 +115,12 @@ public class EntityCleaner {
                             isCleanupMobMessageSent = true;
                         }
                         if (nextCleanupTime <= System.currentTimeMillis()) {
-                            int amount = cleanupEntity(worlds, MobEntity.class, entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
+                            int amount = 0;
+                            if (isAnimalEntitiesCleanupEnable)
+                                amount += cleanupEntity(worlds, entity -> (entity instanceof MobEntity) && !(entity instanceof MonsterEntity),
+                                        entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
+                            if (isMonsterEntitiesCleanupEnable)
+                                amount += cleanupEntity(worlds, entity -> entity instanceof MonsterEntity, entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
                             clearMobTimer = System.currentTimeMillis();
                             isCleanupMobMessageSent = false;
                             sendMessage(cleanedUpMobEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
@@ -134,35 +143,35 @@ public class EntityCleaner {
     public static int cleanOtherEntities(Iterable<ServerWorld> worlds) {
         int amount = 0;
         if (isExperienceOrbEntityCleanupEnable)
-            amount += cleanupEntity(worlds, ExperienceOrbEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof ExperienceOrbEntity, entity -> true);
         if (isFallingBlocksEntityCleanupEnable)
-            amount += cleanupEntity(worlds, FallingBlockEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof FallingBlockEntity, entity -> true);
         if (isArrowEntityCleanupEnable)
-            amount += cleanupEntity(worlds, AbstractArrowEntity.class, entity -> !(entity instanceof TridentEntity));
+            amount += cleanupEntity(worlds, entity -> entity instanceof AbstractArrowEntity, entity -> !(entity instanceof TridentEntity));
         if (isTridentEntityCleanupEnable)
-            amount += cleanupEntity(worlds, TridentEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof TridentEntity, entity -> true);
         if (isDamagingProjectileEntityCleanupEnable)
-            amount += cleanupEntity(worlds, DamagingProjectileEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof DamagingProjectileEntity, entity -> true);
         if (isShulkerBulletEntityCleanupEnable)
-            amount += cleanupEntity(worlds, ShulkerBulletEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof ShulkerBulletEntity, entity -> true);
         if (isFireworkRocketEntityCleanupEnable)
-            amount += cleanupEntity(worlds, FireworkRocketEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof FireworkRocketEntity, entity -> true);
         if (isItemFrameEntityCleanupEnable)
-            amount += cleanupEntity(worlds, ItemFrameEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof ItemFrameEntity, entity -> true);
         if (isPaintingEntityCleanupEnable)
-            amount += cleanupEntity(worlds, PaintingEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof PaintingEntity, entity -> true);
         if (isBoatEntityCleanupEnable)
-            amount += cleanupEntity(worlds, BoatEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof BoatEntity, entity -> true);
         if (isTNTEntityCleanupEnable)
-            amount += cleanupEntity(worlds, TNTEntity.class, entity -> true);
+            amount += cleanupEntity(worlds, entity -> entity instanceof TNTEntity, entity -> true);
         return amount;
     }
 
-    public static int cleanupEntity(Iterable<ServerWorld> worlds, Class<? extends Entity> Type, Predicate<Entity> additionalPredicate) {
+    public static int cleanupEntity(Iterable<ServerWorld> worlds, Predicate<Entity> type, Predicate<Entity> additionalPredicate) {
         AtomicInteger amount = new AtomicInteger();
         worlds.forEach(world -> world.getEntities()
-                .filter(Type::isInstance)
                 .filter(entity -> entity.getCustomName() == null)
+                .filter(type)
                 .filter(additionalPredicate)
                 .forEach(entity -> {
                     entity.remove();

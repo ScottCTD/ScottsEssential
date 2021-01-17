@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.StringReader;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -62,7 +63,7 @@ public class SCEPlayerData {
     private long lastWarpTime = 0;
     private long lastTPATime = 0;
 
-    private SCEPlayerData(@NotNull UUID uuid, @Nullable String playerName) {
+    private SCEPlayerData(@NotNull UUID uuid, String playerName) {
         this.uuid = uuid;
         this.playerName = playerName;
     }
@@ -240,11 +241,40 @@ public class SCEPlayerData {
         return this.player;
     }
 
+    public static @Nullable PlayerEntity getPlayer(String playerName) {
+        for (SCEPlayerData data : PLAYER_DATA_LIST) {
+            if (data.getName().equals(playerName)) {
+                return data.getPlayer();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get all names of online players
+     * If the name of a player could not be input without quotation marks, format a quotation mark.
+     * @return Formatted player names
+     */
+    public static @NotNull List<String> getAllPlayerNamesFormatted() {
+        List<String> result = new ArrayList<>();
+        PLAYER_DATA_LIST.forEach(data -> {
+            StringBuilder name = new StringBuilder(data.getName());
+            for (char c : name.toString().toCharArray()) {
+                if (!StringReader.isAllowedInUnquotedString(c)) {
+                    name = new StringBuilder("\"" + name + "\"");
+                    break;
+                }
+            }
+            result.add(name.toString());
+        });
+        return result;
+    }
+
     public void setPlayer(PlayerEntity player) {
         this.player = player;
     }
 
-    public @Nullable String getName() {
+    public String getName() {
         if (this.playerName == null) {
             this.playerName =  this.player.getGameProfile().getName();
         }

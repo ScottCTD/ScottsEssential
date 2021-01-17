@@ -2,9 +2,10 @@ package xyz.scottc.scessential.commands.teleport;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -47,23 +48,26 @@ public class CommandTPA {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
                 Commands.literal(tpaAlias)
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(context -> tpa(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
+                        .then(Commands.argument("Target", StringArgumentType.string())
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpa(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
                         )
         );
 
         dispatcher.register(
                 Commands.literal(tpaHereAlias)
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(context -> tpaHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
+                        .then(Commands.argument("Target", StringArgumentType.string())
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpaHere(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
                         )
         );
 
         dispatcher.register(
                 Commands.literal(tpHereAlias)
-                        .then(Commands.argument("target", EntityArgument.player())
+                        .then(Commands.argument("Target", StringArgumentType.string())
                                 .requires(commandSource -> commandSource.hasPermissionLevel(2))
-                                .executes(context -> tpHere(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "target")))
+                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpHere(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
                         )
                         .requires(source -> source.hasPermissionLevel(2))
         );
@@ -91,21 +95,25 @@ public class CommandTPA {
     }
 
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
-    private static int tpa(ServerPlayerEntity source, ServerPlayerEntity target) {
-        if (source.equals(target)) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantTPASelf")), false);
+    private static int tpa(ServerPlayerEntity source, String targetName) {
+        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+        if (target == null) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
             return 1;
         }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         if (TeleportUtils.isInCooldown(source, sourceData.getLastTPATime(), tpaCooldownSeconds)) {
             return 1;
         }
+        if (source.equals(target)) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "canttpaself")), false);
+            return 1;
+        }
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
-
         String sourceName = sourceData.getName();
-        String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
@@ -146,7 +154,13 @@ public class CommandTPA {
         return 1;
     }
 
-    private static int tpaHere(ServerPlayerEntity source, ServerPlayerEntity target) {
+    private static int tpaHere(ServerPlayerEntity source, String targetName) {
+        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+        if (target == null) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
+            return 1;
+        }
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
                     TextUtils.getTranslationKey("message", "cantTPASelf")), false);
@@ -160,7 +174,6 @@ public class CommandTPA {
         TPARequest request = TPARequest.getInstance(nextId(), source, target, true);
 
         String sourceName = sourceData.getName();
-        String targetName = target.getGameProfile().getName();
 
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
@@ -236,7 +249,13 @@ public class CommandTPA {
         return 1;
     }
 
-    private static int tpHere(ServerPlayerEntity source, ServerPlayerEntity target) {
+    private static int tpHere(ServerPlayerEntity source, String targetName) {
+        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+        if (target == null) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
+            return 1;
+        }
         TeleportUtils.teleport(target, new TeleportPos(source));
         return 1;
     }

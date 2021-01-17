@@ -11,6 +11,8 @@ public class ConfigEntityCleaner extends AbstractModConfig {
     private ForgeConfigSpec.BooleanValue
             isItemEntityCleanupEnable,
             isMobEntityCleanupEnable,
+            isAnimalEntitiesCleanupEnable,
+            isMonsterEntitiesCleanupEnable,
             isExperienceOrbEntityCleanupEnable,
             isFallingBlocksEntityCleanupEnable,
             isArrowEntityCleanupEnable,
@@ -85,11 +87,21 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                 .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ModConfig::isResourceLocationList);
         this.builder.pop();
 
-        this.builder.push("MobEntities");
+        this.builder.comment("Mobs = Monsters + Animals basically.").push("MobEntities");
         isMobEntityCleanupEnable = builder
                 .comment("Set it to false to disable cleaning up mob entities in your server.",
                         "Default value: true")
-                .define("isMobEntityCleanupEnable", true);
+                .define("IsMobEntityCleanupEnable", true);
+        this.isAnimalEntitiesCleanupEnable = this.builder
+                .comment("Set it to false to disable cleaning up all animal entities. (Sheep, cow, ...)",
+                        "Default value: true",
+                        "Note that even you enable this option, animal entities in whitelist will still be ignored.")
+                .define("IsAnimalEntitiesCleanupEnable", true);
+        this.isMonsterEntitiesCleanupEnable = this.builder
+                .comment("Set it to false to disable cleaning up all monster entities. (Zombie, skeleton, ...)",
+                        "Default value: true",
+                        "Note that even you enable this option, monster entities in whitelist will still be ignored.")
+                .define("IsMonsterEntitiesCleanupEnable", true);
 
         cleanupMobEntitiesIntervalSeconds = builder
                 .comment("Time interval in seconds between two actions of cleaning mob entities.",
@@ -130,7 +142,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         cleanupOtherEntitiesIntervalSeconds = builder
                 .comment("Time interval in seconds between two actions of cleaning other entities.",
                         "Default value: 300 seconds (5 minutes)")
-                .defineInRange("cleanOtherEntitiesInterval", 300, 1, Integer.MAX_VALUE);
+                .defineInRange("CleanOtherEntitiesInterval", 300, 1, Integer.MAX_VALUE);
 
         isExperienceOrbEntityCleanupEnable = builder
                 .comment("Set it to false to disable cleaning up experience orb entities in your server.",
@@ -199,6 +211,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         EntityCleaner.cleanupItemEntitiesCountdownMessage = this.cleanupItemEntitiesCountdownMessage.get();
         EntityCleaner.itemEntitiesWhitelist = this.itemEntitiesWhitelist.get();
 
+        EntityCleaner.isMobEntityCleanupEnable = isMobEntityCleanupEnable.get();
+        EntityCleaner.isAnimalEntitiesCleanupEnable = this.isAnimalEntitiesCleanupEnable.get();
+        EntityCleaner.isMonsterEntitiesCleanupEnable = this.isMonsterEntitiesCleanupEnable.get();
         EntityCleaner.cleanupMobEntitiesIntervalSeconds = this.cleanupMobEntitiesIntervalSeconds.get();
         EntityCleaner.cleanedUpMobEntitiesMessage = this.cleanedupMobEntitiesMessage.get();
         EntityCleaner.cleanupMobEntitiesCountdownSeconds = this.cleanupMobEntitiesCountdownSeconds.get();
@@ -207,7 +222,6 @@ public class ConfigEntityCleaner extends AbstractModConfig {
 
         EntityCleaner.cleanupOtherEntitiesIntervalSeconds = cleanupOtherEntitiesIntervalSeconds.get();
         EntityCleaner.isItemEntityCleanupEnable = isItemEntityCleanupEnable.get();
-        EntityCleaner.isMobEntityCleanupEnable = isMobEntityCleanupEnable.get();
         EntityCleaner.isExperienceOrbEntityCleanupEnable = isExperienceOrbEntityCleanupEnable.get();
         EntityCleaner.isFallingBlocksEntityCleanupEnable = isFallingBlocksEntityCleanupEnable.get();
         EntityCleaner.isArrowEntityCleanupEnable = isArrowEntityCleanupEnable.get();
