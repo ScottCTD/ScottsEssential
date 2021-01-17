@@ -50,6 +50,7 @@
   "message.scessential.requesttimeout": "Request related to \"%s\" expired!",
   "message.scessential.tpadenySource": "Player %s denied your request.",
   "message.scessential.tpahereline01": "Player \"%s\" want you to teleport to his/her position.",
+  "message.scessential.playerNotFound": "Player \"%s\" not found!",
 
   "message.scessential.cantsetfly": "You cannot control a creative player \"%s\"!",
   "message.scessential.cantflynow": "Now, you are unable to fly.",

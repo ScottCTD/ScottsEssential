@@ -5,6 +5,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.MonsterEntity;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.events.entitycleaner.EntityCleaner;
 import xyz.scottc.scessential.events.entitycleaner.SCEItemEntity;
@@ -19,12 +20,17 @@ public class CommandClear {
                                 Commands.literal("clean")
                                         .then(
                                                 Commands.literal("item")
-                                                .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), ItemEntity.class,
+                                                .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof ItemEntity,
                                                         entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist()))
                                         )
                                         .then(
-                                                Commands.literal("mob")
-                                                .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), MobEntity.class,
+                                                Commands.literal("monster")
+                                                .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof MonsterEntity,
+                                                        entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist()))
+                                        )
+                                        .then(
+                                                Commands.literal("animal")
+                                                .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> (entity instanceof MobEntity) && !(entity instanceof MonsterEntity),
                                                         entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist()))
                                         )
                                         .then(
