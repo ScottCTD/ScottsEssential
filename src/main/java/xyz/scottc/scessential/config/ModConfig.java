@@ -27,7 +27,8 @@ public class ModConfig {
         Set<? extends AbstractModConfig> configs = Sets.newHashSet(
                 new ConfigCommands(SERVER_BUILDER),
                 new ConfigEntityCleaner(SERVER_BUILDER),
-                new ConfigInfoRecorder(SERVER_BUILDER)
+                new ConfigInfoRecorder(SERVER_BUILDER),
+                new ConfigMotd(SERVER_BUILDER)
         );
         configs.forEach(AbstractModConfig::init);
         return configs;

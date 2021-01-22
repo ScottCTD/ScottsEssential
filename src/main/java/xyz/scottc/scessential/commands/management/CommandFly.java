@@ -60,7 +60,6 @@ public class CommandFly {
         switch (type) {
             case PERMANENT:
                 data.setCanFlyUntil(-1L);
-                // TODO Test it
                 if (!source.equals(target)) {
                     source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                             TextUtils.getTranslationKey("message", "flyPermanentlySource"), data.getName()), false);

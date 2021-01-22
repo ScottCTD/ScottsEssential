@@ -13,9 +13,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'idea'
 apply plugin: 'maven-publish'
 
-version = "${mc_version}-${mod_version}"
-group = 'xyz.scottc.scessential' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'scessential'
+version = mc_version + "-" + mod_version
+group = "xyz.scottc.$modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = modid
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -49,7 +49,7 @@ minecraft {
                 }
             }
 
-            args "--username=Dev"
+            args "--username=$player_name".toString()
         }
 
         server {
