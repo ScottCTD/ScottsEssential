@@ -39,8 +39,13 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
     private int deathAmount = 0;
     private int totalPlayedTicks;
     private int mobsKilled;
+    // in cm
     private int distanceWalked;
     private int blocksBroke;
+    private int fishCaught;
+    private int distanceBoated;
+    private int damageDealt;
+    private int damageTaken;
 
     private PlayerStatistics(UUID uuid, String name) {
         this.uuid = uuid;
@@ -72,6 +77,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         AtomicInteger temp = new AtomicInteger();
         ForgeRegistries.BLOCKS.getValues().forEach(block -> temp.getAndAdd(stats.getValue(Stats.BLOCK_MINED.get(block))));
         this.setBlocksBroke(temp.get());
+        this.setFishCaught(stats.getValue(Stats.CUSTOM.get(Stats.FISH_CAUGHT)));
+        this.setDistanceBoated(stats.getValue(Stats.CUSTOM.get(Stats.BOAT_ONE_CM)));
+        this.setDamageDealt(stats.getValue(Stats.CUSTOM.get(Stats.DAMAGE_DEALT)));
+        this.setDamageTaken(stats.getValue(Stats.CUSTOM.get(Stats.DAMAGE_TAKEN)));
     }
 
     @Override
@@ -84,6 +93,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         nbt.putInt("mobsKilled", this.mobsKilled);
         nbt.putInt("distanceWalked", this.distanceWalked);
         nbt.putInt("blocksBroke", this.blocksBroke);
+        nbt.putInt("fishCaught", this.fishCaught);
+        nbt.putInt("distanceBoated", this.distanceBoated);
+        nbt.putInt("damageDealt", this.damageDealt);
+        nbt.putInt("damageTaken", this.damageTaken);
         return nbt;
     }
 
@@ -96,6 +109,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         this.mobsKilled = nbt.getInt("mobsKilled");
         this.distanceWalked = nbt.getInt("distanceWalked");
         this.blocksBroke = nbt.getInt("blocksBroke");
+        this.fishCaught = nbt.getInt("fishCaught");
+        this.distanceBoated = nbt.getInt("distanceBoated");
+        this.damageDealt = nbt.getInt("damageDealt");
+        this.damageTaken = nbt.getInt("damageTaken");
     }
 
     public ServerPlayerEntity getPlayer() {
@@ -146,6 +163,38 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         this.blocksBroke = blocksBroke;
     }
 
+    public int getFishCaught() {
+        return fishCaught;
+    }
+
+    public void setFishCaught(int fishCaught) {
+        this.fishCaught = fishCaught;
+    }
+
+    public int getDistanceBoated() {
+        return distanceBoated;
+    }
+
+    public void setDistanceBoated(int distanceBoated) {
+        this.distanceBoated = distanceBoated;
+    }
+
+    public int getDamageDealt() {
+        return damageDealt;
+    }
+
+    public void setDamageDealt(int damageDealt) {
+        this.damageDealt = damageDealt;
+    }
+
+    public int getDamageTaken() {
+        return damageTaken;
+    }
+
+    public void setDamageTaken(int damageTaken) {
+        this.damageTaken = damageTaken;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -158,7 +207,11 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         TIME_PLAYED,
         MOBS_KILLED,
         DISTANCE_WALKED,
-        BLOCKS_BROKE
+        BLOCKS_BROKE,
+        FISH_CAUGHT,
+        DISTANCE_BOATED,
+        DAMAGE_DEALT,
+        DAMAGE_TAKEN
     }
 
     @Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -206,7 +259,7 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         @SubscribeEvent
         public static void onServerTick(TickEvent.ServerTickEvent event) {
             if (event.phase == TickEvent.Phase.END) {
-                if (counter >= 30 * 20) {
+                if (counter >= 60 * 20) {
                     counter = 0;
                     // Only update online players
                     SCEPlayerData.PLAYER_DATA_LIST.forEach(data -> data.getStatistics().update());

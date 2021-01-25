@@ -70,6 +70,34 @@ public class PacketChangeLeaderboard extends AbstractPacket {
                             new TranslationTextComponent(TextUtils.getTranslationKey("text", "blocksBrokeTitle"))
                     );
                     break;
+                case FISH_CAUGHT:
+                    openRank(context, (stat01, stat02) -> stat02.getFishCaught() - stat01.getFishCaught(),
+                            statistics -> TextUtils.getWhiteTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("text", "fishCaught"), statistics.getName(), statistics.getFishCaught()),
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "fishCaughtTitle"))
+                            );
+                    break;
+                case DISTANCE_BOATED:
+                    openRank(context, (stat01, stat02) -> stat02.getDistanceBoated() - stat01.getDistanceBoated(),
+                            statistics -> TextUtils.getWhiteTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("text", "distanceBoated"), statistics.getName(), statistics.getDistanceBoated()),
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "distanceBoatedTitle"))
+                    );
+                    break;
+                case DAMAGE_DEALT:
+                    openRank(context, (stat01, stat02) -> stat02.getDamageDealt() - stat01.getDamageDealt(),
+                            statistics -> TextUtils.getWhiteTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("text", "damageDealt"), statistics.getName(), statistics.getDamageDealt() / 10),
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageDealtTitle"))
+                    );
+                    break;
+                case DAMAGE_TAKEN:
+                    openRank(context, (stat01, stat02) -> stat02.getDamageTaken() - stat01.getDamageTaken(),
+                            statistics -> TextUtils.getWhiteTextFromI18n(false, false, false,
+                                    TextUtils.getTranslationKey("text", "damageTaken"), statistics.getName(), statistics.getDamageTaken() / 10),
+                            new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageTakenTitle"))
+                    );
+                    break;
             }
             context.get().setPacketHandled(true);
         });

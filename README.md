@@ -1,5 +1,7 @@
 # Scott's Essential (SCE)
 
+![LOGO](https://raw.githubusercontent.com/ScottCTD/ScottsEssential/Dev/Logo%20400%20400.png)
+
 A **highly configurable** Minecraft mod which adds many server friendly commands, performance improvements, and other useful things.
 
 Feel free to report any bug or enhancement!

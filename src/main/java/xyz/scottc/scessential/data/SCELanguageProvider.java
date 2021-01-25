@@ -97,6 +97,18 @@ public class SCELanguageProvider extends LanguageProvider {
         this.add(getTextTranslationKey("blocksBrokeButton"), "Blocks Broke");
         this.add(getTextTranslationKey("blocksBrokeTitle"), "Blocks Broke Rank");
         this.add(getTextTranslationKey("blocksBroke"), "%s (%d Blocks)");
+        this.add(getTextTranslationKey("fishCaughtButton"), "Fish Caught");
+        this.add(getTextTranslationKey("fishCaughtTitle"), "Fish Caught Rank");
+        this.add(getTextTranslationKey("fishCaught"), "%s (%d Fish)");
+        this.add(getTextTranslationKey("distanceBoatedButton"), "Meters Boat");
+        this.add(getTextTranslationKey("distanceBoatedTitle"), "Distance Boated Rank");
+        this.add(getTextTranslationKey("distanceBoated"), "%s (%d M)");
+        this.add(getTextTranslationKey("damageDealtButton"), "Damage Dealt");
+        this.add(getTextTranslationKey("damageDealtTitle"), "Damage Dealt Rank");
+        this.add(getTextTranslationKey("damageDealt"), "%s (%d)");
+        this.add(getTextTranslationKey("damageTakenButton"), "Damage Taken");
+        this.add(getTextTranslationKey("damageTakenTitle"), "Damage Taken Rank");
+        this.add(getTextTranslationKey("damageTaken"), "%s (%d)");
         // scessential getRegistryName
         this.add(getMessageTranslationKey("clickToCopy"), "Click to copy to clipboard!");
         this.add(getMessageTranslationKey("nearbyNoLiving"), "No nearby living entities found!");
@@ -108,7 +120,6 @@ public class SCELanguageProvider extends LanguageProvider {
         this.add(getMessageTranslationKey("cleanupMobCountdown"), "Mob entities will be freed after %d seconds!");
         this.add(getMessageTranslationKey("itemCleanupComplete"), "%d item entities freed.");
         this.add(getMessageTranslationKey("mobCleanupComplete"), "%d mob entities freed.");
-
     }
 
     public static String getMessageTranslationKey(String afterModId) {
