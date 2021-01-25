@@ -14,7 +14,7 @@ import xyz.scottc.scessential.commands.info.CommandRank;
 import xyz.scottc.scessential.commands.management.*;
 import xyz.scottc.scessential.commands.teleport.*;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CommandsRegistry {
 
     public static boolean init = false;

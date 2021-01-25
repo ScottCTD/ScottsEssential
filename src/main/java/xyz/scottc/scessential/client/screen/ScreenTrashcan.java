@@ -15,7 +15,7 @@ import xyz.scottc.scessential.utils.TextUtils;
 
 public class ScreenTrashcan extends ContainerScreen<ContainerTrashcan> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/trashcan.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/trashcan.png");
 
     private int x;
     private int y;

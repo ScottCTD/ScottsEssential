@@ -15,23 +15,23 @@ public class CommandClear {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal(Main.MODID)
+                Commands.literal(Main.MOD_ID)
                         .then(
                                 Commands.literal("clean")
                                         .then(
                                                 Commands.literal("item")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof ItemEntity,
-                                                        entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist()))
+                                                        entity -> new SCEItemEntity((ItemEntity) entity).filtrate()))
                                         )
                                         .then(
                                                 Commands.literal("monster")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof MonsterEntity,
-                                                        entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist()))
+                                                        entity -> new SCEMobEntity((MobEntity) entity).filtrate()))
                                         )
                                         .then(
                                                 Commands.literal("animal")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> (entity instanceof MobEntity) && !(entity instanceof MonsterEntity),
-                                                        entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist()))
+                                                        entity -> new SCEMobEntity((MobEntity) entity).filtrate()))
                                         )
                                         .then(
                                                 Commands.literal("other")

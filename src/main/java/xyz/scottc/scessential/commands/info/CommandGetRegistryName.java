@@ -31,7 +31,7 @@ public class CommandGetRegistryName {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
-                Commands.literal(Main.MODID)
+                Commands.literal(Main.MOD_ID)
                         .then(Commands.literal("getRegistryName")
                                 .then(Commands.literal("item")
                                         .requires(source -> source.hasPermissionLevel(2))

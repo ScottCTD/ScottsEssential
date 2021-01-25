@@ -425,7 +425,7 @@ public class SCEPlayerData {
         return this.uuid.toString();
     }
 
-    @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class EventHandler {
 
         @SubscribeEvent

@@ -4,13 +4,15 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import xyz.scottc.scessential.events.entitycleaner.EntityCleaner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ConfigEntityCleaner extends AbstractModConfig {
 
     private ForgeConfigSpec.BooleanValue
             isItemEntityCleanupEnable,
-            isMobEntityCleanupEnable,
+            isMobEntityCleanupEnable;
+    private ForgeConfigSpec.BooleanValue
             isAnimalEntitiesCleanupEnable,
             isMonsterEntitiesCleanupEnable,
             isExperienceOrbEntityCleanupEnable,
@@ -30,9 +32,14 @@ public class ConfigEntityCleaner extends AbstractModConfig {
             cleanupMobEntitiesIntervalSeconds,
             cleanupMobEntitiesCountdownSeconds,
             cleanupOtherEntitiesIntervalSeconds;
+    private ForgeConfigSpec.BooleanValue
+            itemEntitiesMatchMode,
+            mobEntitiesMatchMode;
     private ForgeConfigSpec.ConfigValue<List<? extends String>>
             itemEntitiesWhitelist,
-            mobEntitiesWhitelist;
+            itemEntitiesBlacklist,
+            mobEntitiesWhitelist,
+            mobEntitiesBlacklist;
     private ForgeConfigSpec.ConfigValue<? extends String>
             cleanedupItemEntitiesMessage,
             cleanupItemEntitiesCountdownMessage;
@@ -80,11 +87,21 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: \"null\"")
                 .define("CleanUpItemEntitiesCountdownMessage", "null");
 
+        // Whitelist or Blacklist
+        this.itemEntitiesMatchMode = this.builder
+                .comment("Set it true to enable matching entities with whitelist.",
+                        "False to enable matching entities with blacklist. (Only clean entities in blacklist)",
+                        "Default value: true (Use whitelist)")
+                .define("ItemEntitiesMatchMode", true);
         itemEntitiesWhitelist = builder
                 .comment("List of item registry names (E.g: minecraft:stone) not being cleaned.",
                         "You could use /scessential getItemRegistryName item command with a item hold in your main hand to get it's registry name.",
                         "You could also use minecraft:* or rats:* to add all items of certain mod to the whitelist.")
                 .define("ItemEntitiesWhitelist", Arrays.asList("minecraft:diamond", "minecraft:emerald"), ModConfig::isResourceLocationList);
+        this.itemEntitiesBlacklist = this.builder
+                .comment("Entities here will be cleaned!",
+                        "Same format as the whitelist.")
+                .define("ItemEntitiesBlacklist", Collections.emptyList(), ModConfig::isResourceLocationList);
         this.builder.pop();
 
         this.builder.comment("Mobs = Monsters + Animals basically.").push("MobEntities");
@@ -129,13 +146,23 @@ public class ConfigEntityCleaner extends AbstractModConfig {
                         "Default value: \"null\"")
                 .define("CleanUpMobEntitiesCountdownMessage", "null");
 
-        mobEntitiesWhitelist = builder
+        // Whitelist or Blacklist
+        this.mobEntitiesMatchMode = this.builder
+                .comment("Set it true to enable matching entities with whitelist.",
+                        "False to enable matching entities with blacklist. (Only clean entities in blacklist)",
+                        "Default value: true (Use whitelist)")
+                .define("MobEntitiesMatchMode", true);
+        this.mobEntitiesWhitelist = this.builder
                 .comment("List of mob resourcelocation names (E.g: minecraft:cow) not being cleaned.",
                         "You could use /scessential getItemRegistryName mob to get the registry names of nearby mobs. (radius specified in Commands section)",
                         "You could also use minecraft:* or minecolonies:* to add all living entities of certain mod to whitelist.")
                 .define("MobEntitiesWhitelist", Arrays.asList("minecraft:cat", "minecraft:mule", "minecraft:wolf", "minecraft:horse",
                         "minecraft:donkey", "minecraft:wither", "minecraft:guardian", "minecraft:villager", "minecraft:iron_golem", "minecraft:snow_golem",
                         "minecraft:vindicator", "minecraft:ender_dragon", "minecraft:elder_guardian"), ModConfig::isResourceLocationList);
+        this.mobEntitiesBlacklist = this.builder
+                .comment("Entities here will be cleaned!",
+                        "Same format as the whitelist.")
+                .define("MobEntitiesBlacklist", Collections.emptyList(), ModConfig::isResourceLocationList);
         this.builder.pop();
 
         this.builder.push("OtherEntities");
@@ -209,7 +236,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         EntityCleaner.cleanedUpItemEntitiesMessage = this.cleanedupItemEntitiesMessage.get();
         EntityCleaner.cleanupItemEntitiesCountdownSeconds = this.cleanupItemEntitiesCountdownSeconds.get();
         EntityCleaner.cleanupItemEntitiesCountdownMessage = this.cleanupItemEntitiesCountdownMessage.get();
+        EntityCleaner.itemEntitiesMatchMode = this.itemEntitiesMatchMode.get();
         EntityCleaner.itemEntitiesWhitelist = this.itemEntitiesWhitelist.get();
+        EntityCleaner.itemEntitiesBlacklist = this.itemEntitiesBlacklist.get();
 
         EntityCleaner.isMobEntityCleanupEnable = isMobEntityCleanupEnable.get();
         EntityCleaner.isAnimalEntitiesCleanupEnable = this.isAnimalEntitiesCleanupEnable.get();
@@ -218,7 +247,9 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         EntityCleaner.cleanedUpMobEntitiesMessage = this.cleanedupMobEntitiesMessage.get();
         EntityCleaner.cleanupMobEntitiesCountdownSeconds = this.cleanupMobEntitiesCountdownSeconds.get();
         EntityCleaner.cleanupMobEntitiesCountdownMessage = this.cleanupMobEntitiesCountdownMessage.get();
+        EntityCleaner.mobEntitiesMatchMode = this.mobEntitiesMatchMode.get();
         EntityCleaner.mobEntitiesWhitelist = this.mobEntitiesWhitelist.get();
+        EntityCleaner.mobEntitiesBlacklist = this.mobEntitiesBlacklist.get();
 
         EntityCleaner.cleanupOtherEntitiesIntervalSeconds = cleanupOtherEntitiesIntervalSeconds.get();
         EntityCleaner.isItemEntityCleanupEnable = isItemEntityCleanupEnable.get();

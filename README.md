@@ -120,6 +120,10 @@ Feel free to report any bug or enhancement!
   - All functions have options to enable / disable.
   - All recoding actions are performed asynchronous.
   - Recordings are stored in your world folder/scessential/infoRecorder, separated by date and categories.
+- **MOTD Customization** (Disabled by default)
+  - MOTD Customization can help you to display different information of your server (server description) as every time the player hit "Refresh" button.
+  - You can use '&' to specify the format of text of server description. (Like '&l' in Minecraft stands for **bold** font)
+  - For more information, check the config of my mod.
 
 # About
 

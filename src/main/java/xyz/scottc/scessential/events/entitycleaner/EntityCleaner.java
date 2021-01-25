@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EntityCleaner {
 
     // Clean item
@@ -35,8 +35,13 @@ public class EntityCleaner {
     public static int cleanupItemEntitiesCountdownSeconds = 30;
     @ConfigField
     public static String cleanupItemEntitiesCountdownMessage = "null";
+    // true -> whitelist false -> blacklist
+    @ConfigField
+    public static boolean itemEntitiesMatchMode = true;
     @ConfigField
     public static List<? extends String> itemEntitiesWhitelist = Collections.emptyList();
+    @ConfigField
+    public static List<? extends String> itemEntitiesBlacklist = Collections.emptyList();
 
     // clean mob
     @ConfigField
@@ -53,7 +58,11 @@ public class EntityCleaner {
     @ConfigField
     public static String cleanupMobEntitiesCountdownMessage = "null";
     @ConfigField
+    public static boolean mobEntitiesMatchMode = true;
+    @ConfigField
     public static List<? extends String> mobEntitiesWhitelist = Collections.emptyList();
+    @ConfigField
+    public static List<? extends String> mobEntitiesBlacklist = Collections.emptyList();
 
     // clean other
     @ConfigField
@@ -98,7 +107,7 @@ public class EntityCleaner {
                         }
                         // real clean
                         if (nextCleanupTime <= System.currentTimeMillis()) {
-                            int amount = cleanupEntity(worlds, entity -> entity instanceof ItemEntity, entity -> !new SCEItemEntity((ItemEntity) entity).isInWhitelist());
+                            int amount = cleanupEntity(worlds, entity -> entity instanceof ItemEntity, entity -> new SCEItemEntity((ItemEntity) entity).filtrate());
                             clearItemTimer = System.currentTimeMillis();
                             isCleanupItemCountdownMessageSent = false;
                             sendMessage(cleanedUpItemEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
@@ -118,9 +127,9 @@ public class EntityCleaner {
                             int amount = 0;
                             if (isAnimalEntitiesCleanupEnable)
                                 amount += cleanupEntity(worlds, entity -> (entity instanceof MobEntity) && !(entity instanceof MonsterEntity),
-                                        entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
+                                        entity -> new SCEMobEntity((MobEntity) entity).filtrate());
                             if (isMonsterEntitiesCleanupEnable)
-                                amount += cleanupEntity(worlds, entity -> entity instanceof MonsterEntity, entity -> !new SCEMobEntity((MobEntity) entity).isInWhitelist());
+                                amount += cleanupEntity(worlds, entity -> entity instanceof MonsterEntity, entity -> new SCEMobEntity((MobEntity) entity).filtrate());
                             clearMobTimer = System.currentTimeMillis();
                             isCleanupMobMessageSent = false;
                             sendMessage(cleanedUpMobEntitiesMessage, TextUtils.getGreenTextFromI18n(false, false, false,
@@ -175,7 +184,11 @@ public class EntityCleaner {
                 .filter(additionalPredicate)
                 .forEach(entity -> {
                     entity.remove();
-                    amount.getAndIncrement();
+                    if (entity instanceof ItemEntity) {
+                        amount.getAndAdd(((ItemEntity) entity).getItem().getCount());
+                    } else {
+                        amount.getAndIncrement();
+                    }
                 }));
         return amount.get();
     }

@@ -11,7 +11,7 @@ import xyz.scottc.scessential.containers.OthersInvContainer;
 
 public class ScreenOthersInv extends ContainerScreen<OthersInvContainer> {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/others_inventory.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/others_inventory.png");
 
     private int x, y;
 

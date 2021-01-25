@@ -8,7 +8,7 @@ import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.client.screen.ScreenOthersInv;
 import xyz.scottc.scessential.client.screen.ScreenTrashcan;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ScreenRegistry {
 
     @SubscribeEvent

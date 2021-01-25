@@ -11,13 +11,13 @@ import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.containers.ContainerTrashcan;
 import xyz.scottc.scessential.containers.OthersInvContainer;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ContainerTypeRegistry {
 
-    @ObjectHolder(Main.MODID + ":others_inventory")
+    @ObjectHolder(Main.MOD_ID + ":others_inventory")
     public static ContainerType<OthersInvContainer> othersContainerType;
 
-    @ObjectHolder(Main.MODID + ":trashcan")
+    @ObjectHolder(Main.MOD_ID + ":trashcan")
     public static ContainerType<ContainerTrashcan> trashcanContainerType;
 
     @SubscribeEvent

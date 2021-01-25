@@ -12,7 +12,7 @@ public class TextUtils {
     public static String getTranslationKey(String beforeModid, String afterModid) {
         beforeModid = beforeModid.endsWith(".") ? beforeModid : beforeModid + ".";
         afterModid = afterModid.startsWith(".") ? afterModid : "." + afterModid;
-        return beforeModid + Main.MODID + afterModid;
+        return beforeModid + Main.MOD_ID + afterModid;
     }
 
     public static IFormattableTextComponent getColoredTextFromI18n(Color color, boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {

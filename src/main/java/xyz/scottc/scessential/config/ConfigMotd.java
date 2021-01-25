@@ -11,7 +11,7 @@ import xyz.scottc.scessential.events.motd.EventHandler;
 import java.util.Arrays;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigMotd extends AbstractModConfig {
 
     private ForgeConfigSpec.ConfigValue<List<List<? extends String>>> raws;

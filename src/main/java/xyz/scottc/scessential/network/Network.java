@@ -10,7 +10,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import xyz.scottc.scessential.Main;
 
-@Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Network {
 
     private static final String PROTOCAL_VERSION = "1.0";
@@ -20,7 +20,7 @@ public class Network {
     @SubscribeEvent
     public static void onFMLCommonSetup(FMLCommonSetupEvent event) {
         INSTANCE = NetworkRegistry.newSimpleChannel(
-                new ResourceLocation(Main.MODID, "main"),
+                new ResourceLocation(Main.MOD_ID, "main"),
                 () -> PROTOCAL_VERSION,
                 PROTOCAL_VERSION::equals,
                 PROTOCAL_VERSION::equals

@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ScreenLeaderboard extends Screen {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Main.MODID, "textures/gui/leaderboard.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID, "textures/gui/leaderboard.png");
 
     private RankList rankList;
     private RankList.PageCounter pageCounterWidget;

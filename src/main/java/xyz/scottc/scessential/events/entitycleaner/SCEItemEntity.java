@@ -4,8 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class SCEItemEntity {
 
     private final ItemEntity entity;
@@ -16,19 +14,37 @@ public class SCEItemEntity {
         this.registryName = this.entity.getItem().getItem().getRegistryName();
     }
 
-    public boolean isInWhitelist() {
-        // first match the one without *
-        if (!EntityCleaner.itemEntitiesWhitelist.contains(this.registryName.toString())) {
-            AtomicBoolean isIn = new AtomicBoolean(false);
-            EntityCleaner.itemEntitiesWhitelist.stream()
-                    .filter(s -> s.contains("*"))
-                    .forEach(s -> {
-                        if (isIn.get()) return;
-                        isIn.set(this.registryName.getNamespace().equals(s.substring(0, s.indexOf(":"))));
-                    });
-            return isIn.get();
-        } else {
+    /**
+     * @return true if the entity need to be cleaned.
+     */
+    public boolean filtrate() {
+        int index;
+        if (EntityCleaner.itemEntitiesMatchMode) {
+            // Whitelist
+            for (String s : EntityCleaner.itemEntitiesWhitelist) {
+                if (s.equals(this.registryName.toString())) {
+                    return false;
+                } else if ((index = s.indexOf('*')) != -1) {
+                    s = s.substring(0, index - 1);
+                    if (this.registryName.getNamespace().equals(s)) {
+                        return false;
+                    }
+                }
+            }
             return true;
+        } else {
+            // Blacklist
+            for (String s : EntityCleaner.itemEntitiesBlacklist) {
+                if (s.equals(this.registryName.toString())) {
+                    return true;
+                } else if ((index = s.indexOf('*')) != -1) {
+                    s = s.substring(0, index - 1);
+                    if (this.registryName.getNamespace().equals(s)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

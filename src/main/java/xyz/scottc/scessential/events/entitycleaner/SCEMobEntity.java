@@ -4,8 +4,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class SCEMobEntity {
 
     private final MobEntity entity;
@@ -16,18 +14,34 @@ public class SCEMobEntity {
         this.registryName = EntityType.getKey(entity.getType());
     }
 
-    public boolean isInWhitelist() {
-        if (!EntityCleaner.mobEntitiesWhitelist.contains(this.registryName.toString())) {
-            AtomicBoolean isIn = new AtomicBoolean(false);
-            EntityCleaner.mobEntitiesWhitelist.stream()
-                    .filter(s -> s.contains("*"))
-                    .forEach(s -> {
-                        if (isIn.get()) return;
-                        isIn.set(this.registryName.getNamespace().equals(s.substring(0, s.indexOf(":"))));
-                    });
-            return isIn.get();
-        } else {
+    public boolean filtrate() {
+        int index;
+        if (EntityCleaner.mobEntitiesMatchMode) {
+            // Whitelist
+            for (String s : EntityCleaner.mobEntitiesWhitelist) {
+                if (s.equals(this.registryName.toString())) {
+                    return false;
+                } else if ((index = s.indexOf('*')) != -1) {
+                    s = s.substring(0, index - 1);
+                    if (this.registryName.getNamespace().equals(s)) {
+                        return false;
+                    }
+                }
+            }
             return true;
+        } else {
+            // Blacklist
+            for (String s : EntityCleaner.mobEntitiesBlacklist) {
+                if (s.equals(this.registryName.toString())) {
+                    return true;
+                } else if ((index = s.indexOf('*')) != -1) {
+                    s = s.substring(0, index - 1);
+                    if (this.registryName.getNamespace().equals(s)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

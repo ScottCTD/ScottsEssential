@@ -22,13 +22,12 @@ import xyz.scottc.scessential.core.TeleportPos;
 import java.io.File;
 import java.util.Optional;
 
-@Mod(Main.MODID)
+@Mod(Main.MOD_ID)
 public class Main {
 
-    public static final String MODID = "scessential";
+    public static final String MOD_ID = "scessential";
     public static final String MOD_VERSION = "1.0.0";
     public static final Logger LOGGER = LogManager.getLogger();
-    // ServerLifecycleHooks.getCurrentServer() seems not very good -> null pointer
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
     public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
 
@@ -53,8 +52,8 @@ public class Main {
 
     private void onServerAboutToStart(FMLServerAboutToStartEvent event) {
         SERVER = event.getServer();
-        // Bascially, this function return a path like .\saves\New World\scessential
-        MAIN_FOLDER = SERVER.func_240776_a_(new FolderName(MODID)).toFile();
+        // Basically, this function return a path like .\saves\New World\scessential
+        MAIN_FOLDER = SERVER.func_240776_a_(new FolderName(MOD_ID)).toFile();
         init();
         Main.LOGGER.info("SCE Successfully initialize directories!");
     }

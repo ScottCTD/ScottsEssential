@@ -102,7 +102,7 @@ public class TeleportPos implements INBTSerializable<CompoundNBT> {
         this.pos = new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z"));
     }
 
-    @Mod.EventBusSubscriber(modid = Main.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class EventHandler {
 
         // Deserialize warps
