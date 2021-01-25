@@ -112,7 +112,7 @@ public class CommandRTP {
                 }
                 // Destroy player nearby block
                 BlockPos.getAllInBox(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
-                        .forEach(blockpos -> world.destroyBlock(blockpos, true));
+                        .forEach(blockPos -> world.destroyBlock(blockPos, true));
                 data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
                 player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), false);
