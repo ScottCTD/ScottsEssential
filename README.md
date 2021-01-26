@@ -97,9 +97,10 @@ Feel free to report any bug or enhancement!
     - <img src="https://i.loli.net/2021/01/13/yP8msuVo7LE6Jcj.png" alt="image.png" style="zoom: 67%;" />
 - /rank
     - Usage: Open a GUI, displaying the ranking information of all players. (E.g Number of deaths)
-    - <img src="https://i.loli.net/2021/01/14/3aDYzZy9GL6KCXH.png" alt="image.png" style="zoom:67%;" />
+    - <img src="https://i.loli.net/2021/01/26/EFRL6bvOcDPkVyi.png" alt="image.png" style="zoom:67%;" />
 - More in progress
   
+
 # Services
 
 - **Entity Cleaner**
@@ -126,6 +127,37 @@ Feel free to report any bug or enhancement!
   - MOTD Customization can help you to display different information of your server (server description) as every time the player hit "Refresh" button.
   - You can use '&' to specify the format of text of server description. (Like '&l' in Minecraft stands for **bold** font)
   - For more information, check the config of my mod.
+- **Automatic Shutdown** (Disabled by default)
+  - This is a small thing that can automatically close your server.
+
+  - This function does **not** help you to restart the server, for automatically restarting server, please use a simple script to do that :
+
+    - Linux:
+      ```shell
+      #!/bin/bash
+      while true; do
+              echo "Starting the server"
+              Commands to start server like: java -jar xxx.jar
+              echo "Waiting 10 seconds before starting the server again"
+              sleep 10
+      done
+      ```
+      
+    - Windows:
+      
+      ```shell
+      :start
+      Commands to start minecraft
+      timeout /T 10
+      goto start
+      ```
+  
+  - There are two modes: Real time and Interval.
+    
+    - Real time: Server will be closed at certain time like 12:00
+    - Interval: Server will be closed after a fixed time interval.
+    
+  - You could add countdown messages as many as you want.
 
 # About
 

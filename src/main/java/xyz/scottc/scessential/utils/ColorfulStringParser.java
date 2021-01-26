@@ -1,20 +1,28 @@
-package xyz.scottc.scessential.events.motd;
+package xyz.scottc.scessential.utils;
 
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class Parser {
+/**
+ * Parse the string to an IFormattableTextComponent with proper formats.
+ */
+public class ColorfulStringParser {
 
     public static final char COLOR_CHAR = '§';
 
-    private final IFormattableTextComponent description = new StringTextComponent("");
+    private final IFormattableTextComponent text = new StringTextComponent("");
 
-    public Parser(List<? extends String> rawStrings) {
+    public ColorfulStringParser(String rawString) {
+        this(Collections.singletonList(rawString));
+    }
+
+    public ColorfulStringParser(List<? extends String> rawStrings) {
         for (String raw : rawStrings) {
             StringTextComponent formatted = new StringTextComponent("");
             char[] chars = raw.toCharArray();
@@ -37,7 +45,10 @@ public class Parser {
                 formatted.append(new StringTextComponent(raw.substring(j, index)).mergeStyle(this.toArray(formatters)));
                 j = index - 1;
             }
-            this.description.append(formatted).appendString("\n");
+            this.text.append(formatted);
+            if (rawStrings.size() > 1) {
+                this.text.appendString("\n");
+            }
         }
     }
 
@@ -49,8 +60,8 @@ public class Parser {
         return result;
     }
 
-    public IFormattableTextComponent getDescription() {
-        return this.description;
+    public IFormattableTextComponent getText() {
+        return this.text;
     }
 
     // Sorry, I dont know the convenient way to get TextFormatting from formatting code,

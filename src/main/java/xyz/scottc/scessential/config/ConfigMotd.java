@@ -1,17 +1,12 @@
 package xyz.scottc.scessential.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import xyz.scottc.scessential.Main;
-import xyz.scottc.scessential.events.motd.EventHandler;
+import xyz.scottc.scessential.events.MOTDCustomizer;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigMotd extends AbstractModConfig {
 
     private ForgeConfigSpec.ConfigValue<List<List<? extends String>>> raws;
@@ -43,8 +38,12 @@ public class ConfigMotd extends AbstractModConfig {
 
     @Override
     public void get() {
-        EventHandler.raws = this.raws.get();
-        EventHandler.isCustomizedMOTDEnable = this.isCustomizedMOTDEnable.get();
+        MOTDCustomizer.raws = this.raws.get();
+        MOTDCustomizer.isCustomizedMOTDEnable = this.isCustomizedMOTDEnable.get();
+        if (MOTDCustomizer.isCustomizedMOTDEnable) {
+            MOTDCustomizer.init();
+            Main.LOGGER.info("MOTD Reloaded!");
+        }
     }
 
     private static boolean isValidMOTD(Object o) {
@@ -57,15 +56,6 @@ public class ConfigMotd extends AbstractModConfig {
             }
         }
         return false;
-    }
-
-    // Lowest because I need to handle the new things after it becomes the "new" one.
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onConfigReloading(ModConfig.Reloading event) {
-        if (EventHandler.isCustomizedMOTDEnable) {
-            EventHandler.init();
-            Main.LOGGER.info("MOTD Reloaded!");
-        }
     }
 
 }

@@ -1,4 +1,4 @@
-package xyz.scottc.scessential.events.motd;
+package xyz.scottc.scessential.events;
 
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -8,12 +8,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
+import xyz.scottc.scessential.utils.ColorfulStringParser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class EventHandler {
+public class MOTDCustomizer {
 
     @ConfigField
     public static List<List<? extends String>> raws;
@@ -41,7 +42,7 @@ public class EventHandler {
 
     public static void init() {
         TEXTS.clear();
-        raws.forEach(raw -> TEXTS.add(new Parser(raw).getDescription()));
+        raws.forEach(raw -> TEXTS.add(new ColorfulStringParser(raw).getText()));
         counter = 0;
     }
 

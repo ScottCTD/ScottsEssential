@@ -28,7 +28,8 @@ public class ModConfig {
                 new ConfigCommands(SERVER_BUILDER),
                 new ConfigEntityCleaner(SERVER_BUILDER),
                 new ConfigInfoRecorder(SERVER_BUILDER),
-                new ConfigMotd(SERVER_BUILDER)
+                new ConfigMotd(SERVER_BUILDER),
+                new ConfigShutdowner(SERVER_BUILDER)
         );
         configs.forEach(AbstractModConfig::init);
         return configs;

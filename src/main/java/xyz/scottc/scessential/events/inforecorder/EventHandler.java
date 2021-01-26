@@ -74,7 +74,9 @@ public class EventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onServerAboutToStart(FMLServerAboutToStartEvent event) {
-        init();
+        if (isInfoRecorderEnable) {
+            init();
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -201,7 +203,7 @@ public class EventHandler {
         }
     }
 
-    private static void init() {
+    public static void init() {
         String date = DateUtils.toString(System.currentTimeMillis(), "MMddyyyy");
         folder = new File(Main.INFO_STORAGE_FOLDER.getAbsolutePath() + "/" + date);
         if (!folder.exists()) {
@@ -224,7 +226,6 @@ public class EventHandler {
             if (playerPlaceBlockLogFile == null) playerPlaceBlockLogFile = FIleUtils.createSubFile("PlayerPlaceBlockLog.json", folder);
             if (playerPeriodicallyFile == null) playerPeriodicallyFile = FIleUtils.createSubFile("PlayerPeriodicallyLog.json", folder);
         }
-
     }
 
     public static void writeJson(JsonElement json, File file, boolean append) {

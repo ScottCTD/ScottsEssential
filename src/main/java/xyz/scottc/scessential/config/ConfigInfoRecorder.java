@@ -139,5 +139,7 @@ public class ConfigInfoRecorder extends AbstractModConfig {
 
         EventHandler.recordPlayerIntervalSeconds = this.recordPlayerIntervalSeconds.get();
         EventHandler.placeBlockListeningList = this.placeBlockListeningList.get();
+
+        EventHandler.init();
     }
 }
