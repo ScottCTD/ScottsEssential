@@ -30,10 +30,11 @@ public class CommandHat {
 
     private static int hat(ServerPlayerEntity source, ServerPlayerEntity target) {
         ItemStack itemStack = source.getHeldItemMainhand();
+        ItemStack originStack = target.inventory.getStackInSlot(39);
         // 39 -> Head
         target.inventory.setInventorySlotContents(39, itemStack);
-        if (source.equals(target) && !source.isCreative()) source.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
-        target.container.detectAndSendChanges();
+        source.setHeldItem(Hand.MAIN_HAND, originStack);
+        target.inventory.markDirty();
         source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "ok")), false);
         return 1;
