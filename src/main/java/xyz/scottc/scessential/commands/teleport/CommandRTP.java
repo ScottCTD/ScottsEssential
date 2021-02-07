@@ -1,5 +1,6 @@
 package xyz.scottc.scessential.commands.teleport;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.AirBlock;
 import net.minecraft.command.CommandSource;
@@ -57,76 +58,73 @@ public class CommandRTP {
     }
 
     private static int rtp(ServerPlayerEntity player) {
-        Thread thread = new Thread(() -> {
-            SCEPlayerData data = SCEPlayerData.getInstance(player);
-            if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), rtpCooldownSeconds)) {
-                return;
+        SCEPlayerData data = SCEPlayerData.getInstance(player);
+        if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), rtpCooldownSeconds)) {
+            return Command.SINGLE_SUCCESS;
+        }
+        ServerWorld world = player.getServerWorld();
+        Random random = new Random();
+        int x, y, z;
+        String worldKey = world.getDimensionKey().getLocation().toString();
+        player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "startRTP")), false);
+        boolean nether = false;
+        for (int i = 0; i < maxRTPAttempts; i++) {
+            switch (worldKey) {
+                case OVERWORLD:
+                    y = random.nextInt(maxRTPHeightOverworld - minRTPHeightOverworld) + minRTPHeightOverworld;
+                    x = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
+                    z = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
+                    break;
+                case NETHER:
+                    y = random.nextInt(maxRTPHeightNether - minRTPHeightNether) + minRTPHeightNether;
+                    x = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
+                    z = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
+                    nether = true;
+                    break;
+                case END:
+                    y = random.nextInt(maxRTPHeightEnd - minRTPHeightEnd) + minRTPHeightEnd;
+                    x = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
+                    z = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
+                    break;
+                default:
+                    y = random.nextInt(maxRTPHeightDefault - minRTPHeightDefault) + minRTPHeightDefault;
+                    x = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
+                    z = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
+                    break;
             }
-            ServerWorld world = player.getServerWorld();
-            Random random = new Random();
-            int x, y, z;
-            String worldKey = world.getDimensionKey().getLocation().toString();
+            BlockPos playerPos = player.getPosition();
+            BlockPos targetPos = new BlockPos(x + playerPos.getX(), y, z + playerPos.getZ());
+            if (!nether) {
+                world.getChunk(targetPos.getX() >> 4, targetPos.getZ() >> 4, ChunkStatus.HEIGHTMAPS);
+                targetPos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos);
+            }
+            Optional<RegistryKey<Biome>> biomeRegistryKey = world.func_242406_i(targetPos);
+            if (biomeRegistryKey.isPresent() && biomeRegistryKey.get().getLocation().getPath().contains("ocean")) {
+                continue;
+            }
+            if (world.getBlockState(targetPos.down()).getBlock() instanceof AirBlock) {
+                continue;
+            }
+            Fluid fluid = world.getFluidState(targetPos).getFluid();
+            if (fluid instanceof LavaFluid) {
+                continue;
+            }
+            // Destroy player nearby block
+            BlockPos.getAllInBox(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
+                    .forEach(blockPos -> world.destroyBlock(blockPos, true));
+            data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
             player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "startRTP")), false);
-            boolean nether = false;
-            for (int i = 0; i < maxRTPAttempts; i++) {
-                switch (worldKey) {
-                    case OVERWORLD:
-                        y = random.nextInt(maxRTPHeightOverworld - minRTPHeightOverworld) + minRTPHeightOverworld;
-                        x = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
-                        z = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
-                        break;
-                    case NETHER:
-                        y = random.nextInt(maxRTPHeightNether - minRTPHeightNether) + minRTPHeightNether;
-                        x = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
-                        z = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
-                        nether = true;
-                        break;
-                    case END:
-                        y = random.nextInt(maxRTPHeightEnd - minRTPHeightEnd) + minRTPHeightEnd;
-                        x = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
-                        z = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
-                        break;
-                    default:
-                        y = random.nextInt(maxRTPHeightDefault - minRTPHeightDefault) + minRTPHeightDefault;
-                        x = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
-                        z = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
-                        break;
-                }
-                BlockPos playerPos = player.getPosition();
-                BlockPos targetPos = new BlockPos(x + playerPos.getX(), y, z + playerPos.getZ());
-                if (!nether) {
-                    world.getChunk(targetPos.getX() >> 4, targetPos.getZ() >> 4, ChunkStatus.HEIGHTMAPS);
-                    targetPos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos);
-                }
-                Optional<RegistryKey<Biome>> biomeRegistryKey = world.func_242406_i(targetPos);
-                if (biomeRegistryKey.isPresent() && biomeRegistryKey.get().getLocation().getPath().contains("ocean")) {
-                    continue;
-                }
-                if (world.getBlockState(targetPos.down()).getBlock() instanceof AirBlock) {
-                    continue;
-                }
-                Fluid fluid = world.getFluidState(targetPos).getFluid();
-                if (fluid instanceof LavaFluid) {
-                    continue;
-                }
-                // Destroy player nearby block
-                BlockPos.getAllInBox(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
-                        .forEach(blockPos -> world.destroyBlock(blockPos, true));
-                data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
-                player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), false);
-                TeleportUtils.teleport(player, world, targetPos.up());
-                data.setLastRTPTime(System.currentTimeMillis());
-                player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpSuccess"), x, y, z), true);
-                return;
-            }
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "rtpFail")), false);
-        });
-        thread.start();
-        return 1;
+                    TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), false);
+            TeleportUtils.teleport(player, world, targetPos.up());
+            data.setLastRTPTime(System.currentTimeMillis());
+            player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                    TextUtils.getTranslationKey("message", "rtpSuccess"), x, y, z), true);
+            return Command.SINGLE_SUCCESS;
+        }
+        player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                TextUtils.getTranslationKey("message", "rtpFail")), false);
+        return Command.SINGLE_SUCCESS;
     }
 
 }
