@@ -47,10 +47,10 @@ public class CommandBack {
                     TextUtils.getTranslationKey("message", "noBack")), false);
             return 1;
         }
-        // Safe teleport But if you fall into the void, I will not save you.
+        // Safe teleport, But if you fall into the void, I will not save you.
         BlockPos.Mutable pos = teleportPos.getPos().toMutable();
         ServerWorld world = Main.SERVER.getWorld(teleportPos.getDimension());
-        if (world != null) {
+        if (world != null && world.getFluidState(pos).getFluid() instanceof LavaFluid) {
             // Teleport to a cobblestone above the lava
             while (world.getFluidState(pos).getFluid() instanceof LavaFluid) {
                 pos = pos.move(0, 1, 0);
