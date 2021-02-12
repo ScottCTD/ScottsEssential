@@ -1,5 +1,6 @@
 package xyz.scottc.scessential.commands.teleport;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.command.CommandSource;
@@ -203,59 +204,54 @@ public class CommandHome {
     }
 
     private static int listHome(ServerPlayerEntity player) {
-        Thread thread = new Thread(() -> {
-            SCEPlayerData data = SCEPlayerData.getInstance(player);
-            Map<String, TeleportPos> homes = data.getHomes();
-            if (homes.isEmpty()) {
-                player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "noHome")), false);
-                return;
-            }
-            player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
-            Set<String> names = homes.keySet();
-            int index = 1;
-            for (String name : names) {
-                TeleportPos teleportPos = homes.get(name);
-                IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + name);
-                text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                                .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                        TextUtils.getTranslationKey("message", "clickToTeleport"))
-                                ))));
-                player.sendStatusMessage(text, false);
-                index++;
-            }
-            player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
-        });
-        thread.start();
+        SCEPlayerData data = SCEPlayerData.getInstance(player);
+        Map<String, TeleportPos> homes = data.getHomes();
+        if (homes.isEmpty()) {
+            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "noHome")), false);
+            return Command.SINGLE_SUCCESS;
+        }
+        player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+        Set<String> names = homes.keySet();
+        int index = 1;
+        for (String name : names) {
+            TeleportPos teleportPos = homes.get(name);
+            IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + name);
+            text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
+                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "clickToTeleport"))
+                            ))));
+            player.sendStatusMessage(text, false);
+            index++;
+        }
+        player.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+
         return 1;
     }
 
     private static int listOthersHome(ServerPlayerEntity source, ServerPlayerEntity other) {
-        Thread thread = new Thread(() -> {
-            SCEPlayerData otherData = SCEPlayerData.getInstance(other);
-            Map<String, TeleportPos> otherHomes = otherData.getHomes();
-            if (otherHomes.isEmpty()) {
-                source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                        TextUtils.getTranslationKey("message", "otherNoHome"), otherData.getName()), false);
-                return;
-            }
-            source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
-            int index = 0;
-            for (Map.Entry<String, TeleportPos> e : otherHomes.entrySet()) {
-                TeleportPos teleportPos = e.getValue();
-                IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + e.getKey());
-                text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
-                        .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                                .append(TextUtils.getGreenTextFromI18n(true, false, false,
-                                        TextUtils.getTranslationKey("message", "clickToTeleport"))
-                                ))));
-                source.sendStatusMessage(text, false);
-                index++;
-            }
-            source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
-        });
-        thread.start();
+        SCEPlayerData otherData = SCEPlayerData.getInstance(other);
+        Map<String, TeleportPos> otherHomes = otherData.getHomes();
+        if (otherHomes.isEmpty()) {
+            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "otherNoHome"), otherData.getName()), false);
+            return Command.SINGLE_SUCCESS;
+        }
+        source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
+        int index = 0;
+        for (Map.Entry<String, TeleportPos> e : otherHomes.entrySet()) {
+            TeleportPos teleportPos = e.getValue();
+            IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + e.getKey());
+            text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
+                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "clickToTeleport"))
+                            ))));
+            source.sendStatusMessage(text, false);
+            index++;
+        }
+        source.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 20)), false);
         return 1;
     }
 

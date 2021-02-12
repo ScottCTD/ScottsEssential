@@ -23,7 +23,7 @@ public class CommandsRegistry {
         // Main Commands
         CommandSCE.register(dispatcher);
         CommandGetRegistryName.register(dispatcher);
-        CommandClear.register(dispatcher);
+        CommandClean.register(dispatcher);
 
         // Teleport
         if (CommandSpawn.isSpawnEnable) CommandSpawn.register(dispatcher);

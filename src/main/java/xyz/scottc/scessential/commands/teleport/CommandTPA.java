@@ -261,10 +261,9 @@ public class CommandTPA {
     }
 
     private static int tpAllHere(ServerPlayerEntity source) {
-        new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
+        Main.SERVER.getPlayerList().getPlayers().stream()
                 .filter(player -> !player.equals(source))
-                .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))
-                .start();
+                .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source)));
         return 1;
     }
 

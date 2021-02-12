@@ -11,7 +11,7 @@ import xyz.scottc.scessential.events.entitycleaner.EntityCleaner;
 import xyz.scottc.scessential.events.entitycleaner.SCEItemEntity;
 import xyz.scottc.scessential.events.entitycleaner.SCEMobEntity;
 
-public class CommandClear {
+public class CommandClean {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(
@@ -19,22 +19,22 @@ public class CommandClear {
                         .then(
                                 Commands.literal("clean")
                                         .then(
-                                                Commands.literal("item")
+                                                Commands.literal("items")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof ItemEntity,
                                                         entity -> new SCEItemEntity((ItemEntity) entity).filtrate()))
                                         )
                                         .then(
-                                                Commands.literal("monster")
+                                                Commands.literal("monsters")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> entity instanceof MonsterEntity,
                                                         entity -> new SCEMobEntity((MobEntity) entity).filtrate()))
                                         )
                                         .then(
-                                                Commands.literal("animal")
+                                                Commands.literal("animals")
                                                 .executes(context -> EntityCleaner.cleanupEntity(Main.SERVER.getWorlds(), entity -> (entity instanceof MobEntity) && !(entity instanceof MonsterEntity),
                                                         entity -> new SCEMobEntity((MobEntity) entity).filtrate()))
                                         )
                                         .then(
-                                                Commands.literal("other")
+                                                Commands.literal("others")
                                                 .executes(context -> EntityCleaner.cleanOtherEntities(Main.SERVER.getWorlds()))
                                         )
                                         .requires(source -> source.hasPermissionLevel(2))

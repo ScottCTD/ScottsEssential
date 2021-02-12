@@ -35,7 +35,7 @@ import java.util.*;
 public class SCEPlayerData {
 
     // All the player data are stored in it.
-    // It will be refilled everytime the server restart.
+    // It will be refilled everytime the server restart -> SinglePlayer Support
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
     private PlayerEntity player;
@@ -449,7 +449,9 @@ public class SCEPlayerData {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
+                synchronized (SCEPlayerData.PLAYER_DATA_LIST) {
+                    SCEPlayerData.PLAYER_DATA_LIST.remove(SCEPlayerData.getInstance(event.getPlayer()));
+                }
             }).start();
         }
 
