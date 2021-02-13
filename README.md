@@ -103,7 +103,7 @@ Feel free to report any bug or enhancement!
 
 # Services
 
-- **Entity Cleaner**
+- **Entity Cleaner** (Disabled by default)
   - Entity Cleaner could clean the entities in all worlds with very high configurability. (Almost all kinds of entities) 
   - You could easily add whitelist of entities that shouldn't be cleaned up. 
   - You could get the registry name of items or other entities by using /scessential getRegistryName item / mob (OP required), and then add it to the whitelist.

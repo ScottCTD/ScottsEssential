@@ -59,7 +59,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         isItemEntityCleanupEnable = builder
                 .comment("Set it to false to disable cleaning up item entities in your server.",
                         "Default value: true")
-                .define("IsItemEntityCleanupEnable", true);
+                .define("IsItemEntityCleanupEnable", false);
 
         cleanupItemEntitiesIntervalSeconds = builder
                 .comment("Time interval in seconds between two actions of cleaning item entities.",
@@ -108,7 +108,7 @@ public class ConfigEntityCleaner extends AbstractModConfig {
         isMobEntityCleanupEnable = builder
                 .comment("Set it to false to disable cleaning up mob entities in your server.",
                         "Default value: true")
-                .define("IsMobEntityCleanupEnable", true);
+                .define("IsMobEntityCleanupEnable", false);
         this.isAnimalEntitiesCleanupEnable = this.builder
                 .comment("Set it to false to disable cleaning up all animal entities. (Sheep, cow, ...)",
                         "Default value: true",
