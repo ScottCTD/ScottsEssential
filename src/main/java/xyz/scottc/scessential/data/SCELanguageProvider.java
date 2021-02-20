@@ -43,7 +43,7 @@ public class SCELanguageProvider extends LanguageProvider {
         this.add(getMessageTranslationKey("otherNoHome"), "Player \"%s\" doesn't have any home currently.");
         // TPA
         this.add(getMessageTranslationKey("accept"), "Accept");
-        this.add(getMessageTranslationKey("Deny"), "Deny");
+        this.add(getMessageTranslationKey("deny"), "Deny");
         this.add(getMessageTranslationKey("acceptHover"), "Click to accept this request!");
         this.add(getMessageTranslationKey("denyHover"), "Click to deny this request!");
         this.add(getMessageTranslationKey("cantTPASelf"), "You shouldn't send teleport request to yourself!");

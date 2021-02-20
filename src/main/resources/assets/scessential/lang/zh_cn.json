@@ -1,5 +1,5 @@
 {
-  "message.scessential.Deny": "拒绝",
+  "message.scessential.deny": "拒绝",
   "message.scessential.accept": "同意",
   "message.scessential.acceptHover": "单击以同意该请求！",
   "message.scessential.backSuccess": "成功回到上一次传送前的位置！",

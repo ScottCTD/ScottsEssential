@@ -1,5 +1,4 @@
 {
-  "message.scessential.Deny": "Deny",
   "message.scessential.accept": "Accept",
   "message.scessential.acceptHover": "Click to accept this request!",
   "message.scessential.backSuccess": "Successfully returned to previous position!",
@@ -14,6 +13,7 @@
   "message.scessential.delHomeSuccess": "Successfully deleted home \"%s\"!",
   "message.scessential.delOthersHomeSuccess": "Successfully deleted player \"%s\"'s home \"%s\"!",
   "message.scessential.delWarpSuccess": "Successfully deleted warp \"%s\"!",
+  "message.scessential.deny": "Deny",
   "message.scessential.denyHover": "Click to deny this request!",
   "message.scessential.flyPermanentlySource": "Player \"%s\" now can fly permanently!",
   "message.scessential.flyPermanentlyTarget": "Now, you can fly permanently!",
