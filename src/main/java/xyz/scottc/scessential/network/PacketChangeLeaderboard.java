@@ -109,7 +109,7 @@ public class PacketChangeLeaderboard extends AbstractPacket {
         List<ITextComponent> result = new ArrayList<>();
         int index = 1;
         for (PlayerStatistics statistics : PlayerStatistics.ALL_STATISTICS) {
-            result.add(color(index, new StringTextComponent(index + " : ").append(formatter.apply(statistics))));
+            result.add(color(index, new StringTextComponent(index + " : ").appendSibling(formatter.apply(statistics))));
             index++;
         }
         Network.sendToPlayerClient(context.get().getSender(), new PacketOpenLeaderboard(title, result, result.size()));

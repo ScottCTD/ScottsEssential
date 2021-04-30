@@ -42,10 +42,10 @@ public class ColorfulStringParser {
                     if (index == chars.length) break;
                     c = chars[index];
                 } while (c != '&' && c != COLOR_CHAR);
-                formatted.append(new StringTextComponent(raw.substring(j, index)).mergeStyle(this.toArray(formatters)));
+                formatted.appendSibling(new StringTextComponent(raw.substring(j, index)).mergeStyle(this.toArray(formatters)));
                 j = index - 1;
             }
-            this.text.append(formatted);
+            this.text.appendSibling(formatted);
             if (rawStrings.size() > 1) {
                 this.text.appendString("\n");
             }

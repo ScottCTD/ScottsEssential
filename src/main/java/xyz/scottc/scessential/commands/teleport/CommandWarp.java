@@ -111,7 +111,7 @@ public class CommandWarp {
             for (Map.Entry<String, TeleportPos> warp : TeleportPos.WARPS.entrySet()) {
                 IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + warp.getKey());
                 IFormattableTextComponent hoverText = new StringTextComponent(warp.getValue().toString() + "\n")
-                        .append(TextUtils.getGreenTextFromI18n(false, false, false,
+                        .appendSibling(TextUtils.getGreenTextFromI18n(false, false, false,
                                 TextUtils.getTranslationKey("message", "clickToTeleport")));
                 player.sendStatusMessage(text.setStyle(text.getStyle()
                         .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warp.getKey()))

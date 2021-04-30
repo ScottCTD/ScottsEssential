@@ -64,28 +64,28 @@ public class ScreenLeaderboard extends Screen {
         ExtendedButton deathRankButton = new ExtendedButton(this.x + 8, this.rankList.getY() - 3, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DEATH_AMOUNT)));
-        ExtendedButton playedTimeButton = new ExtendedButton(deathRankButton.x, deathRankButton.y + deathRankButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton playedTimeButton = new ExtendedButton(deathRankButton.x, deathRankButton.y + deathRankButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "timePlayedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.TIME_PLAYED)));
-        ExtendedButton mobsKilledButton = new ExtendedButton(deathRankButton.x, playedTimeButton.y + playedTimeButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton mobsKilledButton = new ExtendedButton(deathRankButton.x, playedTimeButton.y + playedTimeButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "mobsKilledButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.MOBS_KILLED)));
-        ExtendedButton distanceWalked = new ExtendedButton(deathRankButton.x, mobsKilledButton.y + mobsKilledButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton distanceWalked = new ExtendedButton(deathRankButton.x, mobsKilledButton.y + mobsKilledButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "distanceWalkedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DISTANCE_WALKED)));
-        ExtendedButton blocksBrokeButton = new ExtendedButton(deathRankButton.x, distanceWalked.y + distanceWalked.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton blocksBrokeButton = new ExtendedButton(deathRankButton.x, distanceWalked.y + distanceWalked.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "blocksBrokeButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.BLOCKS_BROKE)));
-        ExtendedButton fishCaughtButton = new ExtendedButton(deathRankButton.x, blocksBrokeButton.y + blocksBrokeButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton fishCaughtButton = new ExtendedButton(deathRankButton.x, blocksBrokeButton.y + blocksBrokeButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "fishCaughtButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.FISH_CAUGHT)));
-        ExtendedButton distanceBoated = new ExtendedButton(deathRankButton.x, fishCaughtButton.y + fishCaughtButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton distanceBoated = new ExtendedButton(deathRankButton.x, fishCaughtButton.y + fishCaughtButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "distanceBoatedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DISTANCE_BOATED)));
-        ExtendedButton damageDealtButton = new ExtendedButton(deathRankButton.x, distanceBoated.y + distanceBoated.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton damageDealtButton = new ExtendedButton(deathRankButton.x, distanceBoated.y + distanceBoated.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageDealtButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DAMAGE_DEALT)));
-        ExtendedButton damageTakenButton = new ExtendedButton(deathRankButton.x, damageDealtButton.y + damageDealtButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
+        ExtendedButton damageTakenButton = new ExtendedButton(deathRankButton.x, damageDealtButton.y + damageDealtButton.getHeight() + 5, buttonWidth, buttonHeight,
                 new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageTakenButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DAMAGE_TAKEN)));
 
@@ -102,7 +102,7 @@ public class ScreenLeaderboard extends Screen {
 
     @Override
     public void render(@NotNull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
         // Render the background dark shade
         this.renderBackground(matrixStack);
         this.getMinecraft().getTextureManager().bindTexture(TEXTURE);

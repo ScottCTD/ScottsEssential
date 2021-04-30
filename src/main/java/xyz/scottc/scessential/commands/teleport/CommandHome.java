@@ -219,7 +219,7 @@ public class CommandHome {
             IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, index + ": " + name);
             text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + name))
                     .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                            .appendSibling(TextUtils.getGreenTextFromI18n(true, false, false,
                                     TextUtils.getTranslationKey("message", "clickToTeleport"))
                             ))));
             player.sendStatusMessage(text, false);
@@ -245,7 +245,7 @@ public class CommandHome {
             IFormattableTextComponent text = TextUtils.getGreenTextFromString(false, true, false, (index + 1) + ": " + e.getKey());
             text.setStyle(text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + e.getKey()))
                     .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent(teleportPos.toString()).appendString("\n")
-                            .append(TextUtils.getGreenTextFromI18n(true, false, false,
+                            .appendSibling(TextUtils.getGreenTextFromI18n(true, false, false,
                                     TextUtils.getTranslationKey("message", "clickToTeleport"))
                             ))));
             source.sendStatusMessage(text, false);

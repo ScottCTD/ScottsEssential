@@ -125,7 +125,7 @@ public class CommandTPA {
         IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
         IFormattableTextComponent line0203 = TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "you"));
-        IFormattableTextComponent line02 = line0201.append(line0202).append(line0203);
+        IFormattableTextComponent line02 = line0201.appendSibling(line0202).appendSibling(line0203);
 
         IFormattableTextComponent line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "accept"));
@@ -133,7 +133,7 @@ public class CommandTPA {
                 TextUtils.getTranslationKey("message", "acceptHover"));
         line0301 = line0301.setStyle(line0301.getStyle()
                                 .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0301Hover)))
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").appendSibling(line0301Hover)))
         );
         IFormattableTextComponent line0302 = TextUtils.getRedTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "deny"));
@@ -141,9 +141,9 @@ public class CommandTPA {
                 TextUtils.getTranslationKey("message", "denyHover"));
         line0302 = line0302.setStyle(line0302.getStyle()
                 .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0302Hover)))
+                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").appendSibling(line0302Hover)))
         );
-        IFormattableTextComponent line03 = line0301.append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
+        IFormattableTextComponent line03 = line0301.appendSibling(TextUtils.getWhiteTextFromString(false, false, false, " | ")).appendSibling(line0302);
 
         target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
         target.sendStatusMessage(line01, false);
@@ -184,7 +184,7 @@ public class CommandTPA {
         IFormattableTextComponent line0201 = TextUtils.getGreenTextFromString(false, false, false, "You");
         IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
         IFormattableTextComponent line0203 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
-        IFormattableTextComponent line02 = line0201.append(line0202).append(line0203);
+        IFormattableTextComponent line02 = line0201.appendSibling(line0202).appendSibling(line0203);
 
         IFormattableTextComponent line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "accept"));
@@ -192,7 +192,7 @@ public class CommandTPA {
                 TextUtils.getTranslationKey("message", "acceptHover"));
         line0301 = line0301.setStyle(line0301.getStyle()
                 .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0301Hover)))
+                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").appendSibling(line0301Hover)))
         );
         IFormattableTextComponent line0302 = TextUtils.getRedTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "deny"));
@@ -200,9 +200,9 @@ public class CommandTPA {
                 TextUtils.getTranslationKey("message", "denyHover"));
         line0302 = line0302.setStyle(line0302.getStyle()
                 .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0302Hover)))
+                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").appendSibling(line0302Hover)))
         );
-        IFormattableTextComponent line03 = line0301.append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
+        IFormattableTextComponent line03 = line0301.appendSibling(TextUtils.getWhiteTextFromString(false, false, false, " | ")).appendSibling(line0302);
 
         target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
         target.sendStatusMessage(line01, false);

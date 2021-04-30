@@ -58,11 +58,11 @@ public class RankList implements IRenderable, IGuiEventListener {
                     // +2 because of space
                     String rank = string.substring(0, index + 2);
                     string = string.substring(index + 2);
-                    text = new StringTextComponent(rank).append(TextUtils.getWhiteTextFromString(false, false, false, string)).mergeStyle(text.getStyle());
+                    text = new StringTextComponent(rank).appendSibling(TextUtils.getWhiteTextFromString(false, false, false, string)).mergeStyle(text.getStyle());
                 }
                 AtomicInteger color = new AtomicInteger(0xFFFFFF);
                 Optional.ofNullable(text.getStyle().getColor()).ifPresent(c -> color.set(c.getColor()));
-                ScreenUtils.drawStringDropShadow(matrixStack, this.fontRenderer, text, this.x, realY, color.get());
+                ScreenUtils.drawStringWithShadow(matrixStack, this.fontRenderer, text, this.x, realY, color.get());
             }
         }
         Optional.ofNullable(this.getMouseOver(mouseX, mouseY)).ifPresent(tooltip ->
@@ -130,7 +130,7 @@ public class RankList implements IRenderable, IGuiEventListener {
 
         @Override
         public void render(@NotNull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-            ScreenUtils.drawStringDropShadow(matrixStack, this.fontRenderer, this.getText(), this.x, this.y, 0xFFFFFF);
+            ScreenUtils.drawStringWithShadow(matrixStack, this.fontRenderer, this.getText(), this.x, this.y, 0xFFFFFF);
         }
 
         public ITextComponent getText() {

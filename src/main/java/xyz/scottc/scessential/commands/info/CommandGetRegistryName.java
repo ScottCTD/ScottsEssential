@@ -52,7 +52,7 @@ public class CommandGetRegistryName {
                         .mergeStyle(Style.EMPTY
                                 .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, resourceLocation.toString()))
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new StringTextComponent(resourceLocation.toString() + "\n").append(
+                                        new StringTextComponent(resourceLocation.toString() + "\n").appendSibling(
                                                 TextUtils.getGreenTextFromI18n(true, false, false,
                                                         TextUtils.getTranslationKey("message", "clickToCopy"))
                         )))), false));
@@ -76,7 +76,7 @@ public class CommandGetRegistryName {
                         .mergeStyle(Style.EMPTY
                                 .setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, entityString))
                                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                        new StringTextComponent(entityString + "\n").append(
+                                        new StringTextComponent(entityString + "\n").appendSibling(
                                                 TextUtils.getGreenTextFromI18n(true, false, false,
                                                         TextUtils.getTranslationKey("message", "clickToCopy"))
                                         )))), false)));
