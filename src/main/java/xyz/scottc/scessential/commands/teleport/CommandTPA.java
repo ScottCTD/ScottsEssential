@@ -108,7 +108,7 @@ public class CommandTPA {
         }
         if (source.equals(target)) {
             source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "canttpaself")), false);
+                    TextUtils.getTranslationKey("message", "cantTPASelf")), false);
             return 1;
         }
 
