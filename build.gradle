@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -87,7 +87,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     // https://mvnrepository.com/artifact/org.jetbrains/annotations
-    compile group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
 }
 
 jar {
