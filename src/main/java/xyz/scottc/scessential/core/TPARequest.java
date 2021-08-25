@@ -1,6 +1,6 @@
 package xyz.scottc.scessential.core;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,16 +21,16 @@ public class TPARequest {
 
     // The player who sent the request
     // If reversed (tpahere), it is the player who receive tpahere request
-    private final ServerPlayerEntity source;
+    private final ServerPlayer source;
 
     // The player who receive the request
     // If reversed (tpahere), it is the player who sent tpahere request
-    private final ServerPlayerEntity target;
+    private final ServerPlayer target;
 
     // The time this reuqest created, in long
     private final long createTime;
 
-    private TPARequest(long id, ServerPlayerEntity source, ServerPlayerEntity target, boolean reverse) {
+    private TPARequest(long id, ServerPlayer source, ServerPlayer target, boolean reverse) {
         this.id = id;
         if (reverse) {
             this.target = source;
@@ -51,7 +51,7 @@ public class TPARequest {
      * @return If TPA_REQUEST has this request (Identified by id), then return this request.
      *         Otherwise, create and return a new request.
      */
-    public static @Nonnull TPARequest getInstance(long id, ServerPlayerEntity source, ServerPlayerEntity target, boolean reverse) {
+    public static @Nonnull TPARequest getInstance(long id, ServerPlayer source, ServerPlayer target, boolean reverse) {
         TPARequest instance = getInstance(id);
         if (instance == null) {
             instance = new TPARequest(id, source, target, reverse);
@@ -74,11 +74,11 @@ public class TPARequest {
         return id;
     }
 
-    public ServerPlayerEntity getSource() {
+    public ServerPlayer getSource() {
         return source;
     }
 
-    public ServerPlayerEntity getTarget() {
+    public ServerPlayer getTarget() {
         return target;
     }
 

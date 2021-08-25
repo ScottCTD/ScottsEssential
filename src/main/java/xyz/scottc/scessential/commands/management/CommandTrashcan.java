@@ -1,17 +1,17 @@
 package xyz.scottc.scessential.commands.management;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.config.ConfigField;
@@ -28,36 +28,36 @@ public class CommandTrashcan {
     @ConfigField
     public static int cleanTrashcanIntervalSeconds = 60;
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(trashcanAlias)
-                        .executes(context -> trashcan(context.getSource().asPlayer()))
+                        .executes(context -> trashcan(context.getSource().getPlayerOrException()))
         );
     }
 
-    private static int trashcan(ServerPlayerEntity source) {
+    private static int trashcan(ServerPlayer source) {
         SCEPlayerData data = SCEPlayerData.getInstance(source);
         Trashcan trashcan = data.getTrashcan();
         if (trashcan == null) {
             trashcan = new Trashcan();
             data.setTrashcan(trashcan);
         }
-        NetworkHooks.openGui(source, new INamedContainerProvider() {
+        NetworkHooks.openGui(source, new MenuProvider() {
             @Override
-            public @NotNull ITextComponent getDisplayName() {
+            public Component getDisplayName() {
                 return TextUtils.getContainerNameTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("text", "trashcan"));
             }
 
             @Override
-            public Container createMenu(int id, @NotNull PlayerInventory playerInventory, @NotNull PlayerEntity playerEntity) {
+            public AbstractContainerMenu createMenu(int id, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
                 return ContainerTrashcan.getServerSideInstance(id, playerInventory, data.getTrashcan());
             }
         });
         return 1;
     }
 
-    public static class Trashcan implements IIntArray {
+    public static class Trashcan implements ContainerData {
 
         public static final int SIZE = 50 + 36;
 
@@ -107,9 +107,10 @@ public class CommandTrashcan {
         }
 
         @Override
-        public int size() {
+        public int getCount() {
             return 1;
         }
+
     }
 
 }

@@ -3,14 +3,12 @@ package xyz.scottc.scessential.commands.teleport;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.*;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
@@ -45,61 +43,61 @@ public class CommandTPA {
 
     private static long id = 0;
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(tpaAlias)
                         .then(Commands.argument("Target", StringArgumentType.string())
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
-                                .executes(context -> tpa(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
+                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpa(context.getSource().getPlayerOrException(), StringArgumentType.getString(context, "Target")))
                         )
         );
 
         dispatcher.register(
                 Commands.literal(tpaHereAlias)
                         .then(Commands.argument("Target", StringArgumentType.string())
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
-                                .executes(context -> tpaHere(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
+                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpaHere(context.getSource().getPlayerOrException(), StringArgumentType.getString(context, "Target")))
                         )
         );
 
         dispatcher.register(
                 Commands.literal(tpHereAlias)
                         .then(Commands.argument("Target", StringArgumentType.string())
-                                .requires(commandSource -> commandSource.hasPermissionLevel(2))
-                                .suggests((context, builder) -> ISuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
-                                .executes(context -> tpHere(context.getSource().asPlayer(), StringArgumentType.getString(context, "Target")))
+                                .requires(commandSource -> commandSource.hasPermission(2))
+                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(SCEPlayerData.getAllPlayerNamesFormatted(), builder))
+                                .executes(context -> tpHere(context.getSource().getPlayerOrException(), StringArgumentType.getString(context, "Target")))
                         )
-                        .requires(source -> source.hasPermissionLevel(2))
+                        .requires(source -> source.hasPermission(2))
         );
 
         dispatcher.register(
                 Commands.literal(tpAllHereAlias)
-                        .requires(commandSource -> commandSource.hasPermissionLevel(2))
-                        .executes(context -> tpAllHere(context.getSource().asPlayer()))
+                        .requires(commandSource -> commandSource.hasPermission(2))
+                        .executes(context -> tpAllHere(context.getSource().getPlayerOrException()))
         );
 
         dispatcher.register(
                 Commands.literal("tpaaccept")
                         .then(Commands.argument("id", LongArgumentType.longArg())
-                                .executes(context -> tpaaccept(context.getSource().asPlayer(), LongArgumentType.getLong(context, "id")))
+                                .executes(context -> tpaaccept(context.getSource().getPlayerOrException(), LongArgumentType.getLong(context, "id")))
                         )
         );
 
         dispatcher.register(
                 Commands.literal("tpadeny")
                         .then(Commands.argument("id", LongArgumentType.longArg())
-                                .executes(context -> tpadeny(context.getSource().asPlayer(), LongArgumentType.getLong(context, "id")))
+                                .executes(context -> tpadeny(context.getSource().getPlayerOrException(), LongArgumentType.getLong(context, "id")))
                         )
         );
 
     }
 
     // Many duplicate code with tpahere because it is unnecessary to extract them out of only two methods.
-    private static int tpa(ServerPlayerEntity source, String targetName) {
-        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+    private static int tpa(ServerPlayer source, String targetName) {
+        ServerPlayer target = (ServerPlayer) SCEPlayerData.getPlayer(targetName);
         if (target == null) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
-                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), Util.NIL_UUID);
             return 1;
         }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
@@ -107,63 +105,63 @@ public class CommandTPA {
             return 1;
         }
         if (source.equals(target)) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "canttpaself")), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "canttpaself")), Util.NIL_UUID);
             return 1;
         }
 
         TPARequest request = TPARequest.getInstance(nextId(), source, target, false);
         String sourceName = sourceData.getName();
 
-        source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
+        source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "requestSent"), targetName), Util.NIL_UUID);
 
-        IFormattableTextComponent line01 = TextUtils.getGreenTextFromI18n(false, false, false,
+        TextComponent line01 = (TextComponent) TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "tpaRequestMessage"), sourceName);
 
-        IFormattableTextComponent line0201 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
-        IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
-        IFormattableTextComponent line0203 = TextUtils.getGreenTextFromI18n(false, false, false,
+        TextComponent line0201 = (TextComponent) TextUtils.getYellowTextFromString(true, false, false, sourceName);
+        TextComponent line0202 = (TextComponent) TextUtils.getWhiteTextFromString(false, false, false, " -> ");
+        TextComponent line0203 = (TextComponent) TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "you"));
-        IFormattableTextComponent line02 = line0201.append(line0202).append(line0203);
+        MutableComponent line02 = line0201.append(line0202).append(line0203);
 
-        IFormattableTextComponent line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
+        Component line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "accept"));
-        IFormattableTextComponent line0301Hover = TextUtils.getGreenTextFromI18n(true, false, false,
+        TextComponent line0301Hover = (TextComponent) TextUtils.getGreenTextFromI18n(true, false, false,
                 TextUtils.getTranslationKey("message", "acceptHover"));
-        line0301 = line0301.setStyle(line0301.getStyle()
-                                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
-                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0301Hover)))
+        line0301 = line0301.copy().withStyle(line0301.getStyle()
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.copy().append("\n").append(line0301Hover)))
         );
-        IFormattableTextComponent line0302 = TextUtils.getRedTextFromI18n(true, true, false,
+        Component line0302 = TextUtils.getRedTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "deny"));
-        IFormattableTextComponent line0302Hover = TextUtils.getRedTextFromI18n(true, false, false,
+        Component line0302Hover = TextUtils.getRedTextFromI18n(true, false, false,
                 TextUtils.getTranslationKey("message", "denyHover"));
-        line0302 = line0302.setStyle(line0302.getStyle()
-                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0302Hover)))
+        line0302 = line0302.copy().withStyle(line0302.getStyle()
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.copy().append("\n").append(line0302Hover)))
         );
-        IFormattableTextComponent line03 = line0301.append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
+        Component line03 = line0301.copy().append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
 
-        target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
-        target.sendStatusMessage(line01, false);
-        target.sendStatusMessage(line02, false);
-        target.sendStatusMessage(line03, false);
-        target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
+        target.sendMessage(new TextComponent(TextUtils.getSeparator("=", 40)), Util.NIL_UUID);
+        target.sendMessage(line01, Util.NIL_UUID);
+        target.sendMessage(line02, Util.NIL_UUID);
+        target.sendMessage(line03, Util.NIL_UUID);
+        target.sendMessage(new TextComponent(TextUtils.getSeparator("=", 40)), Util.NIL_UUID);
 
         return 1;
     }
 
-    private static int tpaHere(ServerPlayerEntity source, String targetName) {
-        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+    private static int tpaHere(ServerPlayer source, String targetName) {
+        ServerPlayer target = (ServerPlayer) SCEPlayerData.getPlayer(targetName);
         if (target == null) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
-                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), Util.NIL_UUID);
             return 1;
         }
         if (source.equals(target)) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantTPASelf")), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "cantTPASelf")), Util.NIL_UUID);
             return 1;
         }
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
@@ -175,92 +173,92 @@ public class CommandTPA {
 
         String sourceName = sourceData.getName();
 
-        source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "requestSent"), targetName), false);
+        source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "requestSent"), targetName), Util.NIL_UUID);
 
-        IFormattableTextComponent line01 = TextUtils.getGreenTextFromI18n(false, false, false,
+        Component line01 = TextUtils.getGreenTextFromI18n(false, false, false,
                 TextUtils.getTranslationKey("message", "tpaHereRequestMessage"), sourceName);
 
-        IFormattableTextComponent line0201 = TextUtils.getGreenTextFromString(false, false, false, "You");
-        IFormattableTextComponent line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
-        IFormattableTextComponent line0203 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
-        IFormattableTextComponent line02 = line0201.append(line0202).append(line0203);
+        Component line0201 = TextUtils.getGreenTextFromString(false, false, false, "You");
+        Component line0202 = TextUtils.getWhiteTextFromString(false, false, false, " -> ");
+        Component line0203 = TextUtils.getYellowTextFromString(true, false, false, sourceName);
+        Component line02 = line0201.copy().append(line0202).append(line0203);
 
-        IFormattableTextComponent line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
+        Component line0301 = TextUtils.getGreenTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "accept"));
-        IFormattableTextComponent line0301Hover = TextUtils.getGreenTextFromI18n(true, false, false,
+        Component line0301Hover = TextUtils.getGreenTextFromI18n(true, false, false,
                 TextUtils.getTranslationKey("message", "acceptHover"));
-        line0301 = line0301.setStyle(line0301.getStyle()
-                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0301Hover)))
+        line0301 = line0301.plainCopy().withStyle(line0301.getStyle()
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + request.getId()))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.copy().append("\n").append(line0301Hover)))
         );
-        IFormattableTextComponent line0302 = TextUtils.getRedTextFromI18n(true, true, false,
+        Component line0302 = TextUtils.getRedTextFromI18n(true, true, false,
                 TextUtils.getTranslationKey("message", "deny"));
-        IFormattableTextComponent line0302Hover = TextUtils.getRedTextFromI18n(true, false, false,
+        Component line0302Hover = TextUtils.getRedTextFromI18n(true, false, false,
                 TextUtils.getTranslationKey("message", "denyHover"));
-        line0302 = line0302.setStyle(line0302.getStyle()
-                .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.deepCopy().appendString("\n").append(line0302Hover)))
+        line0302 = line0302.plainCopy().withStyle(line0302.getStyle()
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny " + request.getId()))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, line02.copy().append("\n").append(line0302Hover)))
         );
-        IFormattableTextComponent line03 = line0301.append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
+        Component line03 = line0301.copy().append(TextUtils.getWhiteTextFromString(false, false, false, " | ")).append(line0302);
 
-        target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
-        target.sendStatusMessage(line01, false);
-        target.sendStatusMessage(line02, false);
-        target.sendStatusMessage(line03, false);
-        target.sendStatusMessage(new StringTextComponent(TextUtils.getSeparator("=", 40)), false);
+        target.sendMessage(new TextComponent(TextUtils.getSeparator("=", 40)), Util.NIL_UUID);
+        target.sendMessage(line01, Util.NIL_UUID);
+        target.sendMessage(line02, Util.NIL_UUID);
+        target.sendMessage(line03, Util.NIL_UUID);
+        target.sendMessage(new TextComponent(TextUtils.getSeparator("=", 40)), Util.NIL_UUID);
 
         return 1;
     }
 
-    private static int tpaaccept(ServerPlayerEntity player, long id) {
+    private static int tpaaccept(ServerPlayer player, long id) {
         TPARequest request = TPARequest.getInstance(id);
         if (request == null) {
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "requestNotFound")), false);
+            player.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "requestNotFound")), Util.NIL_UUID);
             return 1;
         }
-        ServerPlayerEntity source = request.getSource();
+        ServerPlayer source = request.getSource();
         SCEPlayerData sourceData = SCEPlayerData.getInstance(source);
         sourceData.addTeleportHistory(new TeleportPos(source));
         TeleportUtils.teleport(source, new TeleportPos(request.getTarget()));
         sourceData.setLastTPATime(System.currentTimeMillis());
-        player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpaSuccessTarget"), sourceData.getName()), true);
-        source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "tpaSuccessSource"), player.getGameProfile().getName()), true);
+        player.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "tpaSuccessTarget"), sourceData.getName()), ChatType.GAME_INFO,Util.NIL_UUID);
+        source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "tpaSuccessSource"), player.getGameProfile().getName()), ChatType.GAME_INFO,Util.NIL_UUID);
         TPARequest.getTpaRequest().remove(id);
         return 1;
     }
 
-    private static int tpadeny(ServerPlayerEntity player, long id) {
+    private static int tpadeny(ServerPlayer player, long id) {
         TPARequest request = TPARequest.getInstance(id);
         if (request == null) {
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "requestNotFound")), false);
+            player.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "requestNotFound")), Util.NIL_UUID);
             return 1;
         }
         TPARequest.getTpaRequest().remove(request.getId());
-        ServerPlayerEntity source = request.getSource();
-        source.sendStatusMessage(TextUtils.getRedTextFromI18n(true, false, false,
-                TextUtils.getTranslationKey("message", "tpaDenySource"), player.getGameProfile().getName()), false);
-        player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                TextUtils.getTranslationKey("message", "ok")), false);
+        ServerPlayer source = request.getSource();
+        source.sendMessage(TextUtils.getRedTextFromI18n(true, false, false,
+                TextUtils.getTranslationKey("message", "tpaDenySource"), player.getGameProfile().getName()), Util.NIL_UUID);
+        player.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                TextUtils.getTranslationKey("message", "ok")), Util.NIL_UUID);
         return 1;
     }
 
-    private static int tpHere(ServerPlayerEntity source, String targetName) {
-        ServerPlayerEntity target = (ServerPlayerEntity) SCEPlayerData.getPlayer(targetName);
+    private static int tpHere(ServerPlayer source, String targetName) {
+        ServerPlayer target = (ServerPlayer) SCEPlayerData.getPlayer(targetName);
         if (target == null) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false , false,
-                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false , false,
+                    TextUtils.getTranslationKey("message", "playerNotFound"), targetName), Util.NIL_UUID);
             return 1;
         }
         TeleportUtils.teleport(target, new TeleportPos(source));
         return 1;
     }
 
-    private static int tpAllHere(ServerPlayerEntity source) {
+    private static int tpAllHere(ServerPlayer source) {
         new Thread(() -> Main.SERVER.getPlayerList().getPlayers().stream()
                 .filter(player -> !player.equals(source))
                 .forEach(player -> TeleportUtils.teleport(player, new TeleportPos(source))))

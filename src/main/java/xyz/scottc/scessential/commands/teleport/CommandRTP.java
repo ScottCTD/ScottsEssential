@@ -1,18 +1,19 @@
 package xyz.scottc.scessential.commands.teleport;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.block.AirBlock;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.LavaFluid;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.LavaFluid;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.core.TeleportPos;
@@ -49,25 +50,25 @@ public class CommandRTP {
     private static final String NETHER = "minecraft:the_nether";
     private static final String END = "minecraft:the_end";
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(rtpAlias)
-                        .executes(context -> rtp(context.getSource().asPlayer()))
+                        .executes(context -> rtp(context.getSource().getPlayerOrException()))
         );
     }
 
-    private static int rtp(ServerPlayerEntity player) {
+    private static int rtp(ServerPlayer player) {
         Thread thread = new Thread(() -> {
             SCEPlayerData data = SCEPlayerData.getInstance(player);
             if (TeleportUtils.isInCooldown(player, data.getLastRTPTime(), rtpCooldownSeconds)) {
                 return;
             }
-            ServerWorld world = player.getServerWorld();
+            ServerLevel world = player.getLevel();
             Random random = new Random();
             int x, y, z;
-            String worldKey = world.getDimensionKey().getLocation().toString();
-            player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "startRTP")), false);
+            String worldKey = world.dimension().getRegistryName().toString();
+            player.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                    TextUtils.getTranslationKey("message", "startRTP")), Util.NIL_UUID);
             boolean nether = false;
             for (int i = 0; i < maxRTPAttempts; i++) {
                 switch (worldKey) {
@@ -93,37 +94,37 @@ public class CommandRTP {
                         z = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
                         break;
                 }
-                BlockPos playerPos = player.getPosition();
+                BlockPos playerPos = player.getOnPos();
                 BlockPos targetPos = new BlockPos(x + playerPos.getX(), y, z + playerPos.getZ());
                 if (!nether) {
                     world.getChunk(targetPos.getX() >> 4, targetPos.getZ() >> 4, ChunkStatus.HEIGHTMAPS);
-                    targetPos = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, targetPos);
+                    targetPos = world.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, targetPos);
                 }
-                Optional<RegistryKey<Biome>> biomeRegistryKey = world.func_242406_i(targetPos);
-                if (biomeRegistryKey.isPresent() && biomeRegistryKey.get().getLocation().getPath().contains("ocean")) {
+                Optional<ResourceKey<Biome>> biomeRegistryKey = world.getBiomeName(targetPos);
+                if (biomeRegistryKey.isPresent() && biomeRegistryKey.get().getRegistryName().getPath().contains("ocean")) {
                     continue;
                 }
-                if (world.getBlockState(targetPos.down()).getBlock() instanceof AirBlock) {
+                if (world.getBlockState(targetPos.above()).getBlock() instanceof AirBlock) {
                     continue;
                 }
-                Fluid fluid = world.getFluidState(targetPos).getFluid();
+                Fluid fluid = world.getFluidState(targetPos).getType();
                 if (fluid instanceof LavaFluid) {
                     continue;
                 }
                 // Destroy player nearby block
-                BlockPos.getAllInBox(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
+                BlockPos.betweenClosed(targetPos.getX() - 1, targetPos.getY(), targetPos.getZ() - 1, targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1)
                         .forEach(blockPos -> world.destroyBlock(blockPos, true));
-                data.addTeleportHistory(new TeleportPos(world.getDimensionKey(), player.getPosition()));
-                player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), false);
-                TeleportUtils.teleport(player, world, targetPos.up());
+                data.addTeleportHistory(new TeleportPos(world.dimension(), player.getOnPos()));
+                player.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                        TextUtils.getTranslationKey("message", "rtpAttempts"), i + 1), Util.NIL_UUID);
+                TeleportUtils.teleport(player, world, targetPos.above());
                 data.setLastRTPTime(System.currentTimeMillis());
-                player.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "rtpSuccess"), x, y, z), true);
+                player.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                        TextUtils.getTranslationKey("message", "rtpSuccess"), x, y, z), Util.NIL_UUID);
                 return;
             }
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "rtpFail")), false);
+            player.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "rtpFail")), Util.NIL_UUID);
         });
         thread.start();
         return 1;

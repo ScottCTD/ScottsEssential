@@ -1,10 +1,10 @@
 package xyz.scottc.scessential.events;
 
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.utils.ColorfulStringParser;
@@ -36,7 +36,7 @@ public class Shutdowner {
     public static long startTime = 0;
 
     // Countdown in seconds and the corresponding messages
-    private static final Map<Integer, IFormattableTextComponent> notifications = new TreeMap<>((a, b) -> b - a);
+    private static final Map<Integer, TextComponent> notifications = new TreeMap<>((a, b) -> b - a);
     private static int counter = 0;
 
     @SubscribeEvent
@@ -50,11 +50,11 @@ public class Shutdowner {
                     for (Calendar time : realTimes) {
                         if (now.after(time)) {
                             Main.LOGGER.info("Stopping Server!");
-                            Main.SERVER.initiateShutdown(false);
+                            Main.SERVER.halt(false);
                             break;
                         } else {
                             long diffSeconds = (time.getTimeInMillis() - now.getTimeInMillis()) / 1000;
-                            for (Map.Entry<Integer, IFormattableTextComponent> notification : notifications.entrySet()) {
+                            for (Map.Entry<Integer,TextComponent> notification : notifications.entrySet()) {
                                 if (diffSeconds == notification.getKey()) {
                                     Main.sendMessageToAllPlayers(notification.getValue(), false);
                                     break;
@@ -68,10 +68,10 @@ public class Shutdowner {
                     long shutdownTime = startTime + minutesInterval * 60 * 1000L;
                     if (nowLong >= shutdownTime) {
                         Main.LOGGER.info("Stopping Server!");
-                        Main.SERVER.initiateShutdown(false);
+                        Main.SERVER.halt(false);
                     } else {
                         long diff = (shutdownTime - nowLong) / 1000;
-                        for (Map.Entry<Integer, IFormattableTextComponent> notification : notifications.entrySet()) {
+                        for (Map.Entry<Integer, TextComponent> notification : notifications.entrySet()) {
                             if (diff == notification.getKey()) {
                                 Main.sendMessageToAllPlayers(notification.getValue(), false);
                                 break;

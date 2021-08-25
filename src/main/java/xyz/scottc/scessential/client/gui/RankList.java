@@ -1,11 +1,13 @@
 package xyz.scottc.scessential.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.IRenderable;
-import net.minecraft.util.text.*;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.fmlclient.gui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.scottc.scessential.client.utils.ScreenUtils;
@@ -17,24 +19,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RankList implements IRenderable, IGuiEventListener {
+public class RankList implements Widget, GuiEventListener {
 
     private final int x;
     private final int y;
     private final int width;
     private final int height;
     private final int elementHeight;
-    private final FontRenderer fontRenderer;
+    private final Font fontRenderer;
 
-    private final PageableList<ITextComponent> texts;
+    private final PageableList<Component> texts;
 
-    public RankList(int x, int y, int width, int height, FontRenderer fontRenderer, List<ITextComponent> elements) {
+    public RankList(int x, int y, int width, int height, Font fontRenderer, List<Component> elements) {
         this.x = x + 5;
         this.y = y + 5;
         this.width = width - 5 * 2;
         this.height = height;
         this.fontRenderer = fontRenderer;
-        this.elementHeight = this.fontRenderer.FONT_HEIGHT + 5;
+        this.elementHeight = this.fontRenderer.lineHeight + 5;
 
         int onePage = this.height / this.elementHeight;
         int totalPages = elements.size() / onePage;
@@ -42,15 +44,15 @@ public class RankList implements IRenderable, IGuiEventListener {
     }
 
     @Override
-    public void render(@NotNull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < this.texts.getCurrentPage().size(); i++) {
             int realY = this.y + this.elementHeight * i;
             if (realY < this.y + this.height) {
-                ITextComponent text = this.texts.getCurrentPage().get(i);
+                Component text = this.texts.getCurrentPage().get(i);
                 String string = text.getString();
-                if (this.fontRenderer.getStringWidth(string) > this.width) {
+                if (this.fontRenderer.width(string) > this.width) {
                     int index = string.length() - 1;
-                    while (this.fontRenderer.getStringWidth(string) > this.width) {
+                    while (this.fontRenderer.width(string) > this.width) {
                         string = string.substring(0, index) + "...";
                         index--;
                     }
@@ -58,10 +60,10 @@ public class RankList implements IRenderable, IGuiEventListener {
                     // +2 because of space
                     String rank = string.substring(0, index + 2);
                     string = string.substring(index + 2);
-                    text = new StringTextComponent(rank).append(TextUtils.getWhiteTextFromString(false, false, false, string)).mergeStyle(text.getStyle());
+                    text = new TextComponent(rank).append(TextUtils.getWhiteTextFromString(false, false, false, string)).withStyle(text.getStyle());
                 }
                 AtomicInteger color = new AtomicInteger(0xFFFFFF);
-                Optional.ofNullable(text.getStyle().getColor()).ifPresent(c -> color.set(c.getColor()));
+                Optional.ofNullable(text.getStyle().getColor()).ifPresent(c -> color.set(c.getValue()));
                 ScreenUtils.drawStringDropShadow(matrixStack, this.fontRenderer, text, this.x, realY, color.get());
             }
         }
@@ -69,7 +71,7 @@ public class RankList implements IRenderable, IGuiEventListener {
                 GuiUtils.drawHoveringText(matrixStack, Collections.singletonList(tooltip), mouseX, mouseY, this.x + this.width, this.y + this.height, -1, this.fontRenderer));
     }
 
-    public @Nullable ITextComponent getMouseOver(double mouseX, double mouseY) {
+    public @Nullable Component getMouseOver(double mouseX, double mouseY) {
         if (isMouseOver(mouseX, mouseY)) {
             int index = (int) ((mouseY - this.y) / this.elementHeight);
             if (index >= this.texts.getCurrentPage().size()) {
@@ -80,12 +82,14 @@ public class RankList implements IRenderable, IGuiEventListener {
         return null;
     }
 
+
+
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         return mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height;
     }
 
-    public PageableList<ITextComponent> getTexts() {
+    public PageableList<Component> getTexts() {
         return texts;
     }
 
@@ -109,17 +113,17 @@ public class RankList implements IRenderable, IGuiEventListener {
         return elementHeight;
     }
 
-    public static class PageCounter implements IRenderable {
+    public static class PageCounter implements Widget {
 
         private int x;
         private int y;
-        private final FontRenderer fontRenderer;
+        private final Font fontRenderer;
         private final String separator;
 
         private int current;
         private int total;
 
-        public PageCounter(int x, int y, FontRenderer fontRenderer, String separator, int current, int total) {
+        public PageCounter(int x, int y, Font fontRenderer, String separator, int current, int total) {
             this.x = x;
             this.y = y;
             this.fontRenderer = fontRenderer;
@@ -129,20 +133,20 @@ public class RankList implements IRenderable, IGuiEventListener {
         }
 
         @Override
-        public void render(@NotNull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        public void render(@NotNull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             ScreenUtils.drawStringDropShadow(matrixStack, this.fontRenderer, this.getText(), this.x, this.y, 0xFFFFFF);
         }
 
-        public ITextComponent getText() {
-            return new StringTextComponent(this.current + " " + this.separator + " " + this.total);
+        public Component getText() {
+            return new TextComponent(this.current + " " + this.separator + " " + this.total);
         }
 
         public int getWidth() {
-            return this.fontRenderer.getStringWidth(this.getText().getString());
+            return this.fontRenderer.width(this.getText().getString());
         }
 
         public int getHeight() {
-            return this.fontRenderer.FONT_HEIGHT;
+            return this.fontRenderer.lineHeight;
         }
 
         public int getCurrent() {

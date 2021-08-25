@@ -1,16 +1,16 @@
 package xyz.scottc.scessential.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.client.gui.GuiUtils;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmlclient.gui.GuiUtils;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.client.gui.RankList;
@@ -28,19 +28,19 @@ public class ScreenLeaderboard extends Screen {
 
     private RankList rankList;
     private RankList.PageCounter pageCounterWidget;
-    private final List<ITextComponent> elements;
+    private final List<Component> elements;
     private final int xSize = 256;
     private final int ySize = 256;
     private int x;
     private int y;
 
-    public ScreenLeaderboard(ITextComponent titleIn, List<ITextComponent> elements) {
+    public ScreenLeaderboard(Component titleIn, List<Component> elements) {
         super(titleIn);
         this.elements = elements;
     }
 
-    public static void open(ITextComponent title, List<ITextComponent> elements) {
-        Minecraft.getInstance().displayGuiScreen(new ScreenLeaderboard(title, elements));
+    public static void open(Component title, List<Component> elements) {
+        Minecraft.getInstance().setScreen(new ScreenLeaderboard(title, elements));
     }
 
     @Override
@@ -51,61 +51,61 @@ public class ScreenLeaderboard extends Screen {
         this.pageCounterWidget = new RankList.PageCounter(this.x + 77, this.y + 7, this.font, "/", 1, this.rankList.getTexts().getTotalPages());
 
         // page
-        this.addButton(new ExtendedButton(this.rankList.getX() - 6, this.rankList.getY() + this.rankList.getHeight() - 1, 60, 22,
-                new StringTextComponent("<--"),
+        this.addWidget(new ExtendedButton(this.rankList.getX() - 6, this.rankList.getY() + this.rankList.getHeight() - 1, 60, 22,
+                new TextComponent("<--"),
                 button -> this.rankList.getTexts().prevPage()));
-        this.addButton(new ExtendedButton(this.rankList.getX() + this.rankList.getWidth() - 54,
+        this.addWidget(new ExtendedButton(this.rankList.getX() + this.rankList.getWidth() - 54,
                 this.rankList.getY() + this.rankList.getHeight() - 1, 60, 22,
-                new StringTextComponent("-->"),
+                new TextComponent("-->"),
                 button -> this.rankList.getTexts().nextPage()));
 
         // Mode
         int buttonWidth = 77, buttonHeight = 20;
         ExtendedButton deathRankButton = new ExtendedButton(this.x + 8, this.rankList.getY() - 3, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "deathButton")),
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "deathButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DEATH_AMOUNT)));
-        ExtendedButton playedTimeButton = new ExtendedButton(deathRankButton.x, deathRankButton.y + deathRankButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "timePlayedButton")),
+        ExtendedButton playedTimeButton = new ExtendedButton(deathRankButton.x, deathRankButton.y + deathRankButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "timePlayedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.TIME_PLAYED)));
-        ExtendedButton mobsKilledButton = new ExtendedButton(deathRankButton.x, playedTimeButton.y + playedTimeButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "mobsKilledButton")),
+        ExtendedButton mobsKilledButton = new ExtendedButton(deathRankButton.x, playedTimeButton.y + playedTimeButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "mobsKilledButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.MOBS_KILLED)));
-        ExtendedButton distanceWalked = new ExtendedButton(deathRankButton.x, mobsKilledButton.y + mobsKilledButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "distanceWalkedButton")),
+        ExtendedButton distanceWalked = new ExtendedButton(deathRankButton.x, mobsKilledButton.y + mobsKilledButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "distanceWalkedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DISTANCE_WALKED)));
-        ExtendedButton blocksBrokeButton = new ExtendedButton(deathRankButton.x, distanceWalked.y + distanceWalked.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "blocksBrokeButton")),
+        ExtendedButton blocksBrokeButton = new ExtendedButton(deathRankButton.x, distanceWalked.y + distanceWalked.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "blocksBrokeButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.BLOCKS_BROKE)));
-        ExtendedButton fishCaughtButton = new ExtendedButton(deathRankButton.x, blocksBrokeButton.y + blocksBrokeButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "fishCaughtButton")),
+        ExtendedButton fishCaughtButton = new ExtendedButton(deathRankButton.x, blocksBrokeButton.y + blocksBrokeButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "fishCaughtButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.FISH_CAUGHT)));
-        ExtendedButton distanceBoated = new ExtendedButton(deathRankButton.x, fishCaughtButton.y + fishCaughtButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "distanceBoatedButton")),
+        ExtendedButton distanceBoated = new ExtendedButton(deathRankButton.x, fishCaughtButton.y + fishCaughtButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "distanceBoatedButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DISTANCE_BOATED)));
-        ExtendedButton damageDealtButton = new ExtendedButton(deathRankButton.x, distanceBoated.y + distanceBoated.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageDealtButton")),
+        ExtendedButton damageDealtButton = new ExtendedButton(deathRankButton.x, distanceBoated.y + distanceBoated.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "damageDealtButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DAMAGE_DEALT)));
-        ExtendedButton damageTakenButton = new ExtendedButton(deathRankButton.x, damageDealtButton.y + damageDealtButton.getHeightRealms() + 5, buttonWidth, buttonHeight,
-                new TranslationTextComponent(TextUtils.getTranslationKey("text", "damageTakenButton")),
+        ExtendedButton damageTakenButton = new ExtendedButton(deathRankButton.x, damageDealtButton.y + damageDealtButton.getHeight() + 5, buttonWidth, buttonHeight,
+                new TranslatableComponent(TextUtils.getTranslationKey("text", "damageTakenButton")),
                 button -> Network.sendToServer(new PacketChangeLeaderboard(PlayerStatistics.StatisticsType.DAMAGE_TAKEN)));
 
-        this.addButton(deathRankButton);
-        this.addButton(playedTimeButton);
-        this.addButton(mobsKilledButton);
-        this.addButton(distanceWalked);
-        this.addButton(blocksBrokeButton);
-        this.addButton(fishCaughtButton);
-        this.addButton(distanceBoated);
-        this.addButton(damageDealtButton);
-        this.addButton(damageTakenButton);
+        this.addWidget(deathRankButton);
+        this.addWidget(playedTimeButton);
+        this.addWidget(mobsKilledButton);
+        this.addWidget(distanceWalked);
+        this.addWidget(blocksBrokeButton);
+        this.addWidget(fishCaughtButton);
+        this.addWidget(distanceBoated);
+        this.addWidget(damageDealtButton);
+        this.addWidget(damageTakenButton);
     }
 
     @Override
-    public void render(@NotNull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    public void render(@NotNull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         // Render the background dark shade
         this.renderBackground(matrixStack);
-        this.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+        this.getMinecraft().getTextureManager().bindForSetup(TEXTURE);
         GuiUtils.drawContinuousTexturedBox(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize, this.xSize, this.ySize, 0, 0, 0, 0, 0);
         //this.blit(matrixStack, this.x, this.y, 0, 0, this.xSize, this.ySize);
         ScreenUtils.drawString(matrixStack, this.font, this.title, this.x + 5, this.y + 7, TextUtils.TITLE_COLOR);
@@ -123,11 +123,11 @@ public class ScreenLeaderboard extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
+        InputConstants.Key input = InputConstants.getKey(keyCode, scanCode);
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        } else if (this.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(input)) {
-            this.closeScreen();
+        } else if (this.getMinecraft().options.keyInventory.isActiveAndMatches(input)) {
+            this.onClose();
             return true;
         }
         return false;

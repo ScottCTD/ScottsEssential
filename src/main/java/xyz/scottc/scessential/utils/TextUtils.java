@@ -1,6 +1,7 @@
 package xyz.scottc.scessential.utils;
 
-import net.minecraft.util.text.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.*;
 import xyz.scottc.scessential.Main;
 
 public class TextUtils {
@@ -15,58 +16,58 @@ public class TextUtils {
         return beforeModid + Main.MOD_ID + afterModid;
     }
 
-    public static IFormattableTextComponent getColoredTextFromI18n(Color color, boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return new TranslationTextComponent(translationKey, parameters)
+    public static Component getColoredTextFromI18n(TextColor color, boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return new TranslatableComponent(translationKey, parameters)
                 .setStyle(Style.EMPTY
-                        .setColor(color)
-                        .setBold(bold)
+                        .withColor(color)
+                        .withBold(bold)
                         .setUnderlined(underline)
-                        .setItalic(italic));
+                        .withItalic(italic));
     }
 
-    public static IFormattableTextComponent getWhiteTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.WHITE), bold, underline, italic, translationKey, parameters);
+    public static Component getWhiteTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.fromLegacyFormat(ChatFormatting.WHITE), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getGrayTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.GRAY), bold, underline, italic, translationKey, parameters);
+    public static Component getGrayTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.fromLegacyFormat(ChatFormatting.GRAY), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getContainerNameTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromHex(String.valueOf(TITLE_COLOR)), bold, underline, italic, translationKey, parameters);
+    public static Component getContainerNameTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.parseColor(String.valueOf(TITLE_COLOR)), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.GREEN), bold, underline, italic, translationKey, parameters);
+    public static Component getGreenTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.fromLegacyFormat(ChatFormatting.GREEN), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getRedTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.RED), bold, underline, italic, translationKey, parameters);
+    public static Component getRedTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.fromLegacyFormat(ChatFormatting.RED), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getYellowTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
-        return getColoredTextFromI18n(Color.fromTextFormatting(TextFormatting.YELLOW), bold, underline, italic, translationKey, parameters);
+    public static Component getYellowTextFromI18n(boolean bold, boolean underline, boolean italic, String translationKey, Object... parameters) {
+        return getColoredTextFromI18n(TextColor.fromLegacyFormat(ChatFormatting.YELLOW), bold, underline, italic, translationKey, parameters);
     }
 
-    public static IFormattableTextComponent getColoredTextFromString(Color color, boolean bold, boolean underline, boolean italic, String text) {
-        return new StringTextComponent(text)
+    public static Component getColoredTextFromString(TextColor color, boolean bold, boolean underline, boolean italic, String text) {
+        return new TextComponent(text)
                 .setStyle(Style.EMPTY
-                        .setColor(color)
-                        .setBold(bold)
+                        .withColor(color)
+                        .withBold(bold)
                         .setUnderlined(underline)
-                        .setItalic(italic));
+                        .withItalic(italic));
     }
 
-    public static IFormattableTextComponent getGreenTextFromString(boolean bold, boolean underline, boolean italic, String text) {
-        return getColoredTextFromString(Color.fromTextFormatting(TextFormatting.GREEN), bold, underline, italic, text);
+    public static Component getGreenTextFromString(boolean bold, boolean underline, boolean italic, String text) {
+        return getColoredTextFromString(TextColor.fromLegacyFormat(ChatFormatting.GREEN), bold, underline, italic, text);
     }
 
-    public static IFormattableTextComponent getYellowTextFromString(boolean bold, boolean underline, boolean italic, String text) {
-        return getColoredTextFromString(Color.fromTextFormatting(TextFormatting.YELLOW), bold, underline, italic, text);
+    public static Component getYellowTextFromString(boolean bold, boolean underline, boolean italic, String text) {
+        return getColoredTextFromString(TextColor.fromLegacyFormat(ChatFormatting.YELLOW), bold, underline, italic, text);
     }
 
-    public static IFormattableTextComponent getWhiteTextFromString(boolean bold, boolean underline, boolean italic, String text) {
-        return getColoredTextFromString(Color.fromTextFormatting(TextFormatting.WHITE), bold, underline, italic, text);
+    public static Component getWhiteTextFromString(boolean bold, boolean underline, boolean italic, String text) {
+        return getColoredTextFromString(TextColor.fromLegacyFormat(ChatFormatting.WHITE), bold, underline, italic, text);
     }
 
     public static String getSeparator(String pattern, int count) {
