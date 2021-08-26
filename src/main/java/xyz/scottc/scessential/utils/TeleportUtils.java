@@ -1,22 +1,25 @@
 package xyz.scottc.scessential.utils;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.scottc.scessential.core.TeleportPos;
 
 public class TeleportUtils {
 
-    public static void teleport(ServerPlayerEntity player, ServerWorld world, BlockPos targetPos) {
+    public static void teleport(ServerPlayer player, ServerLevel world, BlockPos targetPos) {
         // +0.5 teleport to the center of a block -> avoid suffocating
-        player.teleport(world, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+        player.teleportTo(world, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5, player.xRotO, player.yRotO);
     }
 
-    public static void teleport(ServerPlayerEntity player, TeleportPos pos) {
+    public static void teleport(ServerPlayer player, TeleportPos pos) {
         MinecraftServer server = player.getServer();
         if (server != null) {
-            teleport(player, server.getWorld(pos.getDimension()), pos.getPos());
+            teleport(player, server.getLevel(pos.getDimension()), pos.getPos());
         }
     }
 
@@ -36,12 +39,12 @@ public class TeleportUtils {
         }
     }
 
-    public static boolean isInCooldown(ServerPlayerEntity player, long lastTeleportTime, int cooldownSeconds) {
+    public static boolean isInCooldown(ServerPlayer player, long lastTeleportTime, int cooldownSeconds) {
         if (cooldownSeconds <= 0) return false;
         double cooldown = TeleportUtils.getCooldown(lastTeleportTime, cooldownSeconds);
         if (cooldown != -1) {
-            player.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "inCoolDown"), cooldown), false);
+            player.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "inCoolDown"), cooldown), Util.NIL_UUID);
             return true;
         } else {
             return false;

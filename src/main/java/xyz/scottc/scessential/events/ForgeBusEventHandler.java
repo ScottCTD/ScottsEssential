@@ -1,5 +1,6 @@
 package xyz.scottc.scessential.events;
 
+import net.minecraft.Util;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,8 +32,8 @@ public class ForgeBusEventHandler {
                     for (TPARequest next : TPARequest.getTpaRequest().values()) {
                         if ((next.getCreateTime() + CommandTPA.maxTPARequestTimeoutSeconds * 1000L) <= now) {
                             TPARequest.getTpaRequest().remove(next.getId());
-                            next.getSource().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                    TextUtils.getTranslationKey("message", "requesttimeout"), next.getTarget().getGameProfile().getName()), false
+                            next.getSource().sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                    TextUtils.getTranslationKey("message", "requesttimeout"), next.getTarget().getGameProfile().getName()), Util.NIL_UUID
                             );
                         }
                     }
@@ -45,8 +46,8 @@ public class ForgeBusEventHandler {
                             .forEach(player -> {
                                 player.setFlyable(false);
                                 player.setCanFlyUntil(-1);
-                                player.getPlayer().sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                                        TextUtils.getTranslationKey("message", "cantflynow")), false);
+                                player.getPlayer().sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                                        TextUtils.getTranslationKey("message", "cantflynow")), Util.NIL_UUID);
 
                             });
 

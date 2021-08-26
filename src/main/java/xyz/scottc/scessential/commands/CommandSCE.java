@@ -2,26 +2,27 @@ package xyz.scottc.scessential.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.utils.TextUtils;
 
 public class CommandSCE {
 
-    public static LiteralCommandNode<CommandSource> scessential;
+    public static LiteralCommandNode<CommandSourceStack> scessential;
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         scessential = dispatcher.register(
                 Commands.literal(Main.MOD_ID)
-                        .executes(context -> scessential(context.getSource().asPlayer()))
+                        .executes(context -> scessential(context.getSource().getPlayerOrException()))
         );
     }
 
-    private static int scessential(ServerPlayerEntity player) {
-        player.sendStatusMessage(TextUtils.getWhiteTextFromString(true, false, false,
-                Main.MOD_ID + "-" + Main.MOD_VERSION), false);
+    private static int scessential(ServerPlayer player) {
+        player.sendMessage(TextUtils.getWhiteTextFromString(true, false, false,
+                Main.MOD_ID + "-" + Main.MOD_VERSION), Util.NIL_UUID);
         return 1;
     }
 

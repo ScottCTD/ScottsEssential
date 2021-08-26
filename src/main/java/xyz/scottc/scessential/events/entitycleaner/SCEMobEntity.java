@@ -1,15 +1,15 @@
 package xyz.scottc.scessential.events.entitycleaner;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
 
 public class SCEMobEntity {
 
-    private final MobEntity entity;
+    private final Mob entity;
     private final ResourceLocation registryName;
 
-    public SCEMobEntity(MobEntity entity) {
+    public SCEMobEntity(Mob entity) {
         this.entity = entity;
         this.registryName = EntityType.getKey(entity.getType());
     }
@@ -45,7 +45,7 @@ public class SCEMobEntity {
         }
     }
 
-    public MobEntity getEntity() {
+    public Mob getEntity() {
         return entity;
     }
 

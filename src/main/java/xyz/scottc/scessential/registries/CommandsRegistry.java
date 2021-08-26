@@ -1,12 +1,14 @@
 package xyz.scottc.scessential.registries;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.commands.CommandSCE;
 import xyz.scottc.scessential.commands.info.CommandGetRegistryName;
@@ -19,7 +21,7 @@ public class CommandsRegistry {
 
     public static boolean init = false;
 
-    private static void register(CommandDispatcher<CommandSource> dispatcher) {
+    private static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         // Main Commands
         CommandSCE.register(dispatcher);
         CommandGetRegistryName.register(dispatcher);
@@ -49,7 +51,7 @@ public class CommandsRegistry {
      */
     @SubscribeEvent
     public static void register(FMLServerAboutToStartEvent event) {
-        CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommandManager().getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getServer().getCommands().getDispatcher();
         if (!init) {
             register(dispatcher);
             init = true;
@@ -61,7 +63,7 @@ public class CommandsRegistry {
      */
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
-        CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         if (init) {
             register(dispatcher);
         }

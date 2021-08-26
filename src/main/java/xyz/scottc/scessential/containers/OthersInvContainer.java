@@ -1,21 +1,21 @@
 package xyz.scottc.scessential.containers;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.commands.management.CommandOpenInv;
 import xyz.scottc.scessential.registries.ContainerTypeRegistry;
 
-public class OthersInvContainer extends Container {
+public class OthersInvContainer extends AbstractContainerMenu {
 
     private static final int OTHER_INV_SIZE = 77;
 
@@ -24,22 +24,24 @@ public class OthersInvContainer extends Container {
             TARGETINV_ARMORANDSECONDHAND_START_Y = 19, TARGETINV_ARMOR_START_X = 62, TARGETINV_SECONDHAND_START_X = 98,
             PLAYER_MAININV_START_Y = 132, PLAYER_HOTBAR_START_Y = 190;
 
-    private final PlayerInventory playerInventory;
-    private final IInventory targetInventory;
+    private final Inventory playerInventory;
+    private final Container targetInventory;
 
-    public OthersInvContainer(int id, PlayerInventory playerInventory, IInventory targetInventory) {
+    public OthersInvContainer(int id, Inventory playerInventory, Container targetInventory) {
         super(ContainerTypeRegistry.othersContainerType, id);
         this.playerInventory = playerInventory;
         this.targetInventory = targetInventory;
-        this.targetInventory.openInventory(this.playerInventory.player);
+        this.targetInventory.startOpen(this.playerInventory.player);
         this.addSlots();
     }
 
-    public static OthersInvContainer getClientSideInstance(int id, PlayerInventory playerInventory, PacketBuffer data) {
-        return new OthersInvContainer(id, playerInventory, new Inventory(OTHER_INV_SIZE));
+    public static OthersInvContainer getClientSideInstance(int id, Inventory playerInventory, FriendlyByteBuf data) {
+        return new OthersInvContainer(id, playerInventory, new SimpleContainer(OTHER_INV_SIZE));
     }
 
-    public static OthersInvContainer getServerSideInstance(int id, PlayerInventory playerInventory, PlayerInventory targetInv) {
+
+
+    public static OthersInvContainer getServerSideInstance(int id, Inventory playerInventory, Inventory targetInv) {
         return new OthersInvContainer(id, playerInventory, new CommandOpenInv.OthersInventory(targetInv));
     }
 
@@ -78,21 +80,23 @@ public class OthersInvContainer extends Container {
         this.addSlot(new Slot(this.targetInventory, index, TARGETINV_SECONDHAND_START_X, TARGETINV_ARMORANDSECONDHAND_START_Y));
     }
 
+
     @Override
-    public void onContainerClosed(@NotNull PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        this.targetInventory.closeInventory(playerIn);
+    public void removed(Player playerIn) {
+        super.removed(playerIn);
+        this.targetInventory.stopOpen(playerIn);
     }
 
     @Override
-    public boolean canInteractWith(@NotNull PlayerEntity playerIn) {
+    public boolean stillValid(Player p_38874_) {
         return true;
     }
 
+
     @Override
-    public @NotNull ItemStack transferStackInSlot(@NotNull PlayerEntity playerIn, int index) {
-        ItemStack itemStack = this.inventorySlots.get(index).getStack();
-        if (!itemStack.isItemEqual(ItemStack.EMPTY)) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int index) {
+        ItemStack itemStack = this.slots.get(index).getItem();
+        if (!itemStack.equals(ItemStack.EMPTY)) {
             if (index < 36) {
                 Item item = itemStack.getItem();
                 if (item instanceof ArmorItem) {
@@ -100,22 +104,22 @@ public class OthersInvContainer extends Container {
                     if (registryName != null) {
                         String s = registryName.toString();
                         if (s.contains("helmet")) {
-                            if (this.mergeItemStack(itemStack, 75, 76, false)) return itemStack;
+                            if (this.moveItemStackTo(itemStack, 75, 76, false)) return itemStack;
                         } else if (s.contains("chestplate")) {
-                            if (this.mergeItemStack(itemStack, 74, 75, false)) return itemStack;
+                            if (this.moveItemStackTo(itemStack, 74, 75, false)) return itemStack;
                         } else if (s.contains("leggings")) {
-                            if (this.mergeItemStack(itemStack, 73, 74, false)) return itemStack;
+                            if (this.moveItemStackTo(itemStack, 73, 74, false)) return itemStack;
                         } else if (s.contains("boots")) {
-                            if (this.mergeItemStack(itemStack, 72, 73, false)) return itemStack;
+                            if (this.moveItemStackTo(itemStack, 72, 73, false)) return itemStack;
                         }
                     }
                 }
-                if (!this.mergeItemStack(itemStack, 45, 71, false)) {
-                    if (!this.mergeItemStack(itemStack, 36, 44, false)) return ItemStack.EMPTY;
+                if (!this.moveItemStackTo(itemStack, 45, 71, false)) {
+                    if (!this.moveItemStackTo(itemStack, 36, 44, false)) return ItemStack.EMPTY;
                 }
             } else {
-                if (!this.mergeItemStack(itemStack, 9, 35, false)) {
-                    if (!this.mergeItemStack(itemStack, 0, 8, false)) return ItemStack.EMPTY;
+                if (!this.moveItemStackTo(itemStack, 9, 35, false)) {
+                    if (!this.moveItemStackTo(itemStack, 0, 8, false)) return ItemStack.EMPTY;
                 }
             }
         }

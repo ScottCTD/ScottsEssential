@@ -1,6 +1,6 @@
 package xyz.scottc.scessential.registries;
 
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -13,8 +13,8 @@ public class ScreenRegistry {
 
     @SubscribeEvent
     public static void register(FMLClientSetupEvent event) {
-        ScreenManager.registerFactory(ContainerTypeRegistry.othersContainerType, ScreenOthersInv::new);
-        ScreenManager.registerFactory(ContainerTypeRegistry.trashcanContainerType, ScreenTrashcan::new);
+        MenuScreens.register(ContainerTypeRegistry.othersContainerType, ScreenOthersInv::new);
+        MenuScreens.register(ContainerTypeRegistry.trashcanContainerType, ScreenTrashcan::new);
     }
 
 }

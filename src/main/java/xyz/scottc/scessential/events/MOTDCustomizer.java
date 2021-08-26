@@ -1,11 +1,11 @@
 package xyz.scottc.scessential.events;
 
-import net.minecraft.network.ServerStatusResponse;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.utils.ColorfulStringParser;
@@ -21,7 +21,7 @@ public class MOTDCustomizer {
     @ConfigField
     public static boolean isCustomizedMOTDEnable = false;
 
-    private static final List<IFormattableTextComponent> TEXTS = new ArrayList<>();
+    private static final List<TextComponent> TEXTS = new ArrayList<>();
     public static int counter = 0;
     private static int index = 0;
 
@@ -30,9 +30,9 @@ public class MOTDCustomizer {
         if (isCustomizedMOTDEnable) {
             if (counter >= 20) {
                 counter = 0;
-                ServerStatusResponse response = Main.SERVER.getServerStatusResponse();
+                ServerStatus response = Main.SERVER.getStatus();
                 try {
-                    response.setServerDescription(TEXTS.get(index));
+                    response.setDescription(TEXTS.get(index));
                 } catch (IndexOutOfBoundsException ignore) {}
                 index = index == TEXTS.size() - 1 ? 0 : index + 1;
             }

@@ -1,8 +1,10 @@
 package xyz.scottc.scessential.utils;
 
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +18,7 @@ public class ColorfulStringParser {
 
     public static final char COLOR_CHAR = '§';
 
-    private final IFormattableTextComponent text = new StringTextComponent("");
+    private final TextComponent text = new TextComponent("");
 
     public ColorfulStringParser(String rawString) {
         this(Collections.singletonList(rawString));
@@ -24,11 +26,11 @@ public class ColorfulStringParser {
 
     public ColorfulStringParser(List<? extends String> rawStrings) {
         for (String raw : rawStrings) {
-            StringTextComponent formatted = new StringTextComponent("");
+            TextComponent formatted = new TextComponent("");
             char[] chars = raw.toCharArray();
             for (int j = 0; j < chars.length; j++) {
                 char c = chars[j];
-                List<TextFormatting> formatters = new ArrayList<>(5);
+                List<ChatFormatting> formatters = new ArrayList<>(5);
                 // Get formatters
                 while (c == '&' || c == COLOR_CHAR) {
                     formatters.add(fromFormattingCode(chars[j + 1]));
@@ -42,77 +44,77 @@ public class ColorfulStringParser {
                     if (index == chars.length) break;
                     c = chars[index];
                 } while (c != '&' && c != COLOR_CHAR);
-                formatted.append(new StringTextComponent(raw.substring(j, index)).mergeStyle(this.toArray(formatters)));
+                formatted.append(new TextComponent(raw.substring(j, index)).withStyle(this.toArray(formatters)));
                 j = index - 1;
             }
             this.text.append(formatted);
             if (rawStrings.size() > 1) {
-                this.text.appendString("\n");
+                this.text.append("\n");
             }
         }
     }
 
-    private TextFormatting[] toArray(List<TextFormatting> target) {
-        TextFormatting[] result = new TextFormatting[target.size()];
+    private ChatFormatting[] toArray(List<ChatFormatting> target) {
+        ChatFormatting[] result = new ChatFormatting[target.size()];
         for (int i = 0; i < target.size(); i++) {
             result[i] = target.get(i);
         }
         return result;
     }
 
-    public IFormattableTextComponent getText() {
+    public TextComponent getText() {
         return this.text;
     }
 
-    // Sorry, I dont know the convenient way to get TextFormatting from formatting code,
+    // Sorry, I dont know the convenient way to get ChatFormatting from formatting code,
     // because that method is private.
-    public static TextFormatting fromFormattingCode(char formattingCode) {
+    public static ChatFormatting fromFormattingCode(char formattingCode) {
         char c = Character.toString(formattingCode).toLowerCase(Locale.ROOT).charAt(0);
         switch (c) {
             case '0':
-                return TextFormatting.BLACK;
+                return ChatFormatting.BLACK;
             case '1':
-                return TextFormatting.DARK_BLUE;
+                return ChatFormatting.DARK_BLUE;
             case '2':
-                return TextFormatting.DARK_GREEN;
+                return ChatFormatting.DARK_GREEN;
             case '3':
-                return TextFormatting.DARK_AQUA;
+                return ChatFormatting.DARK_AQUA;
             case '4':
-                return TextFormatting.DARK_RED;
+                return ChatFormatting.DARK_RED;
             case '5':
-                return TextFormatting.DARK_PURPLE;
+                return ChatFormatting.DARK_PURPLE;
             case '6':
-                return TextFormatting.GOLD;
+                return ChatFormatting.GOLD;
             case '7':
-                return TextFormatting.GRAY;
+                return ChatFormatting.GRAY;
             case '8':
-                return TextFormatting.DARK_GRAY;
+                return ChatFormatting.DARK_GRAY;
             case '9':
-                return TextFormatting.BLUE;
+                return ChatFormatting.BLUE;
             case 'a':
-                return TextFormatting.GREEN;
+                return ChatFormatting.GREEN;
             case 'b':
-                return TextFormatting.AQUA;
+                return ChatFormatting.AQUA;
             case 'c':
-                return TextFormatting.RED;
+                return ChatFormatting.RED;
             case 'd':
-                return TextFormatting.LIGHT_PURPLE;
+                return ChatFormatting.LIGHT_PURPLE;
             case 'e':
-                return TextFormatting.YELLOW;
+                return ChatFormatting.YELLOW;
             case 'f':
-                return TextFormatting.WHITE;
+                return ChatFormatting.WHITE;
             case 'k':
-                return TextFormatting.OBFUSCATED;
+                return ChatFormatting.OBFUSCATED;
             case 'l':
-                return TextFormatting.BOLD;
+                return ChatFormatting.BOLD;
             case 'm':
-                return TextFormatting.STRIKETHROUGH;
+                return ChatFormatting.STRIKETHROUGH;
             case 'n':
-                return TextFormatting.UNDERLINE;
+                return ChatFormatting.UNDERLINE;
             case 'o':
-                return TextFormatting.ITALIC;
+                return ChatFormatting.ITALIC;
             case 'r':
-                return TextFormatting.RESET;
+                return ChatFormatting.RESET;
             default:
                 return null;
         }

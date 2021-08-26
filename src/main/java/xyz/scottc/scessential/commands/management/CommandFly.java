@@ -2,10 +2,11 @@ package xyz.scottc.scessential.commands.management;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.level.ServerPlayer;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.SCEPlayerData;
 import xyz.scottc.scessential.utils.TextUtils;
@@ -22,37 +23,37 @@ public class CommandFly {
     @ConfigField
     public static String datePattern = "hh:mm:ss MM/dd/yyyy";
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(flyAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
-                                .requires(source -> source.hasPermissionLevel(2))
-                                .executes(context -> fly(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target"), FlyType.PERMANENT))
+                                .requires(source -> source.hasPermission(2))
+                                .executes(context -> fly(context.getSource().getPlayerOrException(), EntityArgument.getPlayer(context, "Target"), FlyType.PERMANENT))
                                 .then(Commands.argument("Minutes", IntegerArgumentType.integer())
-                                        .requires(source -> source.hasPermissionLevel(2))
-                                        .executes(context -> fly(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target"), FlyType.TEMPORARY, IntegerArgumentType.getInteger(context, "Minutes")))
+                                        .requires(source -> source.hasPermission(2))
+                                        .executes(context -> fly(context.getSource().getPlayerOrException(), EntityArgument.getPlayer(context, "Target"), FlyType.TEMPORARY, IntegerArgumentType.getInteger(context, "Minutes")))
                                 )
                         )
-                        .requires(source -> source.hasPermissionLevel(2))
+                        .requires(source -> source.hasPermission(2))
                         .executes(context -> {
-                            ServerPlayerEntity player = context.getSource().asPlayer();
+                            ServerPlayer player = context.getSource().getPlayerOrException();
                             return fly(player, player, FlyType.PERMANENT);
                         })
         );
     }
 
-    private static int fly(ServerPlayerEntity source, ServerPlayerEntity target, FlyType type, int... minutes) {
+    private static int fly(ServerPlayer source, ServerPlayer target, FlyType type, int... minutes) {
         SCEPlayerData data = SCEPlayerData.getInstance(target);
         if (target.isCreative()) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantSetFly"), data.getName()), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "cantSetFly"), data.getName()), Util.NIL_UUID);
             return 1;
         } else if (data.isFlyable()) {
             data.setFlyable(false);
-            source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                    TextUtils.getTranslationKey("message", "ok")), false);
-            target.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantFlyNow")), false);
+            source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                    TextUtils.getTranslationKey("message", "ok")), Util.NIL_UUID);
+            target.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "cantFlyNow")), Util.NIL_UUID);
             return 1;
         } else {
             data.setFlyable(true);
@@ -61,11 +62,11 @@ public class CommandFly {
             case PERMANENT:
                 data.setCanFlyUntil(-1L);
                 if (!source.equals(target)) {
-                    source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "flyPermanentlySource"), data.getName()), false);
+                    source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                            TextUtils.getTranslationKey("message", "flyPermanentlySource"), data.getName()), Util.NIL_UUID);
                 }
-                target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flyPermanentlyTarget")), false);
+                target.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                        TextUtils.getTranslationKey("message", "flyPermanentlyTarget")), Util.NIL_UUID);
                 break;
             case TEMPORARY:
                 long canFlyUntil = System.currentTimeMillis() + minutes[0] * 60 * 1000L;
@@ -74,11 +75,11 @@ public class CommandFly {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
                 String formattedDate = simpleDateFormat.format(date);
                 if (!source.equals(target)) {
-                    target.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                            TextUtils.getTranslationKey("message", "flyTempTarget"), formattedDate), false);
+                    target.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                            TextUtils.getTranslationKey("message", "flyTempTarget"), formattedDate), Util.NIL_UUID);
                 }
-                source.sendStatusMessage(TextUtils.getGreenTextFromI18n(false, false, false,
-                        TextUtils.getTranslationKey("message", "flyTempSource"), data.getName(), formattedDate), false);
+                source.sendMessage(TextUtils.getGreenTextFromI18n(false, false, false,
+                        TextUtils.getTranslationKey("message", "flyTempSource"), data.getName(), formattedDate), Util.NIL_UUID);
                 break;
         }
         return 1;

@@ -2,7 +2,7 @@ package xyz.scottc.scessential.events.inforecorder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.core.TeleportPos;
 import xyz.scottc.scessential.utils.DateUtils;
@@ -36,7 +36,7 @@ public class CommonInfoStorage implements IInfoStorage {
         this.info = info;
     }
 
-    public CommonInfoStorage(PlayerEntity player, String info) {
+    public CommonInfoStorage(Player player, String info) {
         this(player.getGameProfile().getName(), player.getGameProfile().getId(), new TeleportPos(player), info);
     }
 

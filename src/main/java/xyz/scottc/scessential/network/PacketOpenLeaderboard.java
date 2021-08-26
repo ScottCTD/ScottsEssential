@@ -1,8 +1,8 @@
 package xyz.scottc.scessential.network;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import xyz.scottc.scessential.client.screen.ScreenLeaderboard;
 
 import java.util.ArrayList;
@@ -11,31 +11,31 @@ import java.util.function.Supplier;
 
 public class PacketOpenLeaderboard extends AbstractPacket {
 
-    private final ITextComponent title;
-    private final List<ITextComponent> elements;
+    private final Component title;
+    private final List<Component> elements;
     private final int size;
 
-    public PacketOpenLeaderboard(PacketBuffer buffer) {
-        this.title = buffer.readTextComponent();
+    public PacketOpenLeaderboard(FriendlyByteBuf buffer) {
+        this.title = buffer.readComponent();
         this.size = buffer.readInt();
         this.elements = new ArrayList<>(this.size);
         for (int i = 0; i < this.size; i++) {
-            this.elements.add(buffer.readTextComponent());
+            this.elements.add(buffer.readComponent());
         }
     }
 
-    public PacketOpenLeaderboard(ITextComponent title, List<ITextComponent> elements, int size) {
+    public PacketOpenLeaderboard(Component title, List<Component> elements, int size) {
         this.title = title;
         this.elements = elements;
         this.size = size;
     }
 
     @Override
-    public void encode(PacketBuffer buffer) {
-        buffer.writeTextComponent(this.title);
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeComponent(this.title);
         buffer.writeInt(this.size);
-        for (ITextComponent element : this.elements) {
-            buffer.writeTextComponent(element);
+        for (Component element : this.elements) {
+            buffer.writeComponent(element);
         }
     }
 

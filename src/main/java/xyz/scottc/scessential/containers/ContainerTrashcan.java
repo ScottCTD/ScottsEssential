@@ -1,50 +1,55 @@
 package xyz.scottc.scessential.containers;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.commands.management.CommandTrashcan;
 import xyz.scottc.scessential.registries.ContainerTypeRegistry;
 
-public class ContainerTrashcan extends Container {
+public class ContainerTrashcan extends AbstractContainerMenu {
 
-    private final PlayerInventory playerInventory;
+    private final Inventory playerInventory;
     private final ItemStackHandler itemStackHandler;
     private final CommandTrashcan.Trashcan trashcan;
 
-    protected ContainerTrashcan(int id, PlayerInventory playerInventory, CommandTrashcan.Trashcan trashcan) {
+    protected ContainerTrashcan(int id, Inventory playerInventory, CommandTrashcan.Trashcan trashcan) {
         super(ContainerTypeRegistry.trashcanContainerType, id);
-        this.trackIntArray(trashcan);
+        this.addDataSlots(trashcan);
         this.playerInventory = playerInventory;
         this.itemStackHandler = trashcan.getCurrentContents();
         this.trashcan = trashcan;
         this.addSlots();
     }
 
-    public static ContainerTrashcan getServerSideInstance(int id, PlayerInventory playerInventory, CommandTrashcan.Trashcan trashcan) {
+    public static ContainerTrashcan getServerSideInstance(int id, Inventory playerInventory, CommandTrashcan.Trashcan trashcan) {
         return new ContainerTrashcan(id, playerInventory, trashcan);
     }
 
-    public static ContainerTrashcan getClientSideInstance(int id, PlayerInventory playerInventory, PacketBuffer data) {
+    public static ContainerTrashcan getClientSideInstance(int id, Inventory playerInventory, FriendlyByteBuf data) {
         return new ContainerTrashcan(id, playerInventory, new CommandTrashcan.Trashcan());
     }
 
+
+
+
+
     @Override
-    public @NotNull ItemStack transferStackInSlot(@NotNull PlayerEntity playerIn, int index) {
-        Slot slot = this.inventorySlots.get(index);
+    public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int index) {
+        Slot slot = this.slots.get(index);
         if (slot == null) return ItemStack.EMPTY;
-        ItemStack itemStack = slot.getStack();
+        ItemStack itemStack = slot.getItem();
         if (index < 36) {
-            if (!this.mergeItemStack(itemStack, 36, 85, false)) return ItemStack.EMPTY;
+            if (!this.moveItemStackTo(itemStack, 36, 85, false)) return ItemStack.EMPTY;
         } else {
-            if (!this.mergeItemStack(itemStack, 9, 35, false)) {
-                if (!this.mergeItemStack(itemStack, 0, 8, true)) return ItemStack.EMPTY;
+            if (!this.moveItemStackTo(itemStack, 9, 35, false)) {
+                if (!this.moveItemStackTo(itemStack, 0, 8, true)) return ItemStack.EMPTY;
             }
         }
         return itemStack;
@@ -87,7 +92,7 @@ public class ContainerTrashcan extends Container {
     }
 
     @Override
-    public boolean canInteractWith(@NotNull PlayerEntity playerIn) {
+    public boolean stillValid(Player p_38874_) {
         return true;
     }
 }

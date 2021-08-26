@@ -1,13 +1,13 @@
 package xyz.scottc.scessential.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import xyz.scottc.scessential.Main;
 
 @Mod.EventBusSubscriber(modid = Main.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -52,7 +52,7 @@ public class Network {
         );
     }
 
-    public static void sendToPlayerClient(ServerPlayerEntity player, AbstractPacket packet) {
+    public static void sendToPlayerClient(ServerPlayer player, AbstractPacket packet) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
     }
 

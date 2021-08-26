@@ -1,18 +1,19 @@
 package xyz.scottc.scessential.commands.management;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.containers.OthersInvContainer;
@@ -30,43 +31,45 @@ public class CommandOpenInv {
     @ConfigField
     public static String invseeAlias = "invsee";
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(invseeAlias)
                         .then(Commands.argument("Target", EntityArgument.player())
-                                .requires(source -> source.hasPermissionLevel(2))
-                                .executes(context -> invSee(context.getSource().asPlayer(), EntityArgument.getPlayer(context, "Target")))
+                                .requires(source -> source.hasPermission(2))
+                                .executes(context -> invSee(context.getSource().getPlayerOrException(), EntityArgument.getPlayer(context, "Target")))
                         )
-                        .requires(source -> source.hasPermissionLevel(2))
+                        .requires(source -> source.hasPermission(2))
         );
     }
 
-    private static int invSee(ServerPlayerEntity source, ServerPlayerEntity target) {
+    private static int invSee(ServerPlayer source, ServerPlayer target) {
         if (source.equals(target)) {
-            source.sendStatusMessage(TextUtils.getYellowTextFromI18n(true, false, false,
-                    TextUtils.getTranslationKey("message", "cantOpenSelfInv")), false);
+            source.sendMessage(TextUtils.getYellowTextFromI18n(true, false, false,
+                    TextUtils.getTranslationKey("message", "cantOpenSelfInv")), Util.NIL_UUID);
             return 1;
         }
-        NetworkHooks.openGui(source, new INamedContainerProvider() {
+        NetworkHooks.openGui(source, new MenuProvider() {
+
+
             @Override
-            public @NotNull ITextComponent getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return TextUtils.getContainerNameTextFromI18n(false, false, false,
                         TextUtils.getTranslationKey("text", "playerInv"), target.getGameProfile().getName());
             }
 
             @Override
-            public @NotNull Container createMenu(int id, @NotNull PlayerInventory sourceInv, @NotNull PlayerEntity source) {
-                return OthersInvContainer.getServerSideInstance(id, sourceInv, target.inventory);
+            public @NotNull AbstractContainerMenu createMenu(int id, @NotNull Inventory sourceInv, @NotNull Player source) {
+                return OthersInvContainer.getServerSideInstance(id, sourceInv, target.getInventory());
             }
         });
         return 1;
     }
 
-    public static class OthersInventory implements IInventory {
+    public static class OthersInventory implements Container {
 
-        PlayerInventory playerInventory;
+        Inventory playerInventory;
 
-        public OthersInventory(PlayerInventory player) {
+        public OthersInventory(Inventory player) {
             this.playerInventory = player;
         }
 
@@ -75,7 +78,7 @@ public class CommandOpenInv {
         }
 
         @Override
-        public int getSizeInventory() {
+        public int getContainerSize() {
             return 41;
         }
 
@@ -85,61 +88,67 @@ public class CommandOpenInv {
         }
 
         @Override
-        public @NotNull ItemStack getStackInSlot(int index) {
+        public ItemStack getItem(int index) {
             int realIndex = this.getPlayerInvIndex(index);
-            return playerInventory.getStackInSlot(realIndex);
+            return playerInventory.getItem(realIndex);
         }
 
         @Override
-        public @NotNull ItemStack decrStackSize(int index, int count) {
+        public ItemStack removeItem(int index, int count) {
             int realIndex = this.getPlayerInvIndex(index);
-            ItemStack itemStack = this.playerInventory.decrStackSize(realIndex, count);
-            this.markDirty();
+            ItemStack itemStack = this.playerInventory.removeItem(realIndex, count);
+            this.setChanged();
             return itemStack;
         }
 
         @Override
-        public @NotNull ItemStack removeStackFromSlot(int index) {
+        public ItemStack removeItemNoUpdate(int index) {
             int realIndex = this.getPlayerInvIndex(index);
-            ItemStack itemStack = this.playerInventory.removeStackFromSlot(realIndex);
-            this.markDirty();
+            ItemStack itemStack = this.playerInventory.removeItemNoUpdate(realIndex);
+            this.setChanged();
             return itemStack;
         }
 
         @Override
-        public void setInventorySlotContents(int index, @NotNull ItemStack stack) {
+        public void setItem(int index, @NotNull ItemStack stack) {
             int realIndex = this.getPlayerInvIndex(index);
-            this.playerInventory.setInventorySlotContents(realIndex, stack);
-            this.markDirty();
+            this.playerInventory.setItem(realIndex, stack);
+            this.setChanged();
         }
 
         @Override
-        public void markDirty() {
-            this.playerInventory.markDirty();
-            this.playerInventory.player.container.detectAndSendChanges();
-            this.playerInventory.player.openContainer.detectAndSendChanges();
+        public void setChanged() {
+            this.playerInventory.setChanged();
+            this.playerInventory.player.getInventory().setChanged();
+            this.playerInventory.player.inventoryMenu.broadcastChanges();
         }
 
         @Override
-        public boolean isUsableByPlayer(@NotNull PlayerEntity player) {
+        public boolean stillValid(Player p_18946_) {
             return true;
         }
 
-        @Override
-        public void clear() {
-            playerInventory.clear();
-            this.markDirty();
-        }
 
         @Override
-        public int getInventoryStackLimit() {
-            return this.playerInventory.getInventoryStackLimit();
+        public int getMaxStackSize() {
+            return this.playerInventory.getMaxStackSize();
         }
 
+
         @Override
-        public boolean isItemValidForSlot(int index, @NotNull ItemStack stack) {
+        public void clearContent() {
+            playerInventory.clearContent();
+            this.setChanged();
+        }
+
+
+        @Override
+        public boolean canPlaceItem(int index, @NotNull ItemStack stack) {
             int realIndex = this.getPlayerInvIndex(index);
-            return this.playerInventory.isItemValidForSlot(realIndex, stack);
+            return this.playerInventory.canPlaceItem(realIndex, stack);
         }
+
+
+
     }
 }

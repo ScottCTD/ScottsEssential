@@ -1,19 +1,21 @@
 package xyz.scottc.scessential.core;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.stats.ServerStatisticsManager;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.monitoring.jmx.MinecraftServerStatistics;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import xyz.scottc.scessential.Main;
@@ -28,11 +30,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 01/11/2021 23:28
  */
-public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
+public class PlayerStatistics implements INBTSerializable<CompoundTag> {
 
     public static final List<PlayerStatistics> ALL_STATISTICS = new ArrayList<>();
 
-    private ServerPlayerEntity player;
+    private ServerPlayer player;
     private String name;
     private UUID uuid;
 
@@ -54,7 +56,8 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
 
     private PlayerStatistics() {}
 
-    public static @NotNull PlayerStatistics getInstance(@NotNull ServerPlayerEntity player) {
+    public static @NotNull
+    PlayerStatistics getInstance(@NotNull ServerPlayer player) {
         GameProfile gameProfile = player.getGameProfile();
         PlayerStatistics instance = new PlayerStatistics(gameProfile.getId(), gameProfile.getName());
         int index = ALL_STATISTICS.indexOf(instance);
@@ -69,9 +72,9 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
     }
 
     public void update() {
-        ServerStatisticsManager stats = this.player.getStats();
+        ServerStatsCounter stats = this.player.getStats();
         this.setDeathAmount(stats.getValue(Stats.CUSTOM.get(Stats.DEATHS)));
-        this.setTotalPlayedTicks(stats.getValue(Stats.CUSTOM.get(Stats.PLAY_ONE_MINUTE)));
+        this.setTotalPlayedTicks(stats.getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)));
         this.setMobsKilled(stats.getValue(Stats.CUSTOM.get(Stats.MOB_KILLS)));
         this.setDistanceWalked(stats.getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)));
         AtomicInteger temp = new AtomicInteger();
@@ -84,9 +87,9 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        nbt.putUniqueId("uuid", this.uuid);
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putUUID("uuid", this.uuid);
         nbt.putString("name", this.name);
         nbt.putInt("deathAmount", this.deathAmount);
         nbt.putInt("totalPlayedTicks", this.totalPlayedTicks);
@@ -100,9 +103,11 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         return nbt;
     }
 
+
+
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
-        this.uuid = nbt.getUniqueId("uuid");
+    public void deserializeNBT(CompoundTag nbt) {
+        this.uuid = nbt.getUUID("uuid");
         this.name = nbt.getString("name");
         this.deathAmount = nbt.getInt("deathAmount");
         this.totalPlayedTicks = nbt.getInt("totalPlayedTicks");
@@ -115,7 +120,7 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         this.damageTaken = nbt.getInt("damageTaken");
     }
 
-    public ServerPlayerEntity getPlayer() {
+    public ServerPlayer getPlayer() {
         return player;
     }
 
@@ -225,10 +230,10 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
             // Deserialize statistics
             if (Main.STATISTICS_FILE.exists()) {
                 try {
-                    CompoundNBT nbt = CompressedStreamTools.readCompressed(Main.STATISTICS_FILE);
-                    Optional.ofNullable((ListNBT) nbt.get("statistics")).ifPresent(listnbt -> listnbt.forEach(statistic -> {
+                    CompoundTag nbt = NbtIo.readCompressed(Main.STATISTICS_FILE);
+                    Optional.ofNullable((ListTag) nbt.get("statistics")).ifPresent(listnbt -> listnbt.forEach(statistic -> {
                         PlayerStatistics playerStatistics = new PlayerStatistics();
-                        playerStatistics.deserializeNBT((CompoundNBT) statistic);
+                        playerStatistics.deserializeNBT((CompoundTag) statistic);
                         PlayerStatistics.ALL_STATISTICS.add(playerStatistics);
                     }));
                 } catch (IOException e) {
@@ -243,14 +248,14 @@ public class PlayerStatistics implements INBTSerializable<CompoundNBT> {
         public static void onWorldSaved(WorldEvent.Save event) {
             // Serialize statistics
             try {
-                CompoundNBT temp = new CompoundNBT();
-                ListNBT listNBT = new ListNBT();
+                CompoundTag temp = new CompoundTag();
+                ListTag listNBT = new ListTag();
                 PlayerStatistics.ALL_STATISTICS.forEach(statistic -> {
-                    CompoundNBT nbt = statistic.serializeNBT();
+                    CompoundTag nbt = statistic.serializeNBT();
                     listNBT.add(nbt);
                 });
                 temp.put("statistics", listNBT);
-                CompressedStreamTools.writeCompressed(temp, Main.STATISTICS_FILE);
+                NbtIo.writeCompressed(temp, Main.STATISTICS_FILE);
             } catch (IOException e) {
                 e.printStackTrace();
             }

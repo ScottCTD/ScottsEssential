@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import xyz.scottc.scessential.Main;
 
 import java.util.List;
@@ -40,13 +41,13 @@ public class ModConfig {
     }
 
     @SubscribeEvent
-    public static void onLoading(net.minecraftforge.fml.config.ModConfig.Loading event) {
+    public static void onLoading(ModConfigEvent.Loading event) {
         get(CONFIGS);
         Main.LOGGER.info("SCE Config loaded!");
     }
 
     @SubscribeEvent
-    public static void onReloading(net.minecraftforge.fml.config.ModConfig.Reloading event) {
+    public static void onReloading(ModConfigEvent.Reloading event) {
         get(CONFIGS);
         Main.LOGGER.info("SCE Config Reloaded!");
     }

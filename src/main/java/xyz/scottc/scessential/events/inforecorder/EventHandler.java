@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
@@ -20,7 +20,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import xyz.scottc.scessential.Main;
 import xyz.scottc.scessential.config.ConfigField;
 import xyz.scottc.scessential.utils.DateUtils;
@@ -108,7 +108,7 @@ public class EventHandler {
         if (isInfoRecorderEnable && isRecordPlayerUseCommand) {
             try {
                 String command = event.getParseResults().getReader().getString();
-                IInfoStorage info = new CommonInfoStorage(event.getParseResults().getContext().getSource().asPlayer(), command);
+                IInfoStorage info = new CommonInfoStorage(event.getParseResults().getContext().getSource().getPlayerOrException(), command);
                 new Thread(() -> writeJson(info.serializeJson(), commandLogFile, true)).start();
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -119,8 +119,8 @@ public class EventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onPlayerJoinOtherDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (isInfoRecorderEnable && isRecordPlayerJoinDimension) {
-            IInfoStorage info = new CommonInfoStorage(event.getPlayer(), "Player travel from " + event.getFrom().getLocation().toString() +
-                    " to " + event.getTo().getLocation().toString());
+            IInfoStorage info = new CommonInfoStorage(event.getPlayer(), "Player travel from " + event.getFrom().getRegistryName().toString() +
+                    " to " + event.getTo().getRegistryName().toString());
             new Thread(() -> writeJson(info.serializeJson(), playerDimensionLogFile, true)).start();
 
         }
@@ -130,21 +130,21 @@ public class EventHandler {
     public static void onLivingDied(LivingDeathEvent event) {
         if (isInfoRecorderEnable) {
             LivingEntity entityLiving = event.getEntityLiving();
-            Entity source = event.getSource().getTrueSource();
-            if (isRecordPlayerDeath && entityLiving instanceof PlayerEntity) {
-                String cause = event.getSource().damageType;
-                if (source instanceof PlayerEntity) {
-                    cause += " " + ((PlayerEntity) source).getGameProfile().getName();
+            Entity source = event.getSource().getEntity();
+            if (isRecordPlayerDeath && entityLiving instanceof Player) {
+                String cause = event.getSource().msgId;
+                if (source instanceof Player) {
+                    cause += " " + ((Player) source).getGameProfile().getName();
                 }
-                IInfoStorage info = new CommonInfoStorage((PlayerEntity) entityLiving, "Died because of " + cause);
+                IInfoStorage info = new CommonInfoStorage((Player) entityLiving, "Died because of " + cause);
                 new Thread(() -> writeJson(info.serializeJson(), playerDiedLogFile, true)).start();
-            } else if (isRecordPlayerKill && source instanceof PlayerEntity) {
-                if (!isRecordPlayerKillMonster && entityLiving instanceof MonsterEntity) {
+            } else if (isRecordPlayerKill && source instanceof Player) {
+                if (!isRecordPlayerKillMonster && entityLiving instanceof Monster) {
                     return;
-                } else if (!isRecordPlayerKillAnimal && !(entityLiving instanceof MonsterEntity)) {
+                } else if (!isRecordPlayerKillAnimal && !(entityLiving instanceof Monster)) {
                     return;
                 }
-                PlayerEntity trueSource = (PlayerEntity) source;
+                Player trueSource = (Player) source;
                 IInfoStorage info = new CommonInfoStorage(trueSource, "Player killed " + EntityType.getKey(entityLiving.getType()).toString());
                 new Thread(() -> writeJson(info.serializeJson(), playerKilledLogFile, true)).start();
             }
@@ -190,12 +190,12 @@ public class EventHandler {
     public static void onPlayerPlaceBlock(BlockEvent.EntityPlaceEvent event) {
         if (isInfoRecorderEnable && isRecordPlayerPlaceBlock) {
             Entity entity = event.getEntity();
-            if (entity instanceof PlayerEntity) {
+            if (entity instanceof Player) {
                 BlockState placedBlock = event.getPlacedBlock();
                 Optional.ofNullable(placedBlock.getBlock().getRegistryName()).ifPresent(location -> new Thread(() -> {
                     String s = location.toString();
                     if (placeBlockListeningList.contains(s)) {
-                        IInfoStorage info = new CommonInfoStorage((PlayerEntity) entity, s);
+                        IInfoStorage info = new CommonInfoStorage((Player) entity, s);
                         writeJson(info.serializeJson(), playerPlaceBlockLogFile, true);
                     }
                 }).start());

@@ -1,16 +1,17 @@
 package xyz.scottc.scessential;
 
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.storage.FolderName;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.scottc.scessential.config.ModConfig;
@@ -53,7 +54,7 @@ public class Main {
     private void onServerAboutToStart(FMLServerAboutToStartEvent event) {
         SERVER = event.getServer();
         // Basically, this function return a path like .\saves\New World\scessential
-        MAIN_FOLDER = SERVER.func_240776_a_(new FolderName(MOD_ID)).toFile();
+        MAIN_FOLDER = SERVER.getWorldPath(new LevelResource(MOD_ID)).toFile();
         init();
         Main.LOGGER.info("SCE Successfully initialize directories!");
     }
@@ -66,9 +67,9 @@ public class Main {
         resetData();
     }
 
-    public static void sendMessageToAllPlayers(ITextComponent message, boolean actionBar) {
+    public static void sendMessageToAllPlayers(Component message, boolean actionBar) {
         new Thread(() -> Optional.ofNullable(SERVER).ifPresent(server -> server.getPlayerList().getPlayers()
-                .forEach(player -> player.sendStatusMessage(message, actionBar)))).start();
+                .forEach(player -> player.sendMessage(message, Util.NIL_UUID)))).start();
     }
 
     public static void resetData() {

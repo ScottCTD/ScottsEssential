@@ -5,13 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -38,7 +39,7 @@ public class SCEPlayerData {
     // It will be refilled everytime the server restart.
     public static final List<SCEPlayerData> PLAYER_DATA_LIST = new ArrayList<>();
 
-    private PlayerEntity player;
+    private Player player;
     private UUID uuid;
     private String playerName;
 
@@ -72,7 +73,7 @@ public class SCEPlayerData {
      * This method should be used only after player loaded.
      * AttachCapability event happened before player loaded.
      */
-    public static @NotNull SCEPlayerData getInstance(@NotNull PlayerEntity player) {
+    public static @NotNull SCEPlayerData getInstance(@NotNull Player player) {
         GameProfile gameProfile = player.getGameProfile();
         SCEPlayerData data = new SCEPlayerData(gameProfile.getId(), gameProfile.getName());
         int i = PLAYER_DATA_LIST.indexOf(data);
@@ -86,8 +87,8 @@ public class SCEPlayerData {
         return data;
     }
 
-    public @NotNull CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public @NotNull CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
 
         // Info
         nbt.putString("uuid", this.uuid.toString());
@@ -98,9 +99,9 @@ public class SCEPlayerData {
         nbt.putLong("canFlyUntil", this.canFlyUntil);
 
         // Homes
-        ListNBT nbtHomes = new ListNBT();
+        ListTag nbtHomes = new ListTag();
         for (Map.Entry<String, TeleportPos> home : this.homes.entrySet()) {
-            CompoundNBT nbtHome = new CompoundNBT();
+            CompoundTag nbtHome = new CompoundTag();
             nbtHome.putString("name", home.getKey());
             nbtHome.put("pos", home.getValue().serializeNBT());
             nbtHomes.add(nbtHome);
@@ -109,7 +110,7 @@ public class SCEPlayerData {
 
         // Backs
         nbt.putInt("currentBackIndex", this.currentBackIndex);
-        ListNBT nbtBacks = new ListNBT();
+        ListTag nbtBacks = new ListTag();
         for (TeleportPos backPos : this.teleportHistory) {
             if (backPos == null) break;
             nbtBacks.add(backPos.serializeNBT());
@@ -119,7 +120,7 @@ public class SCEPlayerData {
         return nbt;
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         try {
             this.uuid = UUID.fromString(nbt.getString("uuid"));
         } catch (IllegalArgumentException ignore) {}
@@ -128,9 +129,9 @@ public class SCEPlayerData {
         this.isFlyable = nbt.getBoolean("flyable");
         this.canFlyUntil = nbt.getLong("canFlyUntil");
 
-        Optional.ofNullable((ListNBT) nbt.get("homes")).ifPresent((nbtHomes) -> {
-            for (INBT home : nbtHomes) {
-                CompoundNBT temp = (CompoundNBT) home;
+        Optional.ofNullable((ListTag) nbt.get("homes")).ifPresent((nbtHomes) -> {
+            for (Tag home : nbtHomes) {
+                CompoundTag temp = (CompoundTag) home;
                 TeleportPos pos = new TeleportPos();
                 pos.deserializeNBT(temp.getCompound("pos"));
                 this.homes.put(temp.getString("name"), pos);
@@ -138,10 +139,10 @@ public class SCEPlayerData {
         });
 
         this.currentBackIndex = nbt.getInt("currentBackIndex");
-        Optional.ofNullable((ListNBT) nbt.get("backHistory")).ifPresent(backs -> {
+        Optional.ofNullable((ListTag) nbt.get("backHistory")).ifPresent(backs -> {
             int i = 0;
-            for (INBT back : backs) {
-                CompoundNBT temp = (CompoundNBT) back;
+            for (Tag back : backs) {
+                CompoundTag temp = (CompoundTag) back;
                 TeleportPos pos = new TeleportPos();
                 pos.deserializeNBT(temp);
                 try {
@@ -155,8 +156,8 @@ public class SCEPlayerData {
     }
 
     public PlayerStatistics getStatistics() {
-        if (!this.player.world.isRemote) {
-            this.statistics = PlayerStatistics.getInstance((ServerPlayerEntity) this.player);
+        if (!this.player.level.isClientSide) {
+            this.statistics = PlayerStatistics.getInstance((ServerPlayer) this.player);
         }
         return this.statistics;
     }
@@ -184,13 +185,13 @@ public class SCEPlayerData {
         }
         if (this.player != null) {
             if (flyable) {
-                this.player.abilities.allowFlying = true;
+                this.player.getAbilities().mayfly = true;
             } else {
-                this.player.abilities.allowFlying = false;
-                this.player.abilities.isFlying = false;
+                this.player.getAbilities().mayfly = false;
+                this.player.getAbilities().flying = false;
                 this.canFlyUntil = -1;
             }
-            this.player.sendPlayerAbilities();
+            this.player.onUpdateAbilities();
             this.isFlyable = flyable;
         }
     }
@@ -237,11 +238,11 @@ public class SCEPlayerData {
         return this.homes;
     }
 
-    public @Nullable PlayerEntity getPlayer() {
+    public @Nullable Player getPlayer() {
         return this.player;
     }
 
-    public static @Nullable PlayerEntity getPlayer(String playerName) {
+    public static @Nullable Player getPlayer(String playerName) {
         for (SCEPlayerData data : PLAYER_DATA_LIST) {
             if (data.getName().equals(playerName)) {
                 return data.getPlayer();
@@ -270,7 +271,7 @@ public class SCEPlayerData {
         return result;
     }
 
-    public void setPlayer(PlayerEntity player) {
+    public void setPlayer(Player player) {
         this.player = player;
     }
 
@@ -433,7 +434,7 @@ public class SCEPlayerData {
             try {
                 File dataFile = new File(Main.PLAYER_DATA_FOLDER.getAbsolutePath() + "/" + event.getPlayerUUID() + ".dat");
                 SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
-                CompressedStreamTools.writeCompressed(data.serializeNBT(), dataFile);
+                NbtIo.writeCompressed(data.serializeNBT(), dataFile);
                 Main.LOGGER.debug("Successfully save player " + data.getUuid() + " to file!");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -459,7 +460,7 @@ public class SCEPlayerData {
             File dataFile = new File(Main.PLAYER_DATA_FOLDER.getAbsolutePath() + "/" + event.getPlayerUUID() + ".dat");
             if (dataFile.exists()) {
                 try {
-                    CompoundNBT dataNbt = CompressedStreamTools.readCompressed(dataFile);
+                    CompoundTag dataNbt = NbtIo.readCompressed(dataFile);
                     SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
                     data.deserializeNBT(dataNbt);
                 } catch (IOException e) {
@@ -476,9 +477,9 @@ public class SCEPlayerData {
         @SubscribeEvent
         public static void onPlayerDied(LivingDeathEvent event) {
             LivingEntity entity = event.getEntityLiving();
-            if (!entity.world.isRemote) {
-                if (entity instanceof PlayerEntity) {
-                    ServerPlayerEntity player = (ServerPlayerEntity) entity;
+            if (!entity.level.isClientSide) {
+                if (entity instanceof Player) {
+                    ServerPlayer player = (ServerPlayer) entity;
                     SCEPlayerData data = SCEPlayerData.getInstance(player);
                     data.addTeleportHistory(new TeleportPos(player));
                 }
@@ -508,7 +509,7 @@ public class SCEPlayerData {
          */
         @SubscribeEvent
         public static void onPlayerChangeGameMode(PlayerEvent.PlayerChangeGameModeEvent event) {
-            if (event.getCurrentGameMode().isCreative() && event.getNewGameMode().isSurvivalOrAdventure()) {
+            if (event.getCurrentGameMode().isCreative() && event.getNewGameMode().isSurvival()) {
                 new Thread(() -> {
                     // after game mode changed, if player is flyable, then flyable
                     SCEPlayerData data = SCEPlayerData.getInstance(event.getPlayer());
