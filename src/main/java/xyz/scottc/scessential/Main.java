@@ -1,6 +1,7 @@
 package xyz.scottc.scessential;
 
 import net.minecraft.Util;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -9,7 +10,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +30,7 @@ public class Main {
     public static final String MOD_VERSION = "1.0.0";
     public static final Logger LOGGER = LogManager.getLogger();
     // SERVER initializer is in ForgeBusEventHandler.onServerAboutToStart
-    public static MinecraftServer SERVER = ServerLifecycleHooks.getCurrentServer();
+    public static MinecraftServer SERVER = null;
 
     public static File MAIN_FOLDER;
     public static File PLAYER_DATA_FOLDER;
@@ -68,8 +68,8 @@ public class Main {
     }
 
     public static void sendMessageToAllPlayers(Component message, boolean actionBar) {
-        new Thread(() -> Optional.ofNullable(SERVER).ifPresent(server -> server.getPlayerList().getPlayers()
-                .forEach(player -> player.sendMessage(message, Util.NIL_UUID)))).start();
+        Optional.ofNullable(SERVER).ifPresent(server -> server.getPlayerList().getPlayers()
+                .forEach(player -> player.sendMessage(message, ChatType.CHAT, Util.NIL_UUID)));
     }
 
     public static void resetData() {

@@ -63,6 +63,10 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
 
+maven {
+    url 'https://repo.maven.apache.org/maven2'
+    name 'Maven Central'
+}
 }
 
 dependencies {

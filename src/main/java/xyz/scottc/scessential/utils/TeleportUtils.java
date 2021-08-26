@@ -13,7 +13,7 @@ public class TeleportUtils {
 
     public static void teleport(ServerPlayer player, ServerLevel world, BlockPos targetPos) {
         // +0.5 teleport to the center of a block -> avoid suffocating
-        player.teleportTo(world, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5, player.xRotO, player.yRotO);
+        player.teleportTo(world, targetPos.getX() + 0.5, targetPos.getY() + 0.1, targetPos.getZ() + 0.5, player.yRotO, player.xRotO);
     }
 
     public static void teleport(ServerPlayer player, TeleportPos pos) {
@@ -24,7 +24,6 @@ public class TeleportUtils {
     }
 
     /**
-     *
      * @param lastTeleportTime Last teleport time
      * @param cooldownSeconds Cooldown of this function in config
      * @return -1 if no cooldown, else return the remain cooldown in seconds.

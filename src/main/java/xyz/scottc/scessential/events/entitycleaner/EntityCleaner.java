@@ -186,11 +186,11 @@ public class EntityCleaner {
     public static int cleanupEntity(Iterable<ServerLevel> worlds, Predicate<Entity> type, Predicate<Entity> additionalPredicate) {
         AtomicInteger amount = new AtomicInteger();
         worlds.forEach(world -> world.getAllEntities()
-                //.forEach(entity -> entity.getCustomName() == null)
-                //.filter(type)
-                //.filter(additionalPredicate)
                 .forEach(entity -> {
-                    entity.remove(null);
+                    if (entity.getCustomName() == null || type.test(entity) || additionalPredicate.test(entity)) {
+                        return;
+                    }
+                    entity.remove(Entity.RemovalReason.valueOf("USELESS"));
                     if (entity instanceof ItemEntity) {
                         amount.getAndAdd(((ItemEntity) entity).getItem().getCount());
                     } else {

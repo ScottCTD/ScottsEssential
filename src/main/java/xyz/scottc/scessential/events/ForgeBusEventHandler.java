@@ -17,7 +17,7 @@ public class ForgeBusEventHandler {
     private static int counter = 0;
 
     /**
-     * Determine if an tpa request was expired and if a player fly time expired.
+     * Determine if a tpa request was expired and if a player fly time expired.
      * Also ++played time
      * @param event ServerTickEvent
      */

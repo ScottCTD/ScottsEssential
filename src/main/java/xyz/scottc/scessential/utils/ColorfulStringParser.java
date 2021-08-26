@@ -3,7 +3,6 @@ package xyz.scottc.scessential.utils;
 
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class ColorfulStringParser {
                 List<ChatFormatting> formatters = new ArrayList<>(5);
                 // Get formatters
                 while (c == '&' || c == COLOR_CHAR) {
-                    formatters.add(fromFormattingCode(chars[j + 1]));
+                    formatters.add(ChatFormatting.getByCode(chars[j + 1]));
                     j += 2;
                     c = chars[j];
                 }
@@ -68,6 +67,7 @@ public class ColorfulStringParser {
 
     // Sorry, I dont know the convenient way to get ChatFormatting from formatting code,
     // because that method is private.
+    @Deprecated
     public static ChatFormatting fromFormattingCode(char formattingCode) {
         char c = Character.toString(formattingCode).toLowerCase(Locale.ROOT).charAt(0);
         switch (c) {

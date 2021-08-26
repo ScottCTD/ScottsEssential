@@ -72,27 +72,27 @@ public class CommandRTP {
             boolean nether = false;
             for (int i = 0; i < maxRTPAttempts; i++) {
                 switch (worldKey) {
-                    case OVERWORLD:
+                    case OVERWORLD -> {
                         y = random.nextInt(maxRTPHeightOverworld - minRTPHeightOverworld) + minRTPHeightOverworld;
                         x = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
                         z = random.nextInt(maxRTPRadiusOverworld - minRTPRadiusOverworld) + minRTPRadiusOverworld;
-                        break;
-                    case NETHER:
+                    }
+                    case NETHER -> {
                         y = random.nextInt(maxRTPHeightNether - minRTPHeightNether) + minRTPHeightNether;
                         x = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
                         z = random.nextInt(maxRTPRadiusNether - minRTPRadiusNether) + minRTPRadiusNether;
                         nether = true;
-                        break;
-                    case END:
+                    }
+                    case END -> {
                         y = random.nextInt(maxRTPHeightEnd - minRTPHeightEnd) + minRTPHeightEnd;
                         x = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
                         z = random.nextInt(maxRTPRadiusEnd - minRTPRadiusEnd) + minRTPRadiusEnd;
-                        break;
-                    default:
+                    }
+                    default -> {
                         y = random.nextInt(maxRTPHeightDefault - minRTPHeightDefault) + minRTPHeightDefault;
                         x = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
                         z = random.nextInt(maxRTPRadiusDefault - minRTPRadiusDefault) + minRTPRadiusDefault;
-                        break;
+                    }
                 }
                 BlockPos playerPos = player.getOnPos();
                 BlockPos targetPos = new BlockPos(x + playerPos.getX(), y, z + playerPos.getZ());
